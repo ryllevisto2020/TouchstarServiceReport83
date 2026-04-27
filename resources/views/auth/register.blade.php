@@ -1,0 +1,366 @@
+@extends('layouts.app')
+@section('title', 'Employee Management')
+@section('content')
+<div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Employee Management</h1>
+        <p class="text-gray-500 mt-1">Add employee details first → Create login account later</p>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-6 flex flex-wrap justify-between items-center">
+        <div>
+            <h2 class="text-lg font-semibold">Employee Directory</h2>
+            <div class="flex gap-4 text-sm mt-1">
+                <span>Total: <strong id="totalCount">0</strong></span>
+                <span class="text-green-600">✓ With Account: <strong id="withAccountCount">0</strong></span>
+                <span class="text-orange-500">○ No Account: <strong id="noAccountCount">0</strong></span>
+            </div>
+        </div>
+        <div class="flex gap-3 mt-3 sm:mt-0">
+            <input type="text" id="searchInput" placeholder="Search name, position..." class="border rounded-lg px-4 py-2 w-56 text-sm focus:ring-2 focus:ring-blue-300">
+            <button id="addEmployeeBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+                <i class="fas fa-user-plus"></i> Add Employee
+            </button>
+        </div>
+    </div>
+
+    <!-- Employee Table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Position</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dept</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="divide-y divide-gray-200 bg-white"></tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <div id="pagination" class="px-6 py-3 border-t flex justify-between items-center text-sm"></div>
+    </div>
+</div>
+
+<!-- MODAL: Add Employee (NO email/password) -->
+<div id="addModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+            <h3 class="text-xl font-bold">Add New Employee</h3>
+            <button id="closeAddModal" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <form id="addForm" class="p-6 space-y-5" method="POST" action="{{ route('employee.add') }}" enctype="multipart/form-data">
+            <!-- Profile + Signature previews -->
+            <div class="flex gap-4 flex-wrap">
+                <div class="flex-1">
+                    <label class="text-sm font-medium">Profile Picture</label>
+                    <div class="mt-1 flex items-center gap-3">
+                        <div id="profilePrev" class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 overflow-hidden"><i class="fas fa-user text-2xl"></i></div>
+                        <input type="file" id="profileInput" accept="image/*" class="text-sm">
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <label class="text-sm font-medium">Signature</label>
+                    <div class="mt-1 flex items-center gap-3">
+                        <div id="sigPrev" class="w-16 h-16 bg-gray-100 rounded-lg border-dashed border-2 flex items-center justify-center text-gray-400"><i class="fas fa-signature text-xl"></i></div>
+                        <input type="file" id="sigInput" accept="image/*" class="text-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-sm font-medium">First Name *</label><input type="text" id="firstName" required class="w-full border rounded-lg px-3 py-2 mt-1"></div>
+                <div><label class="text-sm font-medium">Last Name *</label><input type="text" id="lastName" required class="w-full border rounded-lg px-3 py-2 mt-1"></div>
+            </div>
+            <div><label class="text-sm font-medium">Phone</label><input type="text" id="phone" class="w-full border rounded-lg px-3 py-2"></div>
+            <div><label class="text-sm font-medium">Viber (+63)</label><input type="text" id="viber" class="w-full border rounded-lg px-3 py-2"></div>
+            <div><label class="text-sm font-medium">Social Media URL</label><input type="text" id="social" class="w-full border rounded-lg px-3 py-2"></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-sm font-medium">Position</label><input type="text" id="position" class="w-full border rounded-lg px-3 py-2" required></div>
+                <div><label class="text-sm font-medium">Department</label>
+                    <select id="dept" class="w-full border rounded-lg px-3 py-2 bg-white" required>
+                        <option value="">Select</option>
+                        <option>Tech Engineering</option><option>Product Specialist</option><option>IT</option>
+                        <option>Marketing</option><option>Sales</option><option>HR</option>
+                    </select>
+                </div>
+            </div>
+            <div><label class="text-sm font-medium">Employment Status</label>
+                <select id="empStatus" class="w-full border rounded-lg px-3 py-2" required>
+                    <option value="active">Active</option><option value="on_leave">On Leave</option><option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium">Save Employee Details</button>
+        </form>
+    </div>
+</div>
+@include('auth.profile-modal')
+
+<script>
+    let employees = [];
+    let currentPage = 1;
+    const PAGE_SIZE = 5;
+    let searchTerm = "";
+
+    // Load from localStorage
+    function loadData() {
+        // const stored = localStorage.getItem("emp_manager");
+        // if (stored) {
+        //     employees = JSON.parse(stored);
+        // } else {
+        //     employees = {{ Illuminate\Support\Js::from($employees) }};
+        //     //saveData();
+        // }
+        employees = {{ Illuminate\Support\Js::from($employees) }};
+        refreshUI();
+    }
+    //function saveData() { localStorage.setItem("emp_manager", JSON.stringify(employees)); }
+
+    function refreshUI() { updateStats(); renderTable(); }
+    function updateStats() {
+        document.getElementById("totalCount").innerText = employees.length;
+        document.getElementById("withAccountCount").innerText = employees.filter(e => e.hasAccount).length;
+        document.getElementById("noAccountCount").innerText = employees.filter(e => !e.hasAccount).length;
+    }
+
+    function getFiltered() {
+        if (!searchTerm.trim()) return employees;
+        const term = searchTerm.toLowerCase();
+        return employees.filter(e => (e.firstName + " " + e.lastName).toLowerCase().includes(term) || (e.position || "").toLowerCase().includes(term));
+    }
+
+    function renderTable() {
+        const filtered = getFiltered();
+        const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+        if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const pageData = filtered.slice(start, start + PAGE_SIZE);
+        const tbody = document.getElementById("tableBody");
+        if (pageData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">No employees</td></tr>`;
+            document.getElementById("pagination").innerHTML = "";
+            return;
+        }
+        tbody.innerHTML = pageData.map(emp => {
+            const statusBadge = emp.emp_status === 'ACTIVE' ? 'bg-green-100 text-green-700' : (emp.emp_status === 'ON LEAVE' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
+            const statusText = emp.emp_status === 'ACTIVE' ? 'ACTIVE' : (emp.emp_status === 'ON LEAVE' ? 'ON LEAVE' : 'INACTIVE');
+            const avatar = emp.emp_profile != null ? `<img src="${emp.emp_profile}" class="w-9 h-9 rounded-full object-cover">` : `<div class="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">${emp.emp_first_name[0]}${emp.emp_last_name[0]}</div>`;
+            const accountSection = true//emp.hasAccount 
+                ? `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full"><i class="fas fa-check-circle mr-1"></i> Active</span>`
+                : `<button onclick="openAccountModal('${emp.emp_id}')" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full transition"><i class="fas fa-user-plus mr-1"></i> Create Account</button>`;
+            return `<tr class="hover:bg-gray-50">
+                <td class="px-6 py-3 whitespace-nowrap"><div class="flex items-center gap-3"><div>${avatar}</div><div><div class="font-medium">${emp.emp_first_name} ${emp.emp_last_name}</div><div class="text-xs text-gray-400">${emp.emp_phone || ''}</div></div></div></td>
+                <td class="px-6 py-3">${emp.emp_position || '—'}</td>
+                <td class="px-6 py-3">${emp.emp_deparment || '—'}</td>
+                <td class="px-6 py-3"><span class="px-2 py-1 rounded-full text-xs font-medium ${statusBadge}">${statusText}</span></td>
+                <td class="px-6 py-3">${accountSection}</td>
+                <td class="px-6 py-3 space-x-2">
+                    <button onclick="openEditModal('${emp.emp_id}')" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                    <button onclick="deleteEmployee('${emp.emp_id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                    <button onclick="viewProfile('${emp.emp_id}')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-eye"></i></button>
+                   <button onclick="disableEmployee('${emp.emp_id}')" 
+                            class="text-yellow-500 hover:text-yellow-700"
+                            title="Disable Account">
+                        <i class="fas fa-user-slash"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+        // Pagination controls
+        let pagHtml = `<div class="text-sm text-gray-600">Showing ${start+1} - ${Math.min(start+PAGE_SIZE, filtered.length)} of ${filtered.length}</div><div class="flex gap-1">`;
+        for (let i = 1; i <= totalPages; i++) {
+            pagHtml += `<button onclick="goToPage(${i})" class="px-3 py-1 border rounded ${i===currentPage ? 'bg-blue-500 text-white' : 'bg-white'}">${i}</button>`;
+        }
+        pagHtml += `</div>`;
+        document.getElementById("pagination").innerHTML = pagHtml;
+    }
+    window.goToPage = (p) => { currentPage = p; renderTable(); };
+
+    // ---------- ADD EMPLOYEE (no email/password) ----------
+    const addModal = document.getElementById("addModal");
+    document.getElementById("addEmployeeBtn").onclick = () => { addModal.classList.remove("hidden"); resetAddForm(); };
+    document.getElementById("closeAddModal").onclick = () => addModal.classList.add("hidden");
+    window.onclick = (e) => { if (e.target === addModal) addModal.classList.add("hidden"); if (e.target === document.getElementById("accountModal")) closeAccountModal(); if (e.target === document.getElementById("editModal")) closeEditModal(); if (e.target === document.getElementById("viewModal")) closeViewModal(); };
+    
+    function resetAddForm() {
+        document.getElementById("addForm").reset();
+        document.getElementById("profilePrev").innerHTML = '<i class="fas fa-user text-2xl"></i>';
+        document.getElementById("sigPrev").innerHTML = '<i class="fas fa-signature text-xl"></i>';
+    }
+    document.getElementById("profileInput").onchange = (e) => { if(e.target.files[0]) { const reader = new FileReader(); reader.onload = ev => document.getElementById("profilePrev").innerHTML = `<img src="${ev.target.result}" class="w-full h-full rounded-full object-cover">`; reader.readAsDataURL(e.target.files[0]); } };
+    document.getElementById("sigInput").onchange = (e) => { if(e.target.files[0]) { const reader = new FileReader(); reader.onload = ev => document.getElementById("sigPrev").innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-contain">`; reader.readAsDataURL(e.target.files[0]); } };
+    
+    document.getElementById("addForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const profileFile = document.getElementById("profileInput").files[0];
+        const sigFile = document.getElementById("sigInput").files[0];
+        const newEmp = {
+            id: Date.now() + "-" + Math.random().toString(36).substr(2, 5),
+            firstName: document.getElementById("firstName").value.trim(),
+            lastName: document.getElementById("lastName").value.trim(),
+            phone: document.getElementById("phone").value.trim(),
+            viber: document.getElementById("viber").value.trim(),
+            social: document.getElementById("social").value.trim(),
+            position: document.getElementById("position").value.trim(),
+            dept: document.getElementById("dept").value,
+            status: document.getElementById("empStatus").value,
+            profilePic: profileFile ? URL.createObjectURL(profileFile) : null,
+            signature: sigFile ? URL.createObjectURL(sigFile) : null,
+            hasAccount: false,
+            email: null,
+            loginEnabled: false
+        };
+        if (!newEmp.firstName || !newEmp.lastName) { Swal.fire("Error", "First & Last name required", "error"); return; }
+        //employees.unshift(newEmp);
+        //saveData();
+        refreshUI();
+        addModal.classList.add("hidden");
+        //Swal.fire("Saved", "Employee details added. You can create account later.", "success");
+        $.ajax({
+            url: "{{ route('employee.add') }}",
+            method: "POST",
+            data: newEmp,
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function(response) {
+                Swal.fire("Saved", "Employee details added. You can create account later.", "success");
+            },
+        });
+    });
+
+    // ---------- CREATE ACCOUNT (email/password) ----------
+    const accModal = document.getElementById("accountModal");
+    window.openAccountModal = (empId) => {
+        document.getElementById("accEmpId").value = empId;
+        document.getElementById("accEmail").value = "";
+        document.getElementById("accPassword").value = "";
+        document.getElementById("accConfirm").value = "";
+        accModal.classList.remove("hidden");
+    };
+    function closeAccountModal() { accModal.classList.add("hidden"); }
+    document.getElementById("closeAccountModal").onclick = closeAccountModal;
+    document.getElementById("accountForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const empId = document.getElementById("accEmpId").value;
+        const email = document.getElementById("accEmail").value.trim();
+        const pwd = document.getElementById("accPassword").value;
+        const confirm = document.getElementById("accConfirm").value;
+        if (!email || !pwd) { Swal.fire("Error", "Email and password required", "error"); return; }
+        if (pwd !== confirm) { Swal.fire("Error", "Passwords do not match", "error"); return; }
+        const emp = employees.find(e => e.id === empId);
+        if (!emp) return;
+        if (emp.hasAccount) { Swal.fire("Info", "Account already exists", "info"); closeAccountModal(); return; }
+        emp.hasAccount = true;
+        emp.email = email;
+        emp.loginEnabled = true;
+        // store mock password hash (just for demo)
+        //saveData();
+        refreshUI();
+        closeAccountModal();
+        Swal.fire("Success", `Login account created for ${emp.firstName} ${emp.lastName}`, "success");
+    });
+
+    // ---------- EDIT EMPLOYEE ----------
+    const editModal = document.getElementById("editModal");
+    window.openEditModal = (id) => {
+        const emp = employees.find(e => e.id === id);
+        if (!emp) return;
+        document.getElementById("editId").value = emp.id;
+        document.getElementById("editFirstName").value = emp.firstName;
+        document.getElementById("editLastName").value = emp.lastName;
+        document.getElementById("editPhone").value = emp.phone || "";
+        document.getElementById("editViber").value = emp.viber || "";
+        document.getElementById("editSocial").value = emp.social || "";
+        document.getElementById("editPosition").value = emp.position || "";
+        document.getElementById("editDept").value = emp.dept || "";
+        document.getElementById("editStatus").value = emp.status;
+        // clear file inputs
+        document.getElementById("editProfile").value = "";
+        document.getElementById("editSig").value = "";
+        editModal.classList.remove("hidden");
+    };
+    function closeEditModal() { editModal.classList.add("hidden"); }
+    document.getElementById("closeEditModal").onclick = closeEditModal;
+    document.getElementById("editForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const id = document.getElementById("editId").value;
+        const idx = employees.findIndex(e => e.id === id);
+        if (idx === -1) return;
+        const profileFile = document.getElementById("editProfile").files[0];
+        const sigFile = document.getElementById("editSig").files[0];
+        employees[idx] = {
+            ...employees[idx],
+            firstName: document.getElementById("editFirstName").value.trim(),
+            lastName: document.getElementById("editLastName").value.trim(),
+            phone: document.getElementById("editPhone").value.trim(),
+            viber: document.getElementById("editViber").value.trim(),
+            social: document.getElementById("editSocial").value.trim(),
+            position: document.getElementById("editPosition").value.trim(),
+            dept: document.getElementById("editDept").value,
+            status: document.getElementById("editStatus").value,
+            profilePic: profileFile ? URL.createObjectURL(profileFile) : employees[idx].profilePic,
+            signature: sigFile ? URL.createObjectURL(sigFile) : employees[idx].signature
+        };
+        //saveData();
+        refreshUI();
+        closeEditModal();
+        Swal.fire("Updated", "Employee details updated", "success");
+    });
+
+    // ---------- DELETE ----------
+    window.deleteEmployee = (id) => {
+        Swal.fire({ title: "Confirm", text: "Delete this employee?", icon: "warning", showCancelButton: true }).then(res => {
+            if (res.isConfirmed) {
+                employees = employees.filter(e => e.id !== id);
+                //saveData();
+                if (getFiltered().length === 0 && currentPage > 1) currentPage--;
+                refreshUI();
+                Swal.fire("Deleted", "", "success");
+            }
+        });
+    };
+
+    // ---------- VIEW PROFILE ----------
+    window.viewProfile = (id) => {
+        const emp = employees.find(e => e.id === id);
+        if (!emp) return;
+        const avatarHtml = emp.profilePic ? `<img src="${emp.profilePic}" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow">` : `<div class="w-24 h-24 rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl font-bold">${(emp.firstName[0]||'')}${(emp.lastName[0]||'')}</div>`;
+        const accountInfo = emp.hasAccount ? `<div class="mt-2 text-green-600"><i class="fas fa-envelope"></i> ${emp.email} <span class="ml-2 text-xs bg-green-100 px-2 py-1 rounded">Login Enabled</span></div>` : `<div class="mt-2 text-orange-500"><i class="fas fa-exclamation-triangle"></i> No system account yet. Click "Create Account" to add login.</div>`;
+        const content = `
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-24 rounded-t-lg"></div>
+            <div class="px-6 pb-6 -mt-12">
+                <div class="flex flex-col md:flex-row gap-6 items-start">
+                    ${avatarHtml}
+                    <div class="flex-1 mt-2">
+                        <h2 class="text-2xl font-bold">${emp.firstName} ${emp.lastName}</h2>
+                        <div class="flex gap-3 flex-wrap mt-1">
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded">${emp.position || 'No position'}</span>
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded">${emp.dept || 'No dept'}</span>
+                        </div>
+                        ${accountInfo}
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mt-6">
+                    <div class="bg-gray-50 p-4 rounded-lg"><i class="fas fa-phone text-blue-500 w-5"></i> ${emp.phone || '—'}</div>
+                    <div class="bg-gray-50 p-4 rounded-lg"><i class="fab fa-viber text-purple-500"></i> ${emp.viber ? '+63 '+emp.viber : '—'}</div>
+                    <div class="bg-gray-50 p-4 rounded-lg col-span-2"><i class="fab fa-facebook text-blue-600"></i> ${emp.social ? `<a href="${emp.social}" target="_blank" class="text-blue-600">${emp.social}</a>` : '—'}</div>
+                </div>
+                ${emp.signature ? `<div class="mt-4 border-t pt-4"><p class="text-sm text-gray-500">Signature:</p><img src="${emp.signature}" class="h-16 object-contain mt-1"></div>` : ''}
+            </div>
+        `;
+        document.getElementById("viewContent").innerHTML = content;
+        document.getElementById("viewModal").classList.remove("hidden");
+    };
+    window.closeViewModal = () => document.getElementById("viewModal").classList.add("hidden");
+
+    // Search + pagination reset
+    document.getElementById("searchInput").addEventListener("input", (e) => { searchTerm = e.target.value; currentPage = 1; renderTable(); });
+
+    // Init
+    loadData();
+</script>
+@endsection
