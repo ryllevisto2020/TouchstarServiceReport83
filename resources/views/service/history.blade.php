@@ -192,7 +192,7 @@
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
                                 <button onclick="viewDetails(${record.id})" class="text-blue-600 hover:text-blue-800 p-1.5 rounded-lg hover:bg-blue-50 transition" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button onclick="editMock(${record.id})" class="text-amber-600 hover:text-amber-800 p-1.5 rounded-lg hover:bg-amber-50 transition" title="Edit Report"><i class="fas fa-edit"></i></button>
+                                @php
                                 <button onclick="deleteMock(${record.id})" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition" title="Delete Report"><i class="fas fa-trash-alt"></i></button>
                                 <button onclick="printMock(${record.id})" class="text-slate-500 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition" title="Print Report"><i class="fas fa-print"></i></button>
                             </div>
