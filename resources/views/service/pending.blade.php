@@ -435,15 +435,15 @@ function submitPendingService(draftId) {
         if (typeof openModal === 'function') {
             openModal(service.machine_id);
         }
-        setTimeout(() => {
-            const submitBtn = document.getElementById('submit-service-btn');
-            if (submitBtn) {
-                // Highlight the submit button briefly
-                submitBtn.style.transform = 'scale(1.05)';
-                setTimeout(() => { submitBtn.style.transform = ''; }, 200);
-                submitBtn.click();
-            }
-        }, 500);
+        // setTimeout(() => {
+        //     const submitBtn = document.getElementById('submit-service-btn');
+        //     if (submitBtn) {
+        //         // Highlight the submit button briefly
+        //         submitBtn.style.transform = 'scale(1.05)';
+        //         setTimeout(() => { submitBtn.style.transform = ''; }, 200);
+        //         submitBtn.click();
+        //     }
+        // }, 500);
     } else {
         // Try localStorage as fallback
         const draft = localStorage.getItem(`serviceDraft_${draftId}`);
@@ -732,12 +732,12 @@ window.viewPendingDetails = viewPendingDetails;
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const saveDraftBtn = document.getElementById('save-draft-btn');
-    if (saveDraftBtn) {
-        // Replace existing button to ensure our handler is used
-        const newBtn = saveDraftBtn.cloneNode(true);
-        saveDraftBtn.parentNode.replaceChild(newBtn, saveDraftBtn);
-        newBtn.addEventListener('click', window.saveDraft);
-    }
+    // const saveDraftBtn = document.getElementById('save-draft-btn');
+    // if (saveDraftBtn) {
+    //     // Replace existing button to ensure our handler is used
+    //     const newBtn = saveDraftBtn.cloneNode(true);
+    //     saveDraftBtn.parentNode.replaceChild(newBtn, saveDraftBtn);
+    //     newBtn.addEventListener('click', window.saveDraft);
+    // }
 });
 </script>
