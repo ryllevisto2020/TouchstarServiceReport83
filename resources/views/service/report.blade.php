@@ -431,10 +431,7 @@ function openModal(id) {
     });
 }
 
-function closeServiceModal() {
-    document.getElementById('service-modal').classList.add('hidden');
-    document.body.style.overflow = '';
-}
+
 
 function updateSignatureData() {
     if (signaturePad && !signaturePad.isEmpty()) {
@@ -516,6 +513,7 @@ function setupImageUpload(uploadAreaId, inputId, previewId, statusId, maxFiles =
 // Parts management
 document.getElementById('add-part').addEventListener('click', () => {
     const container = document.getElementById('parts-container');
+    const fieldsetpart = document.createElement('fieldset');
     const newPart = document.createElement('div');
     newPart.className = 'parts-row';
     newPart.innerHTML = `
@@ -523,7 +521,9 @@ document.getElementById('add-part').addEventListener('click', () => {
         <input type="text" name="particulars[]" placeholder="Particulars" class="svc-input parts-part">
         <input type="text" name="si_dr_no[]" placeholder="S.I./D.R. No." class="svc-input parts-si">
     `;
-    container.appendChild(newPart);
+    fieldsetpart.className = "fieldset_particular";
+    fieldsetpart.innerHTML = newPart.outerHTML;;
+    container.appendChild(fieldsetpart);
 });
 
 // Others checkbox
@@ -555,10 +555,9 @@ document.getElementById('undo-signature').addEventListener('click', () => {
 });
 
 // Draft
-document.getElementById('save-draft-btn').addEventListener('click', () => {
-    const formData = new FormData(document.getElementById('service-form'));
-    localStorage.setItem('serviceDraft', JSON.stringify(Object.fromEntries(formData)));
-    alert('Draft saved successfully!');
+
+document.getElementById('save-draft-btn').addEventListener('click', (e) => {
+
 });
 
 document.getElementById('clear-draft-btn').addEventListener('click', () => {

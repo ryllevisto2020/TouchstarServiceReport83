@@ -2,7 +2,7 @@
 <div id="service-modal" class="fixed z-50 inset-0 hidden" style="overflow:hidden;">
 
     <!-- Backdrop -->
-    <div id="modal-backdrop" onclick="closeServiceModal()" class="absolute inset-0 bg-gray-900/70" style="backdrop-filter:blur(4px);"></div>
+    <div id="modal-backdrop" id="closeServiceModal" class="absolute inset-0 bg-gray-900/70" style="backdrop-filter:blur(4px);"></div>
 
     <!-- Scroll wrapper -->
     <div class="absolute inset-0 overflow-y-auto flex items-end sm:items-center justify-center sm:p-4">
@@ -21,7 +21,7 @@
                         <h3 class="text-base sm:text-xl font-bold text-white leading-tight">Complete Service Report</h3>
                         <p class="mt-0.5 text-blue-100 text-xs sm:text-sm">Fill out the required fields to complete the service report</p>
                     </div>
-                    <button type="button" onclick="closeServiceModal()"
+                    <button type="button" id="closeServiceModal"
                             class="text-white/80 hover:text-white focus:outline-none transition-colors flex-shrink-0 mt-0.5">
                         <i class="fas fa-times text-lg"></i>
                     </button>
@@ -46,33 +46,33 @@
                                 <label class="svc-label">Type of Service <span class="text-red-500">*</span></label>
                                 <div class="svc-checkbox-grid">
                                     <label class="svc-check-card">
-                                        <input type="checkbox" name="service_type[]" value="PMS" class="rounded text-blue-600 focus:ring-blue-500">
+                                        <input type="checkbox" name="service_type[]" value="PMS" class="services rounded text-blue-600 focus:ring-blue-500">
                                         <span class="ml-2.5 text-sm font-medium">PMS</span>
                                     </label>
                                     <label class="svc-check-card">
-                                        <input type="checkbox" name="service_type[]" value="Troubleshooting" class="rounded text-blue-600 focus:ring-blue-500">
+                                        <input type="checkbox" name="service_type[]" value="Troubleshooting" class="services rounded text-blue-600 focus:ring-blue-500">
                                         <span class="ml-2.5 text-sm font-medium">Troubleshooting</span>
                                     </label>
                                     <label class="svc-check-card">
-                                        <input type="checkbox" name="service_type[]" value="Installation" class="rounded text-blue-600 focus:ring-blue-500">
+                                        <input type="checkbox" name="service_type[]" value="Installation" class="services rounded text-blue-600 focus:ring-blue-500">
                                         <span class="ml-2.5 text-sm font-medium">Installation</span>
                                     </label>
                                     <label class="svc-check-card">
-                                        <input type="checkbox" name="service_type[]" value="Warranty" class="rounded text-blue-600 focus:ring-blue-500">
+                                        <input type="checkbox" name="service_type[]" value="Warranty" class="services rounded text-blue-600 focus:ring-blue-500">
                                         <span class="ml-2.5 text-sm font-medium">Warranty</span>
                                     </label>
                                     <label class="svc-check-card">
-                                        <input type="checkbox" name="service_type[]" value="Calibration" class="rounded text-blue-600 focus:ring-blue-500">
+                                        <input type="checkbox" name="service_type[]" value="Calibration" class="services rounded text-blue-600 focus:ring-blue-500">
                                         <span class="ml-2.5 text-sm font-medium">Calibration</span>
                                     </label>
                                     <label class="svc-check-card">
-                                        <input type="checkbox" id="others-checkbox" class="rounded text-blue-600 focus:ring-blue-500">
+                                        <input type="checkbox" id="others-checkbox" class="services-others rounded text-blue-600 focus:ring-blue-500">
                                         <span class="ml-2.5 text-sm font-medium">Others</span>
                                     </label>
                                 </div>
                                 <div id="others-input" class="mt-2.5 hidden">
                                     <input type="text" name="service_type[]" placeholder="Please specify..."
-                                           class="svc-input">
+                                           class="services-others-write svc-input">
                                 </div>
                             </div>
 
@@ -129,11 +129,13 @@
                             <div>
                                 <label class="svc-label">Parts Replaced</label>
                                 <div id="parts-container" style="display:flex;flex-direction:column;gap:0.75rem;">
+                                    <fieldset class="fieldset_particular">
                                     <div class="parts-row">
                                         <input type="number" name="qty[]" placeholder="Qty" class="svc-input parts-qty">
                                         <input type="text" name="particulars[]" placeholder="Particulars" class="svc-input parts-part">
                                         <input type="text" name="si_dr_no[]" placeholder="S.I./D.R. No." class="svc-input parts-si">
                                     </div>
+                                    </fieldset>
                                 </div>
                                 <button type="button" id="add-part"
                                         class="mt-3 flex items-center text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
@@ -269,7 +271,7 @@
                     <div id="draft-status-indicator"></div>
                     <div class="svc-footer-btns">
                         <div class="svc-footer-left">
-                            <button type="button" id="save-draft-btn" class="svc-btn-draft">
+                            <button type="button" id="save-draft-btn" class="save-draft svc-btn-draft">
                                 <i class="fas fa-save mr-1.5"></i>Save Draft
                             </button>
                             <button type="button" id="clear-draft-btn" class="svc-btn-clear hidden">
@@ -277,10 +279,10 @@
                             </button>
                         </div>
                         <div class="svc-footer-right">
-                            <button type="button" onclick="closeServiceModal()" class="svc-btn-cancel">
+                            <button type="button" id="closeServiceModal" class="svc-btn-cancel">
                                 Cancel
                             </button>
-                            <button type="submit" id="submit-service-btn" class="svc-btn-submit">
+                            <button type="submit" id="submit-service-btn" class="submit-service svc-btn-submit">
                                 <i class="fas fa-check-circle mr-1.5"></i>Complete Service
                             </button>
                         </div>
@@ -502,6 +504,7 @@
 </style>
 
 <script>
+
 $(document).ready(function () {
     const medtech_signature = $("#signature-data");
     const canvas = $("#signature-pad")[0];
@@ -516,5 +519,108 @@ $(document).ready(function () {
             alert('Please provide your signature');
         }
     });
+    
+    $("#save-draft-btn").click(function(e){
+
+        if(!signature.isEmpty()){
+            medtech_signature.val(signature.toDataURL())
+
+            const formData = new FormData(document.getElementById('service-form'));
+            
+            var dataObjects = Object.fromEntries(formData);
+            
+            var services = document.querySelectorAll(".services:checked")
+            var services_type = [];
+            for (let index = 0; index <services.length; index++) {
+                services_type.push(services[index].defaultValue)
+            }
+            
+            var services_other = document.querySelectorAll(".services-others:checked")
+            for (let index = 0; index < services_other.length; index++) {
+                services_type.push(document.querySelector(".services-others-write").value)
+            }
+            
+            var parts_replaced = [];
+            var fieldset = document.querySelectorAll(".fieldset_particular")
+            for (let i = 0; i <fieldset.length; i++) {
+                var fieldset_input = fieldset[i].querySelectorAll("input");
+                var parts_object = {
+                    qty:fieldset_input[0].value,
+                    particulars:fieldset_input[1].value,
+                    si_dr_no:fieldset_input[2].value,}
+                    parts_replaced.push(parts_object);
+            }
+            
+            var data = {
+                "machine_id" :  dataObjects.machine_id,
+                "service_type" : services_type,
+                "identification_verification" : dataObjects.identification,
+                "root_cause_findings" : dataObjects.root_cause,
+                "action_taken" : dataObjects.action_taken,
+                "equipment_status" : dataObjects.equipment_status,
+                "recommendations" : dataObjects.recommendations,
+                "parts_replaced" : parts_replaced,
+                "approved_by" : dataObjects.approved_by,
+                "medtech_signature" : medtech_signature.val(),
+                "service_engineer" : dataObjects.service_engineer,
+                "service_engineer_department" : dataObjects.service_engineer_department,
+                "service_date" : new Date().toLocaleDateString("sv-SE",{year:"numeric",month:"2-digit",day:"2-digit"}),
+                "service_images" : "",
+                "before_images" : "",
+                "after_images" : "",
+                "calibration_images" :"",
+                "completed_by_user_id": {{Js::from($employee_details->emp_id)}}
+            }
+            
+            if(localStorage.getItem("serviceDraft")){
+                var services_arr = [];
+                var services = JSON.parse(localStorage.getItem("serviceDraft"))
+                for (let index = 0; index < services.length; index++) {
+                    services_arr.push(services[index]);
+                }
+                services_arr.push(data);
+                localStorage.setItem('serviceDraft',JSON.stringify(services_arr));
+            }else{
+                localStorage.setItem('serviceDraft', JSON.stringify([data]));
+            }
+            Swal.fire({
+                text: "Draft saved successfully!",
+                icon: "success",
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    closeModal();
+                }
+            })
+            
+        }
+        else if(medtech_signature.val() == ""){
+            e.preventDefault();
+            alert('Please provide your signature');
+        }
+    })
+
+    $(document).on("click","#closeServiceModal",function(){
+        signature.clear();
+        medtech_signature.val("")
+        document.getElementById('service-modal').classList.add('hidden');
+        document.body.style.overflow = '';
+    })
+
+    function isOnline(){
+        if (navigator.onLine) {
+            $(".submit-service").removeAttr('disabled');
+        } else {
+            $(".submit-service").attr('disabled', 'disabled');
+        }
+    }
+
+    function closeModal(){
+        $("#service-form")[0].reset();
+        signature.clear();
+        medtech_signature.val("")
+        document.getElementById('service-modal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    setInterval(isOnline, 1000)
 });
 </script>

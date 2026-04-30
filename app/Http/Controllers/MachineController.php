@@ -46,7 +46,7 @@ class MachineController extends Controller
 
                 case 'Overdue':
                     $query->whereNotNull('next_service_date') // ✅ prevent null errors
-                          ->where('next_service_date', '<', $now);
+                        ->where('next_service_date', '<', $now);
                     break;
             }
         }
@@ -103,7 +103,7 @@ class MachineController extends Controller
             ]);
 
             // Calculate next service date
-           $lastServiceDate = Carbon::parse($request->last_service_date);
+        $lastServiceDate = Carbon::parse($request->last_service_date);
         $data['next_service_date'] = $lastServiceDate->addDays((int) $request->service_interval_days);
 
             // Handle image upload
