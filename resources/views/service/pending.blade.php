@@ -435,11 +435,11 @@ client_location)}</p>
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Identification/Verification</p>
-                <p class="text-sm">${escapeHtml(service.identification_verification) || 'N/A'}</p>
+                <p class="text-sm">${escapeHtml(service.identification) || 'N/A'}</p>
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Root Cause/Findings</p>
-                <p class="text-sm">${escapeHtml(service.root_cause_findings) || 'N/A'}</p>
+                <p class="text-sm">${escapeHtml(service.root_cause) || 'N/A'}</p>
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Action Taken</p>

@@ -17,6 +17,7 @@ class ServiceController extends Controller
         $machines = Machine::all();
         return view('service.report',compact('employee_details','machines'));
     }
+    
     public function addReport(Request $req){
         $machine_id = $req->input('machine_id');
         $service_type = $req->input('service_type');
