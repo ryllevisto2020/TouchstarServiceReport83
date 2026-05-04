@@ -1,6 +1,6 @@
 @push('scripts')
 <script>
-// SAMPLE PENDING SERVICE DATA - Replace with your actual database data
+// ─── SAMPLE DATA ───────────────────────────────────────────────────────────────
 let pendingServices = [
     {
         id: 'pending_001',
@@ -21,9 +21,8 @@ let pendingServices = [
         recommendations: 'Schedule quarterly maintenance',
         approved_by: 'Dr. Juan Santos',
         medtech_signature: null,
-        parts: [
-            { qty: 1, particulars: 'Display Cable', si_dr_no: 'SI-2024-001' }
-        ]
+        parts: [{ qty: 1, particulars: 'Display Cable', si_dr_no: 'SI-2024-001' }],
+        before_images: [], after_images: [], service_images: [], calibration_images: []
     },
     {
         id: 'pending_002',
@@ -44,9 +43,8 @@ let pendingServices = [
         recommendations: 'Monitor probe performance weekly',
         approved_by: 'Dr. Maria Reyes',
         medtech_signature: null,
-        parts: [
-            { qty: 1, particulars: 'Probe Connector', si_dr_no: 'DR-2024-089' }
-        ]
+        parts: [{ qty: 1, particulars: 'Probe Connector', si_dr_no: 'DR-2024-089' }],
+        before_images: [], after_images: [], service_images: [], calibration_images: []
     },
     {
         id: 'pending_003',
@@ -61,7 +59,7 @@ let pendingServices = [
         status: 'draft',
         service_type: ['Maintenance', 'Calibration'],
         identification: 'Oxygen sensor calibration drift',
-        root_cause: 'Sensor老化',
+        root_cause: 'Sensor aging',
         action_taken: 'Replaced oxygen sensor and recalibrated',
         equipment_status: 'Operational',
         recommendations: 'Replace sensor every 6 months',
@@ -70,7 +68,8 @@ let pendingServices = [
         parts: [
             { qty: 1, particulars: 'Oxygen Sensor', si_dr_no: 'SI-2024-056' },
             { qty: 2, particulars: 'Filter Kit', si_dr_no: 'SI-2024-056' }
-        ]
+        ],
+        before_images: [], after_images: [], service_images: [], calibration_images: []
     },
     {
         id: 'pending_004',
@@ -91,7 +90,8 @@ let pendingServices = [
         recommendations: 'Train staff on proper usage',
         approved_by: 'Dr. Robert Lim',
         medtech_signature: null,
-        parts: []
+        parts: [],
+        before_images: [], after_images: [], service_images: [], calibration_images: []
     },
     {
         id: 'pending_005',
@@ -115,7 +115,8 @@ let pendingServices = [
         parts: [
             { qty: 1, particulars: 'Filter Assembly', si_dr_no: 'DR-2024-112' },
             { qty: 2, particulars: 'Tubing Set', si_dr_no: 'DR-2024-112' }
-        ]
+        ],
+        before_images: [], after_images: [], service_images: [], calibration_images: []
     },
     {
         id: 'pending_006',
@@ -136,191 +137,159 @@ let pendingServices = [
         recommendations: 'Annual calibration required',
         approved_by: 'Dr. Manuel Santos',
         medtech_signature: null,
-        parts: []
+        parts: [],
+        before_images: [], after_images: [], service_images: [], calibration_images: []
     }
 ];
 
-// Function to load pending services (from localStorage + sample data)
+// ─── HELPERS ───────────────────────────────────────────────────────────────────
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-PH', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+function getRelativeTime(dateString) {
+    const diffMs  = Date.now() - new Date(dateString);
+    const mins    = Math.floor(diffMs / 60000);
+    const hours   = Math.floor(diffMs / 3600000);
+    const days    = Math.floor(diffMs / 86400000);
+    if (mins  < 1)  return 'Just now';
+    if (mins  < 60) return `${mins} minute${mins  > 1 ? 's' : ''} ago`;
+    if (hours < 24) return `${hours} hour${hours  > 1 ? 's' : ''} ago`;
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+}
+
+// Convert a single File → { name, type, data: base64DataURL }
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload  = () => resolve({ name: file.name, type: file.type, data: reader.result });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// Collect all files from an <input id="..."> and return base64 array
+async function collectImages(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input || !input.files || !input.files.length) return [];
+    return Promise.all(Array.from(input.files).map(fileToBase64));
+}
+
+// Render saved base64 images into a preview container with a "draft" badge
+function restoreImagePreviews(images, previewContainerId) {
+    const container = document.getElementById(previewContainerId);
+    if (!container || !images || !images.length) return;
+    container.innerHTML = images.map(img => `
+        <div class="relative group">
+            <img src="${img.data}" alt="${escapeHtml(img.name)}"
+                 class="w-full h-20 object-cover rounded-lg border border-gray-200">
+            <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs
+                        px-1 py-0.5 rounded-b-lg truncate">${escapeHtml(img.name)}</div>
+            <span class="absolute top-1 right-1 bg-amber-400 text-white text-xs
+                         px-1.5 py-0.5 rounded font-medium">draft</span>
+        </div>
+    `).join('');
+}
+
+// ─── BADGE ─────────────────────────────────────────────────────────────────────
+
+function updatePendingBadge() {
+    const badge     = document.getElementById('pending-badge');
+    const countSpan = document.getElementById('pending-count');
+    const count     = pendingServices.length;
+    if (badge)     { badge.textContent = count; badge.classList.toggle('hidden', count === 0); }
+    if (countSpan) { countSpan.textContent = count; }
+}
+
+// ─── LOAD ──────────────────────────────────────────────────────────────────────
+
 function loadPendingServices() {
-    // Load from localStorage drafts
     const localStorageDrafts = [];
+
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith('serviceDraft_')) {
-            try {
-                const draft = JSON.parse(localStorage.getItem(key));
-                localStorageDrafts.push({
-                    id: key.replace('serviceDraft_', ''),
-                    machine_id: draft.machine_id || 'unknown',
-                    machine_name: draft.machine_name || 'Unknown Machine',
-                    serial_number: draft.serial_number || 'N/A',
-                    model: draft.model || 'N/A',
-                    location: draft.location || 'N/A',
-                    client_name: draft.client_name || 'N/A',
-                    created_at: draft.created_at || new Date().toISOString(),
-                    last_updated: draft.last_updated || new Date().toISOString(),
-                    status: 'draft',
-                    service_type: draft.service_type || [],
-                    identification: draft.identification || '',
-                    root_cause: draft.root_cause || '',
-                    action_taken: draft.action_taken || '',
-                    equipment_status: draft.equipment_status || '',
-                    recommendations: draft.recommendations || '',
-                    approved_by: draft.approved_by || '',
-                    medtech_signature: draft.medtech_signature || null,
-                    parts: draft.parts || []
-                });
-            } catch(e) {
-                console.error('Error loading draft:', e);
-            }
+        if (!key || !key.startsWith('serviceDraft_')) continue;
+        try {
+            const draft = JSON.parse(localStorage.getItem(key));
+            localStorageDrafts.push({
+                id:                 key.replace('serviceDraft_', ''),
+                machine_id:         draft.machine_id         || 'unknown',
+                machine_name:       draft.machine_name       || 'Unknown Machine',
+                serial_number:      draft.serial_number      || 'N/A',
+                model:              draft.model              || 'N/A',
+                location:           draft.location           || 'N/A',
+                client_name:        draft.client_name        || 'N/A',
+                created_at:         draft.created_at         || new Date().toISOString(),
+                last_updated:       draft.last_updated       || new Date().toISOString(),
+                status:             'draft',
+                service_type:       draft.service_type       || [],
+                identification:     draft.identification     || '',
+                root_cause:         draft.root_cause         || '',
+                action_taken:       draft.action_taken       || '',
+                equipment_status:   draft.equipment_status   || '',
+                recommendations:    draft.recommendations    || '',
+                approved_by:        draft.approved_by        || '',
+                medtech_signature:  draft.medtech_signature  || null,
+                parts:              draft.parts              || [],
+                before_images:      draft.before_images      || [],
+                after_images:       draft.after_images       || [],
+                service_images:     draft.service_images     || [],
+                calibration_images: draft.calibration_images || [],
+            });
+        } catch(e) {
+            console.error('Error loading draft:', e);
         }
     }
-    
-    // Merge sample data with localStorage drafts (avoid duplicates)
-    const allDrafts = [...pendingServices];
-    
-    localStorageDrafts.forEach(localDraft => {
-        const exists = allDrafts.some(d => d.id === localDraft.id);
-        if (!exists) {
-            allDrafts.unshift(localDraft);
-        }
+
+    // Merge — localStorage drafts first, then sample data (no duplicates)
+    const merged = [...pendingServices.filter(s => s.id.startsWith('pending_'))];
+    localStorageDrafts.forEach(d => {
+        if (!merged.some(m => m.id === d.id)) merged.unshift(d);
     });
-    
-    pendingServices = allDrafts;
+    pendingServices = merged;
+
     updatePendingBadge();
     renderPendingTable();
 }
 
-// Update floating button badge
-function updatePendingBadge() {
-    const badge = document.getElementById('pending-badge');
-    const countSpan = document.getElementById('pending-count');
-    if (badge) {
-        const count = pendingServices.length;
-        badge.textContent = count;
-        badge.classList.toggle('hidden', count === 0);
-    }
-    if (countSpan) {
-        countSpan.textContent = pendingServices.length;
-    }
-}
+// ─── RENDER TABLE ──────────────────────────────────────────────────────────────
 
-// Delete a pending service
-function deletePendingService(serviceId) {
-    Swal.fire({
-        title: 'Delete Draft?',
-        text: 'This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        confirmButtonText: 'Yes, delete it',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Remove from localStorage if exists
-            localStorage.removeItem(`serviceDraft_${serviceId}`);
-            
-            // Remove from pendingServices array
-            pendingServices = pendingServices.filter(s => s.id !== serviceId);
-            
-            // Re-render
-            updatePendingBadge();
-            renderPendingTable();
-            
-            Swal.fire('Deleted!', 'Draft has been deleted.', 'success');
-        }
-    });
-}
-
-// View pending service details
-function viewPendingDetails(serviceId) {
-    const service = pendingServices.find(s => s.id === serviceId);
-    if (!service) return;
-    
-    let detailsHtml = `
-        <div class="space-y-3 text-left">
-            <div class="border-b pb-2">
-                <p class="text-xs text-gray-500">Machine</p>
-                <p class="font-medium">${escapeHtml(service.machine_name)}</p>
-                <p class="text-sm text-gray-600">SN: ${escapeHtml(service.serial_number)} | ${escapeHtml(service.model)}</p>
-            </div>
-            <div class="border-b pb-2">
-                <p class="text-xs text-gray-500">Client / Location</p>
-                <p class="font-medium">${escapeHtml(service.client_name)}</p>
-                <p class="text-sm text-gray-600">${escapeHtml(service.location)}</p>
-            </div>
-            <div class="border-b pb-2">
-                <p class="text-xs text-gray-500">Service Type</p>
-                <div class="flex gap-1 flex-wrap mt-1">
-                    ${service.service_type.map(t => `<span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs">${t}</span>`).join('')}
-                </div>
-            </div>
-            <div class="border-b pb-2">
-                <p class="text-xs text-gray-500">Identification/Verification</p>
-                <p class="text-sm">${escapeHtml(service.identification) || 'N/A'}</p>
-            </div>
-            <div class="border-b pb-2">
-                <p class="text-xs text-gray-500">Root Cause/Findings</p>
-                <p class="text-sm">${escapeHtml(service.root_cause) || 'N/A'}</p>
-            </div>
-            <div class="border-b pb-2">
-                <p class="text-xs text-gray-500">Action Taken</p>
-                <p class="text-sm">${escapeHtml(service.action_taken) || 'N/A'}</p>
-            </div>
-            <div class="border-b pb-2">
-                <p class="text-xs text-gray-500">Equipment Status</p>
-                <p class="text-sm font-semibold ${service.equipment_status === 'Operational' ? 'text-green-600' : 'text-red-600'}">${service.equipment_status || 'N/A'}</p>
-            </div>
-            ${service.parts && service.parts.length > 0 ? `
-            <div>
-                <p class="text-xs text-gray-500">Parts Replaced</p>
-                <div class="text-sm space-y-1 mt-1">
-                    ${service.parts.map(p => `<div class="flex gap-2"><span class="font-medium">${p.qty}x</span> ${p.particulars} <span class="text-gray-400">(${p.si_dr_no})</span></div>`).join('')}
-                </div>
-            </div>
-            ` : ''}
-            <div class="pt-2 text-xs text-gray-400">
-                Created: ${formatDate(service.created_at)}
-                ${service.last_updated ? `<br>Last updated: ${formatDate(service.last_updated)}` : ''}
-            </div>
-        </div>
-    `;
-    
-    Swal.fire({
-        title: 'Service Draft Details',
-        html: detailsHtml,
-        icon: 'info',
-        width: '500px',
-        showCancelButton: true,
-        confirmButtonText: '<i class="fas fa-edit mr-1"></i> Edit',
-        cancelButtonText: 'Close',
-        confirmButtonColor: '#3b82f6'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            editPendingService(serviceId);
-        }
-    });
-}
-
-// Render the pending table
 function renderPendingTable() {
     const tbody = document.getElementById('pending-table-body');
     if (!tbody) return;
-    
-    if (pendingServices.length === 0) {
+
+    if (!pendingServices.length) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="text-center py-12 text-gray-400">
+                <td colspan="4" class="text-center py-12 text-gray-400">
                     <i class="fas fa-inbox text-4xl mb-3 block"></i>
                     <p class="text-sm">No pending services found</p>
                     <p class="text-xs mt-1">Drafts you save will appear here</p>
                 </td>
-            </tr>
-        `;
+            </tr>`;
         return;
     }
-    
-    tbody.innerHTML = pendingServices.map(service => `
+
+    tbody.innerHTML = pendingServices.map(service => {
+        // Count saved images
+        const imgCount = (service.before_images?.length  || 0)
+                       + (service.after_images?.length   || 0)
+                       + (service.service_images?.length || 0)
+                       + (service.calibration_images?.length || 0);
+
+        return `
         <tr class="border-b border-gray-100 hover:bg-amber-50 transition-colors group">
             <td class="px-3 py-3">
                 <div class="font-medium text-gray-800 text-sm flex items-center gap-2">
@@ -340,212 +309,501 @@ function renderPendingTable() {
             </td>
             <td class="px-3 py-3">
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                    <i class="fas fa-pen-fancy mr-1 text-10"></i> Draft
+                    <i class="fas fa-pen-fancy mr-1"></i> Draft
                 </span>
                 <div class="text-xs text-gray-400 mt-1">
-                    <i class="far fa-clock mr-1"></i>${service.service_type?.slice(0,2).join(', ')}${service.service_type?.length > 2 ? '...' : ''}
+                    <i class="far fa-clock mr-1"></i>
+                    ${service.service_type?.slice(0,2).join(', ')}${service.service_type?.length > 2 ? '…' : ''}
                 </div>
+                ${imgCount > 0 ? `
+                <div class="text-xs text-blue-500 mt-0.5">
+                    <i class="fas fa-images mr-1"></i>${imgCount} image${imgCount > 1 ? 's' : ''} saved
+                </div>` : ''}
+                ${service.medtech_signature ? `
+                <div class="text-xs text-green-500 mt-0.5">
+                    <i class="fas fa-signature mr-1"></i>Signature saved
+                </div>` : ''}
             </td>
             <td class="px-3 py-3">
                 <div class="flex gap-1 flex-wrap">
-                    <button onclick="viewPendingDetails('${service.id}')" 
+                    <button onclick="viewPendingDetails('${service.id}')"
                             class="px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                             title="View Details">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button onclick="editPendingService('${service.id}')" 
-                            class="px-2.5 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="Edit Draft">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button onclick="submitPendingService('${service.id}')" 
-                            class="px-2.5 py-1.5 text-xs font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                            title="Submit Service">
-                        <i class="fas fa-check-circle"></i> Submit
-                    </button>
-                    <button onclick="deletePendingService('${service.id}')" 
+                    <button onclick="deletePendingService('${service.id}')"
                             class="px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete Draft">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
 
-// Helper: Get relative time (e.g., "2 hours ago")
-function getRelativeTime(dateString) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-    
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-}
+// ─── VIEW DETAILS ──────────────────────────────────────────────────────────────
 
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
+function viewPendingDetails(serviceId) {
+    const service = pendingServices.find(s => s.id === serviceId);
+    if (!service) return;
+
+    const totalImages = (service.before_images?.length       || 0)
+                      + (service.after_images?.length        || 0)
+                      + (service.service_images?.length      || 0)
+                      + (service.calibration_images?.length  || 0);
+
+    // Build image thumbnails section
+    function thumbsHtml(label, arr) {
+        if (!arr || !arr.length) return '';
+        return `
+            <div class="mb-2">
+                <p class="text-xs text-gray-400 mb-1">${label} (${arr.length})</p>
+                <div class="flex gap-1 flex-wrap">
+                    ${arr.map(img => `
+                        <img src="${img.data}" alt="${escapeHtml(img.name)}"
+                             class="h-14 w-14 object-cover rounded-lg border border-gray-200 cursor-pointer"
+                             onclick="window.open('${img.data}','_blank')"
+                             title="${escapeHtml(img.name)}">
+                    `).join('')}
+                </div>
+            </div>`;
+    }
+
+    const imagesSection = totalImages > 0 ? `
+        <div class="border-b pb-2">
+            <p class="text-xs text-gray-500 mb-2">
+                <i class="fas fa-images mr-1 text-blue-400"></i>Saved Images (${totalImages} total)
+            </p>
+            ${thumbsHtml('Before', service.before_images)}
+            ${thumbsHtml('After',  service.after_images)}
+            ${thumbsHtml('Service', service.service_images)}
+            ${thumbsHtml('Calibration', service.calibration_images)}
+        </div>` : `
+        <div class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-400">
+            <i class="fas fa-image mr-1"></i> No images saved in this draft.
+        </div>`;
+
+    Swal.fire({
+        title: 'Service Draft Details',
+        html: `
+        <div class="space-y-3 text-left">
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Machine</p>
+                <p class="font-medium">${escapeHtml(service.machine_name)}</p>
+                <p class="text-sm text-gray-600">SN: ${escapeHtml(service.serial_number)} | ${escapeHtml(service.model)}</p>
+            </div>
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Client / Location</p>
+                <p class="font-medium">${escapeHtml(service.client_name)}</p>
+                <p class="text-sm text-gray-600">${escapeHtml(service.location)}</p>
+            </div>
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Service Type</p>
+                <div class="flex gap-1 flex-wrap mt-1">
+                    ${service.service_type.map(t =>
+                        `<span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs">${escapeHtml(t)}</span>`
+                    ).join('')}
+                </div>
+            </div>
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Identification/Verification</p>
+                <p class="text-sm">${escapeHtml(service.identification) || 'N/A'}</p>
+            </div>
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Root Cause/Findings</p>
+                <p class="text-sm">${escapeHtml(service.root_cause) || 'N/A'}</p>
+            </div>
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Action Taken</p>
+                <p class="text-sm">${escapeHtml(service.action_taken) || 'N/A'}</p>
+            </div>
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Equipment Status</p>
+                <p class="text-sm font-semibold ${service.equipment_status === 'Operational' ? 'text-green-600' : 'text-red-600'}">
+                    ${escapeHtml(service.equipment_status) || 'N/A'}
+                </p>
+            </div>
+            ${service.recommendations ? `
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Recommendations</p>
+                <p class="text-sm">${escapeHtml(service.recommendations)}</p>
+            </div>` : ''}
+            ${service.parts && service.parts.length ? `
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500">Parts Replaced</p>
+                <div class="text-sm space-y-1 mt-1">
+                    ${service.parts.map(p =>
+                        `<div class="flex gap-2">
+                            <span class="font-medium">${escapeHtml(String(p.qty))}x</span>
+                            ${escapeHtml(p.particulars)}
+                            <span class="text-gray-400">(${escapeHtml(p.si_dr_no)})</span>
+                        </div>`
+                    ).join('')}
+                </div>
+            </div>` : ''}
+            ${service.medtech_signature ? `
+            <div class="border-b pb-2">
+                <p class="text-xs text-gray-500 mb-1">
+                    <i class="fas fa-signature mr-1 text-green-500"></i>Signature
+                </p>
+                <div class="border border-gray-200 rounded-lg p-2 bg-gray-50 inline-block">
+                    <img src="${service.medtech_signature}" alt="Signature" class="max-h-12">
+                </div>
+            </div>` : ''}
+            ${imagesSection}
+            <div class="pt-1 text-xs text-gray-400">
+                Created: ${formatDate(service.created_at)}
+                ${service.last_updated ? `<br>Last updated: ${formatDate(service.last_updated)}` : ''}
+            </div>
+        </div>`,
+        width: '520px',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-edit mr-1"></i> Edit / Submit',
+        cancelButtonText: 'Close',
+        confirmButtonColor: '#3b82f6'
+    }).then(result => {
+        if (result.isConfirmed) editPendingService(serviceId);
     });
 }
 
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+// ─── DELETE ────────────────────────────────────────────────────────────────────
+
+function deletePendingService(serviceId) {
+    Swal.fire({
+        title: 'Delete Draft?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel'
+    }).then(result => {
+        if (!result.isConfirmed) return;
+        localStorage.removeItem(`serviceDraft_${serviceId}`);
+        pendingServices = pendingServices.filter(s => s.id !== serviceId);
+        updatePendingBadge();
+        renderPendingTable();
+        Swal.fire({ title: 'Deleted!', text: 'Draft has been deleted.', icon: 'success', timer: 1500, showConfirmButton: false });
+    });
 }
 
-function editPendingService(draftId) {
-    const service = pendingServices.find(s => s.id === draftId);
-    if (service) {
-        populateServiceForm(service);
-        closePendingModal();
-        if (typeof openModal === 'function') {
-            openModal(service.machine_id);
-        }
-    } else {
-        // Try localStorage as fallback
-        const draft = localStorage.getItem(`serviceDraft_${draftId}`);
-        if (draft) {
-            const data = JSON.parse(draft);
-            populateServiceForm(data);
-            closePendingModal();
-            if (typeof openModal === 'function') {
-                openModal(data.machine_id);
-            }
-        }
-    }
-}
-
-function submitPendingService(draftId) {
-    const service = pendingServices.find(s => s.id === draftId);
-    if (service) {
-        populateServiceForm(service);
-        closePendingModal();
-        if (typeof openModal === 'function') {
-            openModal(service.machine_id);
-        }
-        // setTimeout(() => {
-        //     const submitBtn = document.getElementById('submit-service-btn');
-        //     if (submitBtn) {
-        //         // Highlight the submit button briefly
-        //         submitBtn.style.transform = 'scale(1.05)';
-        //         setTimeout(() => { submitBtn.style.transform = ''; }, 200);
-        //         submitBtn.click();
-        //     }
-        // }, 500);
-    } else {
-        // Try localStorage as fallback
-        const draft = localStorage.getItem(`serviceDraft_${draftId}`);
-        if (draft) {
-            const data = JSON.parse(draft);
-            populateServiceForm(data);
-            closePendingModal();
-            if (typeof openModal === 'function') {
-                openModal(data.machine_id);
-            }
-            setTimeout(() => {
-                const submitBtn = document.getElementById('submit-service-btn');
-                if (submitBtn) submitBtn.click();
-            }, 500);
-        }
-    }
-}
+// ─── POPULATE FORM ─────────────────────────────────────────────────────────────
 
 function populateServiceForm(data) {
-    // Populate machine ID
     const machineIdField = document.getElementById('machine-id');
     if (machineIdField && data.machine_id) machineIdField.value = data.machine_id;
-    
-    // Service types
-    if (data.service_type && Array.isArray(data.service_type)) {
+
+    if (Array.isArray(data.service_type)) {
         document.querySelectorAll('input[name="service_type[]"]').forEach(cb => {
             cb.checked = data.service_type.includes(cb.value);
         });
-        if (data.service_type.includes('others_specified') && data.others_specified) {
+        const knownTypes = ['PMS','Troubleshooting','Installation','Warranty','Calibration'];
+        const othersVal  = data.service_type.find(t => !knownTypes.includes(t));
+        if (othersVal) {
             const othersCheckbox = document.getElementById('others-checkbox');
-            if (othersCheckbox) othersCheckbox.checked = true;
             const othersInputDiv = document.getElementById('others-input');
+            const othersInput    = document.querySelector('#others-input input');
+            if (othersCheckbox) othersCheckbox.checked = true;
             if (othersInputDiv) othersInputDiv.classList.remove('hidden');
-            const othersInput = document.querySelector('#others-input input');
-            if (othersInput) othersInput.value = data.others_specified;
+            if (othersInput)    othersInput.value = othersVal;
         }
     }
-    
-    // Textareas
-    const fields = ['identification', 'root_cause', 'action_taken', 'recommendations'];
-    fields.forEach(field => {
+
+    ['identification','root_cause','action_taken','recommendations'].forEach(field => {
         const el = document.querySelector(`textarea[name="${field}"]`);
-        if (el && data[field]) el.value = data[field];
+        if (el && data[field] != null) el.value = data[field];
     });
-    
+
     // Equipment status
     if (data.equipment_status) {
         const radio = document.querySelector(`input[name="equipment_status"][value="${data.equipment_status}"]`);
         if (radio) radio.checked = true;
     }
-    
-    // Signature
+
     if (data.medtech_signature) {
-        const signatureData = document.getElementById('signature-data');
-        if (signatureData) signatureData.value = data.medtech_signature;
-        const preview = document.getElementById('signature-image');
-        if (preview) preview.src = data.medtech_signature;
-        document.getElementById('signature-preview')?.classList.remove('hidden');
+        const sigData    = document.getElementById('signature-data');
+        const sigImg     = document.getElementById('signature-image');
+        const sigPreview = document.getElementById('signature-preview');
+        if (sigData)    sigData.value = data.medtech_signature;
+        if (sigImg)     sigImg.src    = data.medtech_signature;
+        if (sigPreview) sigPreview.classList.remove('hidden');
+
+        try {
+            const canvas = document.getElementById('signature-pad');
+            if (canvas && window.SignaturePad) {
+              
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = data.medtech_signature;
+            }
+        } catch(e) { /* non-critical */ }
     }
-    
-    // Approved by
+
     const approvedBy = document.querySelector('input[name="approved_by"]');
     if (approvedBy && data.approved_by) approvedBy.value = data.approved_by;
-    
-    // Parts - clear and repopulate
+
     const partsContainer = document.getElementById('parts-container');
-    if (partsContainer && data.parts && data.parts.length > 0) {
-        // Clear existing except first row
-        while (partsContainer.children.length > 1) {
-            partsContainer.removeChild(partsContainer.lastChild);
-        }
-        // Populate first row
-        const firstRow = partsContainer.querySelector('.parts-row');
-        if (firstRow) {
-            const firstPart = data.parts[0];
-            firstRow.querySelector('.parts-qty').value = firstPart.qty || '';
-            firstRow.querySelector('.parts-part').value = firstPart.particulars || '';
-            firstRow.querySelector('.parts-si').value = firstPart.si_dr_no || '';
-        }
-        // Add additional rows
-        for (let i = 1; i < data.parts.length; i++) {
-            const part = data.parts[i];
-            const newRow = document.createElement('div');
-            newRow.className = 'parts-row';
-            newRow.innerHTML = `
-                <input type="number" name="qty[]" placeholder="Qty" class="svc-input parts-qty" value="${part.qty || ''}">
-                <input type="text" name="particulars[]" placeholder="Particulars" class="svc-input parts-part" value="${escapeHtml(part.particulars || '')}">
-                <input type="text" name="si_dr_no[]" placeholder="S.I./D.R. No." class="svc-input parts-si" value="${escapeHtml(part.si_dr_no || '')}">
+    if (partsContainer && data.parts && data.parts.length) {
+        // Remove all fieldset rows
+        partsContainer.querySelectorAll('.fieldset_particular').forEach(el => el.remove());
+
+        data.parts.forEach((part, i) => {
+            const fieldset  = document.createElement('fieldset');
+            fieldset.className = 'fieldset_particular';
+            const row       = document.createElement('div');
+            row.className   = 'parts-row';
+            row.innerHTML   = `
+                <input type="number" name="qty[]"         placeholder="Qty"          class="svc-input parts-qty"  value="${escapeHtml(String(part.qty || ''))}">
+                <input type="text"   name="particulars[]" placeholder="Particulars"  class="svc-input parts-part" value="${escapeHtml(part.particulars || '')}">
+                <input type="text"   name="si_dr_no[]"    placeholder="S.I./D.R. No." class="svc-input parts-si"  value="${escapeHtml(part.si_dr_no || '')}">
             `;
-            partsContainer.appendChild(newRow);
-        }
+            fieldset.appendChild(row);
+            partsContainer.appendChild(fieldset);
+        });
     }
+
+    restoreImagePreviews(data.before_images,      'before-image-preview');
+    restoreImagePreviews(data.after_images,       'after-image-preview');
+    restoreImagePreviews(data.service_images,     'service-image-preview');
+    restoreImagePreviews(data.calibration_images, 'calibration-image-preview');
 }
+
+
+function editPendingService(draftId) {
+    const service = pendingServices.find(s => s.id === draftId)
+                 || (() => {
+                        const raw = localStorage.getItem(`serviceDraft_${draftId}`);
+                        return raw ? JSON.parse(raw) : null;
+                    })();
+
+    if (!service) { Swal.fire('Not Found', 'Could not load this draft.', 'error'); return; }
+
+    closePendingModal();
+    if (typeof openModal === 'function') {
+        openModal(service.machine_id);
+    } else {
+        const modal = document.getElementById('service-modal');
+        if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+    setTimeout(() => populateServiceForm(service), 350);
+}
+
+
+// function submitPendingService(serviceId) {
+//     const service = pendingServices.find(s => s.id === serviceId)
+//                  || (() => {
+//                         const raw = localStorage.getItem(`serviceDraft_${serviceId}`);
+//                         return raw ? JSON.parse(raw) : null;
+//                     })();
+
+//     if (!service) { Swal.fire('Not Found', 'Could not load this draft.', 'error'); return; }
+
+//     const totalImages = (service.before_images?.length      || 0)
+//                       + (service.after_images?.length       || 0)
+//                       + (service.service_images?.length     || 0)
+//                       + (service.calibration_images?.length || 0);
+
+//     Swal.fire({
+//         title: 'Open Draft for Submission?',
+//         html: `
+//             <p class="text-sm text-gray-600 mb-3">The form will be pre-filled with your saved data.</p>
+//             <div class="flex justify-center gap-4 text-xs">
+//                 <span class="${service.medtech_signature ? 'text-green-600' : 'text-gray-400'}">
+//                     <i class="fas fa-signature mr-1"></i>
+//                     ${service.medtech_signature ? 'Signature saved' : 'No signature — must re-sign'}
+//                 </span>
+//                 <span class="${totalImages > 0 ? 'text-blue-600' : 'text-gray-400'}">
+//                     <i class="fas fa-images mr-1"></i>
+//                     ${totalImages > 0 ? `${totalImages} image(s) saved` : 'No images saved'}
+//                 </span>
+//             </div>`,
+//         icon: 'question',
+//         showCancelButton: true,
+//         confirmButtonText: '<i class="fas fa-folder-open mr-1"></i> Open Form',
+//         cancelButtonText: 'Cancel',
+//         confirmButtonColor: '#16a34a'
+//     }).then(result => {
+//         if (!result.isConfirmed) return;
+
+//         closePendingModal();
+
+//         if (typeof openModal === 'function') {
+//             openModal(service.machine_id);
+//         } else {
+//             const modal = document.getElementById('service-modal');
+//             if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+//         }
+
+//         setTimeout(() => {
+//             populateServiceForm(service);
+
+//             // Briefly highlight the submit button
+//             const submitBtn = document.getElementById('submit-service-btn');
+//             if (submitBtn) {
+//                 submitBtn.classList.add('ring-2', 'ring-offset-2', 'ring-green-400');
+//                 setTimeout(() => submitBtn.classList.remove('ring-2','ring-offset-2','ring-green-400'), 2500);
+//             }
+
+//             // Toast reminder
+//             Swal.fire({
+//                 toast: true,
+//                 position: 'top-end',
+//                 icon: 'info',
+//                 title: service.medtech_signature
+//                     ? 'Draft loaded — review and click Complete Service'
+//                     : 'Draft loaded — please re-sign before submitting',
+//                 showConfirmButton: false,
+//                 timer: 4500,
+//                 timerProgressBar: true,
+//             });
+//         }, 400);
+//     });
+// }
+
+// ─── SAVE DRAFT (async — converts images to base64) ────────────────────────────
+
+window.saveDraft = async function() {
+    const form = document.getElementById('service-form');
+    if (!form) return;
+
+    // Show loading
+    Swal.fire({
+        title: 'Saving Draft…',
+        text: 'Converting images, please wait.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    try {
+        // Collect images as base64 in parallel
+        const [beforeImages, afterImages, serviceImages, calibrationImages] = await Promise.all([
+            collectImages('before-images'),
+            collectImages('after-images'),
+            collectImages('service-images'),
+            collectImages('calibration-images'),
+        ]);
+
+        // Service types
+        const serviceTypes = [];
+        document.querySelectorAll('.services:checked').forEach(cb => serviceTypes.push(cb.value));
+        document.querySelectorAll('.services-others:checked').forEach(() => {
+            const val = document.querySelector('.services-others-write')?.value;
+            if (val) serviceTypes.push(val);
+        });
+
+        // Parts
+        const parts = [];
+        document.querySelectorAll('.fieldset_particular').forEach(fieldset => {
+            const inputs = fieldset.querySelectorAll('input');
+            if (inputs[0]?.value || inputs[1]?.value) {
+                parts.push({
+                    qty:        inputs[0]?.value || 0,
+                    particulars:inputs[1]?.value || '',
+                    si_dr_no:   inputs[2]?.value || ''
+                });
+            }
+        });
+
+        // Signature
+        const signatureVal = document.getElementById('signature-data')?.value || '';
+
+        // Machine metadata (from the active machine card)
+        const activeCard     = document.querySelector('#card-view .bg-white.border');
+        let machineName      = document.querySelector('#service-engineer-name')?.dataset?.machineName || 'Unknown Machine';
+        let serialNumber     = 'N/A';
+        let machineModel     = 'N/A';
+        let clientLocation   = 'N/A';
+
+        if (activeCard) {
+            const nameEl     = activeCard.querySelector('.font-bold');
+            const serialEl   = activeCard.querySelector('.text-gray-400');
+            if (nameEl)   machineName   = nameEl.innerText.trim();
+            if (serialEl) serialNumber  = serialEl.innerText.replace('# ','').trim();
+        }
+
+        const draftData = {
+            machine_id:         document.getElementById('machine-id')?.value || 'unknown',
+            machine_name:       machineName,
+            serial_number:      serialNumber,
+            model:              machineModel,
+            location:           clientLocation,
+            client_name:        clientLocation,
+            service_type:       serviceTypes,
+            identification:     document.querySelector('textarea[name="identification"]')?.value  || '',
+            root_cause:         document.querySelector('textarea[name="root_cause"]')?.value      || '',
+            action_taken:       document.querySelector('textarea[name="action_taken"]')?.value    || '',
+            equipment_status:   document.querySelector('input[name="equipment_status"]:checked')?.value || '',
+            recommendations:    document.querySelector('textarea[name="recommendations"]')?.value || '',
+            approved_by:        document.querySelector('input[name="approved_by"]')?.value        || '',
+            medtech_signature:  signatureVal,
+            parts,
+            before_images:      beforeImages,
+            after_images:       afterImages,
+            service_images:     serviceImages,
+            calibration_images: calibrationImages,
+            created_at:         new Date().toISOString(),
+            last_updated:       new Date().toISOString(),
+        };
+
+        const draftId = 'draft_' + Date.now();
+
+        try {
+            localStorage.setItem(`serviceDraft_${draftId}`, JSON.stringify(draftData));
+        } catch (storageErr) {
+            // localStorage full — save without images as fallback
+            console.warn('localStorage full, saving without images:', storageErr);
+            draftData.before_images      = [];
+            draftData.after_images       = [];
+            draftData.service_images     = [];
+            draftData.calibration_images = [];
+            localStorage.setItem(`serviceDraft_${draftId}`, JSON.stringify(draftData));
+
+            loadPendingServices();
+            Swal.fire({
+                title: 'Draft Saved (No Images)',
+                html: `Saved without images due to storage limits.<br>
+                       <small class="text-gray-500">Delete old drafts to free up space.</small>`,
+                icon: 'warning'
+            });
+            return;
+        }
+
+        loadPendingServices();
+
+        const imgTotal = beforeImages.length + afterImages.length
+                       + serviceImages.length + calibrationImages.length;
+
+        Swal.fire({
+            title: 'Draft Saved!',
+            html: `
+                <p>Service report saved successfully.</p>
+                <div class="flex justify-center gap-4 mt-2 text-xs text-gray-500">
+                    <span><i class="fas fa-images mr-1 text-blue-400"></i>${imgTotal} image(s)</span>
+                    <span><i class="fas fa-signature mr-1 ${signatureVal ? 'text-green-500' : 'text-gray-300'}"></i>
+                          ${signatureVal ? 'Signature saved' : 'No signature'}</span>
+                </div>`,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+        });
+
+    } catch (err) {
+        console.error('saveDraft error:', err);
+        Swal.fire('Error', 'Failed to save draft. Try with fewer or smaller images.', 'error');
+    }
+};
+
 
 function togglePendingModal() {
     const modal = document.getElementById('pending-modal');
-    if (modal) {
-        modal.classList.toggle('hidden');
-        if (!modal.classList.contains('hidden')) {
-            renderPendingTable();
-        }
-    }
+    if (!modal) return;
+    modal.classList.toggle('hidden');
+    if (!modal.classList.contains('hidden')) renderPendingTable();
 }
 
 function closePendingModal() {
@@ -553,111 +811,26 @@ function closePendingModal() {
     if (modal) modal.classList.add('hidden');
 }
 
-// Load on page ready
-document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', function () {
     loadPendingServices();
-    
-    // Close modal when clicking backdrop
-    const backdrop = document.getElementById('pending-modal-backdrop');
-    if (backdrop) {
-        backdrop.addEventListener('click', closePendingModal);
-    }
-    
-    // Escape key to close
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closePendingModal();
-        }
+
+    document.getElementById('pending-modal-backdrop')
+        ?.addEventListener('click', closePendingModal);
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closePendingModal();
     });
 });
 
-// Enhanced save draft function
-window.saveDraft = function() {
-    const form = document.getElementById('service-form');
-    if (form) {
-        const formData = new FormData(form);
-        const draftData = {};
-        
-        formData.forEach((value, key) => {
-            if (key.includes('[]')) {
-                const cleanKey = key.replace('[]', '');
-                if (!draftData[cleanKey]) draftData[cleanKey] = [];
-                draftData[cleanKey].push(value);
-            } else {
-                draftData[key] = value;
-            }
-        });
-        
-        // Get machine info from the current machine being viewed
-        const activeCard = document.querySelector('#card-view .bg-white.border');
-        let machineName = 'Unknown Machine';
-        let serialNumber = 'N/A';
-        let machineModel = 'N/A';
-        let clientLocation = 'N/A';
-        
-        if (activeCard) {
-            const nameEl = activeCard.querySelector('.font-bold');
-            const serialEl = activeCard.querySelector('.text-gray-400');
-            const locationEl = activeCard.querySelector('.text-gray-700');
-            
-            if (nameEl) machineName = nameEl.innerText;
-            if (serialEl) serialNumber = serialEl.innerText.replace('# ', '');
-            if (locationEl && locationEl.closest('div')?.previousElementSibling?.innerText === 'Location') {
-                clientLocation = locationEl.innerText;
-            }
-        }
-        
-        // Add metadata
-        draftData.machine_name = machineName;
-        draftData.serial_number = serialNumber;
-        draftData.model = machineModel;
-        draftData.location = clientLocation;
-        draftData.client_name = clientLocation;
-        draftData.created_at = new Date().toISOString();
-        draftData.last_updated = new Date().toISOString();
-        draftData.machine_id = document.getElementById('machine-id')?.value || 'unknown';
-        
-        // Collect parts
-        const parts = [];
-        const qtyInputs = document.querySelectorAll('.parts-qty');
-        const partInputs = document.querySelectorAll('.parts-part');
-        const siInputs = document.querySelectorAll('.parts-si');
-        
-        for (let i = 0; i < qtyInputs.length; i++) {
-            if (qtyInputs[i].value || partInputs[i].value) {
-                parts.push({
-                    qty: qtyInputs[i].value || 0,
-                    particulars: partInputs[i].value || '',
-                    si_dr_no: siInputs[i].value || ''
-                });
-            }
-        }
-        draftData.parts = parts;
-        
-        const draftId = 'draft_' + Date.now();
-        localStorage.setItem(`serviceDraft_${draftId}`, JSON.stringify(draftData));
-        
-        // Reload pending services
-        loadPendingServices();
-        
-        // Show success message
-        Swal.fire({
-            title: 'Draft Saved!',
-            text: 'Your service report has been saved to pending list.',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false
-        });
-    }
-};
 
-// Expose functions globally
-window.togglePendingModal = togglePendingModal;
-window.closePendingModal = closePendingModal;
-window.editPendingService = editPendingService;
-window.submitPendingService = submitPendingService;
-window.deletePendingService = deletePendingService;
-window.viewPendingDetails = viewPendingDetails;
+window.togglePendingModal    = togglePendingModal;
+window.closePendingModal     = closePendingModal;
+window.loadPendingServices   = loadPendingServices;
+window.editPendingService    = editPendingService;
+window.submitPendingService  = submitPendingService;
+window.deletePendingService  = deletePendingService;
+window.viewPendingDetails    = viewPendingDetails;
 </script>
 @endpush
 

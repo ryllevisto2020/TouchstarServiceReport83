@@ -48,3 +48,11 @@ Route::post('/service/add',[ServiceController::class, 'addReport'])->name('servi
 #History Routes
 Route::get('/service/history', [ServiceController::class, 'history'])->name('service.history');
     
+
+Route::get('/service/print', function () {
+    return view('service.print');
+})->name('service.print');
+
+Route::get('/service/batch-print', function () {
+    return view('service.batch-print');
+})->name('service.batch-print');

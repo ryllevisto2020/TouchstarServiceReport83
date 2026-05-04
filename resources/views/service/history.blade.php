@@ -9,11 +9,8 @@
                 <p class="text-slate-500 mt-1 text-sm">Complete service history & maintenance records — track every repair, PMS, and calibration</p>
             </div>
             <div class="flex space-x-3 no-print">
-                <button onclick="exportReportsDemo()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl shadow-sm transition-all duration-200">
-                    <i class="fas fa-download text-sm"></i> Export CSV
-                </button>
-                <button onclick="window.print()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-medium rounded-xl shadow-sm transition-all duration-200">
-                    <i class="fas fa-print text-sm"></i> Print Reports
+                <button onclick="batchPrint()" id="batchPrintBtn" class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl shadow-sm transition-all duration-200">
+                    <i class="fas fa-print text-sm"></i> Batch Print
                 </button>
             </div>
         </div>
@@ -31,7 +28,6 @@
                 <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><i class="fas fa-user-cog text-xl"></i></div>
                 <div class="ml-4"><p class="text-xs font-medium text-slate-400 uppercase tracking-wide">Active Engineers</p><p class="text-2xl font-bold text-slate-800" id="statEngineers">0</p></div>
             </div>
-           
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
@@ -92,7 +88,7 @@
         </div>
     </main>
 
-    <!-- ========== DETAIL MODAL  ========== -->
+    <!-- ========== DETAIL MODAL ========== -->
     <div id="detailModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden modal-transition">
         <div class="bg-white rounded-2xl shadow-xl w-11/12 md:w-2/3 lg:w-1/2 max-h-[85vh] overflow-y-auto m-4">
             <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
@@ -103,16 +99,19 @@
         </div>
     </div>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         const MOCK_REPORTS = [
-            { id: 1001, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "PMS", service_date: "2025-02-10", formatted_date: "Feb 10, 2025", root_cause_findings: "Calibration drift on laser module. QC outliers detected on HGB channel.", action_taken: "Realigned optics, performed full QC calibration, replaced cuvette washer.", parts_replaced: [{qty:1, name:"Laser diode"}], equipment_status: "Operational", recommendations: "Schedule quarterly calibration and monthly QC checks.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", service_images: 2, completion_notes: "All parameters within spec." },
-            { id: 1002, machine_name: "MRI 3T Pro", model: "SIGNA", serial_number: "SN-MRI-4532", client_location: "Cebu", client_name: "MetroHealth Labs", service_type: "Troubleshooting", service_date: "2025-02-18", formatted_date: "Feb 18, 2025", root_cause_findings: "Noise artifact in axial view, RF interference suspected.", action_taken: "Replaced RF amplifier board, performed system noise test.", parts_replaced: [{qty:1, name:"RF Amp Board"}], equipment_status: "Operational", recommendations: "Monitor weekly for 1 month.", service_engineer: "Sarah Gomez", approved_by: "Dr. Alonzo", service_images: 3 },
-            { id: 1003, machine_name: "Ultrasound Logiq E10", model: "E10", serial_number: "SN-ULT-1290", client_location: "Davao", client_name: "St. Catherine Hospital", service_type: "Installation", service_date: "2025-02-05", formatted_date: "Feb 5, 2025", root_cause_findings: "New installation & configuration of ultrasound system.", action_taken: "Installed software, calibrated all probes, trained sonographers.", parts_replaced: [], equipment_status: "Operational", recommendations: "User training completion required.", service_engineer: "James Cruz", approved_by: "Engr. Villanueva", service_images: 5 },
-            { id: 1004, machine_name: "Centrifuge CL-2", model: "CryoSpin", serial_number: "SN-CEN-876", client_location: "Laguna", client_name: "Northside Imaging", service_type: "Warranty", service_date: "2025-01-28", formatted_date: "Jan 28, 2025", root_cause_findings: "Motor not spinning, rotor imbalance error.", action_taken: "Replaced motor assembly and rotor locking mechanism.", parts_replaced: [{qty:1, name:"Drive motor"},{qty:1,name:"Rotor lock"}], equipment_status: "Operational", recommendations: "Check belt tension monthly.", service_engineer: "Patricia Lim", approved_by: "Mr. Lim", service_images: 1 },
-            { id: 1005, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "Troubleshooting", service_date: "2025-01-15", formatted_date: "Jan 15, 2025", root_cause_findings: "Intermittent power failure, unit reboots randomly.", action_taken: "Replaced PSU capacitor bank, verified voltage stability.", parts_replaced: [{qty:1, name:"Power supply unit"}], equipment_status: "Operational", recommendations: "Add voltage regulator to outlet.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", service_images: 2 },
-            { id: 1006, machine_name: "Anesthesia Workstation", model: "Aisys CS2", serial_number: "SN-AN-3340", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "PMS", service_date: "2025-02-22", formatted_date: "Feb 22, 2025", root_cause_findings: "Gas flow sensor deviation, O2 readings unstable.", action_taken: "Calibrated flow sensors, replaced O2 cell, updated firmware.", parts_replaced: [{qty:1, name:"O2 sensor"}], equipment_status: "Operational", recommendations: "Recalibrate after 6 months.", service_engineer: "Sarah Gomez", approved_by: "Dr. Cruz", service_images: 4 },
-            { id: 1007, machine_name: "Ventilator V800", model: "V800", serial_number: "SN-VENT-5678", client_location: "Cebu", client_name: "MetroHealth Labs", service_type: "Troubleshooting", service_date: "2025-02-14", formatted_date: "Feb 14, 2025", root_cause_findings: "Alarm false triggers, pressure sensor drift.", action_taken: "Firmware update & sensor recalibration, replaced pressure transducer.", parts_replaced: [{qty:1, name:"Pressure sensor"}], equipment_status: "Operational", recommendations: "Monitor alarm logs weekly.", service_engineer: "James Cruz", approved_by: "Dr. Alonzo", service_images: 2 },
-            { id: 1008, machine_name: "ECG Mac 2000", model: "MAC 2000", serial_number: "SN-ECG-9921", client_location: "Quezon City", client_name: "Makati Medical Center", service_type: "PMS", service_date: "2025-02-28", formatted_date: "Feb 28, 2025", root_cause_findings: "Baseline wander on lead II, electrode cable wear.", action_taken: "Replaced patient cable, cleaned electrode inputs, performed signal test.", parts_replaced: [{qty:1, name:"10-lead patient cable"}], equipment_status: "Operational", recommendations: "Replace cables annually.", service_engineer: "Anna Reyes", approved_by: "Dr. Santos", service_images: 1 }
+            { id: 1001, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "PMS", service_date: "2025-02-10", formatted_date: "Feb 10, 2025", root_cause_findings: "Calibration drift on laser module. QC outliers detected on HGB channel.", action_taken: "Realigned optics, performed full QC calibration, replaced cuvette washer.", parts_replaced: [{qty:1, name:"Laser diode", particulars:"Laser diode", si_dr_no:"SI-2024-001"}], equipment_status: "Operational", recommendations: "Schedule quarterly calibration and monthly QC checks.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", service_images: 2, completion_notes: "All parameters within spec.", identification_verification: "Patient table movement checked and verified. All sensors responding correctly." },
+            { id: 1002, machine_name: "MRI 3T Pro", model: "SIGNA", serial_number: "SN-MRI-4532", client_location: "Cebu", client_name: "MetroHealth Labs", service_type: "Troubleshooting", service_date: "2025-02-18", formatted_date: "Feb 18, 2025", root_cause_findings: "Noise artifact in axial view, RF interference suspected.", action_taken: "Replaced RF amplifier board, performed system noise test.", parts_replaced: [{qty:1, name:"RF Amp Board", particulars:"RF Amp Board", si_dr_no:"DR-2024-045"}], equipment_status: "Operational", recommendations: "Monitor weekly for 1 month.", service_engineer: "Sarah Gomez", approved_by: "Dr. Alonzo", service_images: 3, identification_verification: "RF shielding integrity verified. All connections secured." },
+            { id: 1003, machine_name: "Ultrasound Logiq E10", model: "E10", serial_number: "SN-ULT-1290", client_location: "Davao", client_name: "St. Catherine Hospital", service_type: "Installation", service_date: "2025-02-05", formatted_date: "Feb 5, 2025", root_cause_findings: "New installation & configuration of ultrasound system.", action_taken: "Installed software, calibrated all probes, trained sonographers.", parts_replaced: [], equipment_status: "Operational", recommendations: "User training completion required.", service_engineer: "James Cruz", approved_by: "Engr. Villanueva", service_images: 5, identification_verification: "System installation complete. All probes calibrated." },
+            { id: 1004, machine_name: "Centrifuge CL-2", model: "CryoSpin", serial_number: "SN-CEN-876", client_location: "Laguna", client_name: "Northside Imaging", service_type: "Warranty", service_date: "2025-01-28", formatted_date: "Jan 28, 2025", root_cause_findings: "Motor not spinning, rotor imbalance error.", action_taken: "Replaced motor assembly and rotor locking mechanism.", parts_replaced: [{qty:1, name:"Drive motor", particulars:"Drive motor", si_dr_no:"SI-2024-089"},{qty:1, name:"Rotor lock", particulars:"Rotor lock", si_dr_no:"SI-2024-090"}], equipment_status: "Operational", recommendations: "Check belt tension monthly.", service_engineer: "Patricia Lim", approved_by: "Mr. Lim", service_images: 1, identification_verification: "Rotor assembly inspected. All components secure." },
+            { id: 1005, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "Troubleshooting", service_date: "2025-01-15", formatted_date: "Jan 15, 2025", root_cause_findings: "Intermittent power failure, unit reboots randomly.", action_taken: "Replaced PSU capacitor bank, verified voltage stability.", parts_replaced: [{qty:1, name:"Power supply unit", particulars:"Power supply unit", si_dr_no:"SI-2024-095"}], equipment_status: "Operational", recommendations: "Add voltage regulator to outlet.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", service_images: 2, identification_verification: "Power supply checked. Voltage output stable." },
+            { id: 1006, machine_name: "Anesthesia Workstation", model: "Aisys CS2", serial_number: "SN-AN-3340", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "PMS", service_date: "2025-02-22", formatted_date: "Feb 22, 2025", root_cause_findings: "Gas flow sensor deviation, O2 readings unstable.", action_taken: "Calibrated flow sensors, replaced O2 cell, updated firmware.", parts_replaced: [{qty:1, name:"O2 sensor", particulars:"O2 sensor", si_dr_no:"SI-2024-102"}], equipment_status: "Operational", recommendations: "Recalibrate after 6 months.", service_engineer: "Sarah Gomez", approved_by: "Dr. Cruz", service_images: 4, identification_verification: "Gas flow calibrated. O2 readings normalized." },
+            { id: 1007, machine_name: "Ventilator V800", model: "V800", serial_number: "SN-VENT-5678", client_location: "Cebu", client_name: "MetroHealth Labs", service_type: "Troubleshooting", service_date: "2025-02-14", formatted_date: "Feb 14, 2025", root_cause_findings: "Alarm false triggers, pressure sensor drift.", action_taken: "Firmware update & sensor recalibration, replaced pressure transducer.", parts_replaced: [{qty:1, name:"Pressure sensor", particulars:"Pressure sensor", si_dr_no:"SI-2024-108"}], equipment_status: "Operational", recommendations: "Monitor alarm logs weekly.", service_engineer: "James Cruz", approved_by: "Dr. Alonzo", service_images: 2, identification_verification: "Pressure sensor calibrated. Alarm system tested." },
+            { id: 1008, machine_name: "ECG Mac 2000", model: "MAC 2000", serial_number: "SN-ECG-9921", client_location: "Quezon City", client_name: "Makati Medical Center", service_type: "PMS", service_date: "2025-02-28", formatted_date: "Feb 28, 2025", root_cause_findings: "Baseline wander on lead II, electrode cable wear.", action_taken: "Replaced patient cable, cleaned electrode inputs, performed signal test.", parts_replaced: [{qty:1, name:"10-lead patient cable", particulars:"10-lead patient cable", si_dr_no:"SI-2024-110"}], equipment_status: "Operational", recommendations: "Replace cables annually.", service_engineer: "Anna Reyes", approved_by: "Dr. Santos", service_images: 1, identification_verification: "ECG signal quality verified. All leads functional." }
         ];
 
         let filteredData = [...MOCK_REPORTS];
@@ -133,7 +132,6 @@
             document.getElementById('statEngineers').innerText = uniqueEngineers;
         }
 
-        // Render table with pagination
         function renderTable() {
             const totalRecords = filteredData.length;
             const totalPages = Math.max(1, Math.ceil(totalRecords / rowsPerPage));
@@ -192,9 +190,8 @@
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
                                 <button onclick="viewDetails(${record.id})" class="text-blue-600 hover:text-blue-800 p-1.5 rounded-lg hover:bg-blue-50 transition" title="View Details"><i class="fas fa-eye"></i></button>
-                                @php
+                                <button onclick="printSingleReport(${record.id})" class="text-slate-500 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition" title="Print Report"><i class="fas fa-print"></i></button>
                                 <button onclick="deleteMock(${record.id})" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition" title="Delete Report"><i class="fas fa-trash-alt"></i></button>
-                                <button onclick="printMock(${record.id})" class="text-slate-500 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition" title="Print Report"><i class="fas fa-print"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -211,7 +208,6 @@
             document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
         }
 
-        // Filter logic
         function applyFilters() {
             const client = document.getElementById('filterClient').value;
             const serial = document.getElementById('filterSerial').value.trim().toLowerCase();
@@ -280,9 +276,69 @@
         };
         
         window.closeModal = () => document.getElementById('detailModal').classList.add('hidden');
-        window.editMock = (id) => { Swal.fire({ title: 'Edit Mode (Demo)', text: `Edit form for report #${id} would open here. Integrate backend endpoint.`, icon: 'info', confirmButtonColor: '#2563eb' }); };
+
+        // Print single report
+        window.printSingleReport = (id) => {
+            const printWindow = window.open(`/service/print?id=${id}`, '_blank', 'width=1200,height=800');
+            if (printWindow) {
+                printWindow.focus();
+            } else {
+                Swal.fire({
+                    title: 'Print Report',
+                    text: `Opening print view for report #${id}`,
+                    icon: 'info',
+                    confirmButtonText: 'Open Print View',
+                    confirmButtonColor: '#2563eb'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.open(`/service/print?id=${id}`, '_blank');
+                    }
+                });
+            }
+        };
+
+        // Batch print all filtered reports
+        window.batchPrint = () => {
+            const ids = filteredData.map(r => r.id).join(',');
+            if (!ids) {
+                Swal.fire({
+                    title: 'No Reports',
+                    text: 'No service reports to print. Please adjust your filters.',
+                    icon: 'warning',
+                    confirmButtonColor: '#2563eb'
+                });
+                return;
+            }
+            
+            const printWindow = window.open(`/service/batch-print?ids=${ids}`, '_blank', 'width=1200,height=800');
+            if (printWindow) {
+                printWindow.focus();
+            } else {
+                Swal.fire({
+                    title: 'Batch Print',
+                    text: 'Opening batch print view...',
+                    icon: 'info',
+                    confirmButtonText: 'Open Print View',
+                    confirmButtonColor: '#2563eb'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.open(`/service/batch-print?ids=${ids}`, '_blank');
+                    }
+                });
+            }
+        };
+
+        // Delete report
         window.deleteMock = (id) => {
-            Swal.fire({ title: 'Confirm Deletion', text: `Delete service report #${id}? This action cannot be undone.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, delete' }).then((res) => {
+            Swal.fire({ 
+                title: 'Confirm Deletion', 
+                text: `Delete service report #${id}? This action cannot be undone.`, 
+                icon: 'warning', 
+                showCancelButton: true, 
+                confirmButtonColor: '#d33', 
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel'
+            }).then((res) => {
                 if (res.isConfirmed) {
                     const idx = MOCK_REPORTS.findIndex(r => r.id === id);
                     if (idx !== -1) MOCK_REPORTS.splice(idx, 1);
@@ -293,15 +349,38 @@
                 }
             });
         };
-        window.printMock = (id) => { Swal.fire({ title: 'Print Preview', text: `Generating print view for report #${id}`, icon: 'success', timer: 1500, showConfirmButton: false }); };
-        window.exportReportsDemo = () => { Swal.fire({ title: 'Export CSV', text: 'Exporting filtered service reports as CSV (demo).', icon: 'success' }); };
+
+        // Event Listeners
+        document.getElementById('prevPageBtn').addEventListener('click', () => { 
+            if (currentPage > 1) { 
+                currentPage--; 
+                renderTable(); 
+            } 
+        });
         
-        document.getElementById('prevPageBtn').addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTable(); } });
-        document.getElementById('nextPageBtn').addEventListener('click', () => { const totalPages = Math.ceil(filteredData.length / rowsPerPage); if (currentPage < totalPages) { currentPage++; renderTable(); } });
+        document.getElementById('nextPageBtn').addEventListener('click', () => { 
+            const totalPages = Math.ceil(filteredData.length / rowsPerPage); 
+            if (currentPage < totalPages) { 
+                currentPage++; 
+                renderTable(); 
+            } 
+        });
+        
         document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
         document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
-        document.getElementById('detailModal').addEventListener('click', (e) => { if (e.target === document.getElementById('detailModal')) closeModal(); });
         
+        document.getElementById('detailModal').addEventListener('click', (e) => { 
+            if (e.target === document.getElementById('detailModal')) closeModal(); 
+        });
+        
+        // Keyboard shortcut to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Initial render
         renderTable();
     </script>
 @endsection
