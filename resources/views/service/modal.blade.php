@@ -607,6 +607,7 @@ $(document).ready(function () {
 
     $(document).on("click","#closeServiceModal",function(){
         signature.clear();
+        $('#service-form')[0].reset();
         medtech_signature.val("")
         document.getElementById('service-modal').classList.add('hidden');
         document.body.style.overflow = '';
