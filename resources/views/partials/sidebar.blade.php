@@ -113,6 +113,8 @@
                         </a>
                     </div>
             </li>
+
+            @if ($employee_details->emp_role === "SUPERADMIN" || $employee_details->emp_role === "ADMIN")
            <li class="nav-item">
                 <button class="nav-button" onclick="toggleDropdown('user-dropdown', 'user-chevron')">
                     <div class="flex items-center">
@@ -130,6 +132,7 @@
                 </div>
             </li>
             <li class="nav-item">
+                
                 <button class="nav-button" onclick="toggleDropdown('client-dropdown', 'client-chevron')">
                     <div class="flex items-center">
                         <i class="fa-solid fa-users w-5 text-center"></i>
@@ -137,7 +140,7 @@
                     </div>
                     <i class="fa-solid fa-chevron-down text-xs chevron" id="client-chevron"></i>
                 </button>
-
+                
                 <div class="dropdown-content" id="client-dropdown">
                     <a href="{{ route('client.register') }}" class="dropdown-link">
                         <i class="fa-solid fa-id-card w-4 mr-2"></i>
@@ -145,6 +148,7 @@
                     </a>
                 </div>
             </li>
+            @endif
         </ul>
     </div>
     
