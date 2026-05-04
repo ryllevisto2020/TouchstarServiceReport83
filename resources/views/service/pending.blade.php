@@ -1,147 +1,148 @@
 @push('scripts')
 <script>
 // ─── SAMPLE DATA ───────────────────────────────────────────────────────────────
-let pendingServices = [
-    {
-        id: 'pending_001',
-        machine_id: 1,
-        machine_name: 'Siemens X-Ray Machine',
-        serial_number: 'XR-2024-001',
-        model: 'Siemens Multix',
-        location: 'Manila General Hospital',
-        client_name: 'Manila General Hospital',
-        created_at: '2024-01-15T09:30:00',
-        last_updated: '2024-01-15T14:20:00',
-        status: 'draft',
-        service_type: ['PMS', 'Calibration'],
-        identification: 'Unit showing intermittent display issues',
-        root_cause: 'Loose connection on main board',
-        action_taken: 'Reseated connectors and updated firmware',
-        equipment_status: 'Operational',
-        recommendations: 'Schedule quarterly maintenance',
-        approved_by: 'Dr. Juan Santos',
-        medtech_signature: null,
-        parts: [{ qty: 1, particulars: 'Display Cable', si_dr_no: 'SI-2024-001' }],
-        before_images: [], after_images: [], service_images: [], calibration_images: []
-    },
-    {
-        id: 'pending_002',
-        machine_id: 2,
-        machine_name: 'Philips Ultrasound',
-        serial_number: 'US-2024-045',
-        model: 'Philips EPIQ 7',
-        location: 'Cebu Medical Center',
-        client_name: 'Cebu Medical Center',
-        created_at: '2024-01-16T10:15:00',
-        last_updated: '2024-01-16T11:45:00',
-        status: 'draft',
-        service_type: ['Troubleshooting'],
-        identification: 'Probe not detected by system',
-        root_cause: 'Faulty probe connector',
-        action_taken: 'Replaced probe connector assembly',
-        equipment_status: 'Operational',
-        recommendations: 'Monitor probe performance weekly',
-        approved_by: 'Dr. Maria Reyes',
-        medtech_signature: null,
-        parts: [{ qty: 1, particulars: 'Probe Connector', si_dr_no: 'DR-2024-089' }],
-        before_images: [], after_images: [], service_images: [], calibration_images: []
-    },
-    {
-        id: 'pending_003',
-        machine_id: 3,
-        machine_name: 'GE Ventilator',
-        serial_number: 'VENT-2024-123',
-        model: 'GE CARESCAPE R860',
-        location: 'Davao Doctors Hospital',
-        client_name: 'Davao Doctors Hospital',
-        created_at: '2024-01-16T13:00:00',
-        last_updated: '2024-01-16T15:30:00',
-        status: 'draft',
-        service_type: ['Maintenance', 'Calibration'],
-        identification: 'Oxygen sensor calibration drift',
-        root_cause: 'Sensor aging',
-        action_taken: 'Replaced oxygen sensor and recalibrated',
-        equipment_status: 'Operational',
-        recommendations: 'Replace sensor every 6 months',
-        approved_by: 'Dr. Antonio Cruz',
-        medtech_signature: null,
-        parts: [
-            { qty: 1, particulars: 'Oxygen Sensor', si_dr_no: 'SI-2024-056' },
-            { qty: 2, particulars: 'Filter Kit', si_dr_no: 'SI-2024-056' }
-        ],
-        before_images: [], after_images: [], service_images: [], calibration_images: []
-    },
-    {
-        id: 'pending_004',
-        machine_id: 4,
-        machine_name: 'Mindray Patient Monitor',
-        serial_number: 'PM-2024-789',
-        model: 'Mindray uMEC12',
-        location: 'St. Lukes Medical Center',
-        client_name: 'St. Lukes Medical Center',
-        created_at: '2024-01-17T08:45:00',
-        last_updated: '2024-01-17T10:20:00',
-        status: 'draft',
-        service_type: ['Installation'],
-        identification: 'New unit installation and setup',
-        root_cause: 'Initial deployment',
-        action_taken: 'Installed, configured network, and tested all parameters',
-        equipment_status: 'Operational',
-        recommendations: 'Train staff on proper usage',
-        approved_by: 'Dr. Robert Lim',
-        medtech_signature: null,
-        parts: [],
-        before_images: [], after_images: [], service_images: [], calibration_images: []
-    },
-    {
-        id: 'pending_005',
-        machine_id: 5,
-        machine_name: 'B Braun Dialysis Machine',
-        serial_number: 'DIA-2024-234',
-        model: 'B Braun Dialog+',
-        location: 'National Kidney Institute',
-        client_name: 'National Kidney Institute',
-        created_at: '2024-01-17T14:30:00',
-        last_updated: '2024-01-17T16:15:00',
-        status: 'draft',
-        service_type: ['Troubleshooting', 'PMS'],
-        identification: 'Flow rate error during dialysis',
-        root_cause: 'Clogged filter in fluid path',
-        action_taken: 'Cleaned filter system and replaced tubing',
-        equipment_status: 'Operational',
-        recommendations: 'Replace filter every 3 months',
-        approved_by: 'Dr. Cristina Fernandez',
-        medtech_signature: null,
-        parts: [
-            { qty: 1, particulars: 'Filter Assembly', si_dr_no: 'DR-2024-112' },
-            { qty: 2, particulars: 'Tubing Set', si_dr_no: 'DR-2024-112' }
-        ],
-        before_images: [], after_images: [], service_images: [], calibration_images: []
-    },
-    {
-        id: 'pending_006',
-        machine_id: 6,
-        machine_name: 'Drager Anesthesia Machine',
-        serial_number: 'AN-2024-567',
-        model: 'Drager Perseus A500',
-        location: 'Philippine Heart Center',
-        client_name: 'Philippine Heart Center',
-        created_at: '2024-01-18T09:00:00',
-        last_updated: '2024-01-18T11:30:00',
-        status: 'draft',
-        service_type: ['Calibration'],
-        identification: 'Vaporizer output inaccurate',
-        root_cause: 'Calibration out of spec',
-        action_taken: 'Recalibrated vaporizer and tested',
-        equipment_status: 'Operational',
-        recommendations: 'Annual calibration required',
-        approved_by: 'Dr. Manuel Santos',
-        medtech_signature: null,
-        parts: [],
-        before_images: [], after_images: [], service_images: [], calibration_images: []
-    }
-];
+// let pendingServices = [
+//     {
+//         id: 'pending_001',
+//         machine_id: 1,
+//         machine_name: 'Siemens X-Ray Machine',
+//         serial_number: 'XR-2024-001',
+//         model: 'Siemens Multix',
+//         location: 'Manila General Hospital',
+//         client_name: 'Manila General Hospital',
+//         created_at: '2024-01-15T09:30:00',
+//         last_updated: '2024-01-15T14:20:00',
+//         status: 'draft',
+//         service_type: ['PMS', 'Calibration'],
+//         identification: 'Unit showing intermittent display issues',
+//         root_cause: 'Loose connection on main board',
+//         action_taken: 'Reseated connectors and updated firmware',
+//         equipment_status: 'Operational',
+//         recommendations: 'Schedule quarterly maintenance',
+//         approved_by: 'Dr. Juan Santos',
+//         medtech_signature: null,
+//         parts: [{ qty: 1, particulars: 'Display Cable', si_dr_no: 'SI-2024-001' }],
+//         before_images: [], after_images: [], service_images: [], calibration_images: []
+//     },
+//     {
+//         id: 'pending_002',
+//         machine_id: 2,
+//         machine_name: 'Philips Ultrasound',
+//         serial_number: 'US-2024-045',
+//         model: 'Philips EPIQ 7',
+//         location: 'Cebu Medical Center',
+//         client_name: 'Cebu Medical Center',
+//         created_at: '2024-01-16T10:15:00',
+//         last_updated: '2024-01-16T11:45:00',
+//         status: 'draft',
+//         service_type: ['Troubleshooting'],
+//         identification: 'Probe not detected by system',
+//         root_cause: 'Faulty probe connector',
+//         action_taken: 'Replaced probe connector assembly',
+//         equipment_status: 'Operational',
+//         recommendations: 'Monitor probe performance weekly',
+//         approved_by: 'Dr. Maria Reyes',
+//         medtech_signature: null,
+//         parts: [{ qty: 1, particulars: 'Probe Connector', si_dr_no: 'DR-2024-089' }],
+//         before_images: [], after_images: [], service_images: [], calibration_images: []
+//     },
+//     {
+//         id: 'pending_003',
+//         machine_id: 3,
+//         machine_name: 'GE Ventilator',
+//         serial_number: 'VENT-2024-123',
+//         model: 'GE CARESCAPE R860',
+//         location: 'Davao Doctors Hospital',
+//         client_name: 'Davao Doctors Hospital',
+//         created_at: '2024-01-16T13:00:00',
+//         last_updated: '2024-01-16T15:30:00',
+//         status: 'draft',
+//         service_type: ['Maintenance', 'Calibration'],
+//         identification: 'Oxygen sensor calibration drift',
+//         root_cause: 'Sensor aging',
+//         action_taken: 'Replaced oxygen sensor and recalibrated',
+//         equipment_status: 'Operational',
+//         recommendations: 'Replace sensor every 6 months',
+//         approved_by: 'Dr. Antonio Cruz',
+//         medtech_signature: null,
+//         parts: [
+//             { qty: 1, particulars: 'Oxygen Sensor', si_dr_no: 'SI-2024-056' },
+//             { qty: 2, particulars: 'Filter Kit', si_dr_no: 'SI-2024-056' }
+//         ],
+//         before_images: [], after_images: [], service_images: [], calibration_images: []
+//     },
+//     {
+//         id: 'pending_004',
+//         machine_id: 4,
+//         machine_name: 'Mindray Patient Monitor',
+//         serial_number: 'PM-2024-789',
+//         model: 'Mindray uMEC12',
+//         location: 'St. Lukes Medical Center',
+//         client_name: 'St. Lukes Medical Center',
+//         created_at: '2024-01-17T08:45:00',
+//         last_updated: '2024-01-17T10:20:00',
+//         status: 'draft',
+//         service_type: ['Installation'],
+//         identification: 'New unit installation and setup',
+//         root_cause: 'Initial deployment',
+//         action_taken: 'Installed, configured network, and tested all parameters',
+//         equipment_status: 'Operational',
+//         recommendations: 'Train staff on proper usage',
+//         approved_by: 'Dr. Robert Lim',
+//         medtech_signature: null,
+//         parts: [],
+//         before_images: [], after_images: [], service_images: [], calibration_images: []
+//     },
+//     {
+//         id: 'pending_005',
+//         machine_id: 5,
+//         machine_name: 'B Braun Dialysis Machine',
+//         serial_number: 'DIA-2024-234',
+//         model: 'B Braun Dialog+',
+//         location: 'National Kidney Institute',
+//         client_name: 'National Kidney Institute',
+//         created_at: '2024-01-17T14:30:00',
+//         last_updated: '2024-01-17T16:15:00',
+//         status: 'draft',
+//         service_type: ['Troubleshooting', 'PMS'],
+//         identification: 'Flow rate error during dialysis',
+//         root_cause: 'Clogged filter in fluid path',
+//         action_taken: 'Cleaned filter system and replaced tubing',
+//         equipment_status: 'Operational',
+//         recommendations: 'Replace filter every 3 months',
+//         approved_by: 'Dr. Cristina Fernandez',
+//         medtech_signature: null,
+//         parts: [
+//             { qty: 1, particulars: 'Filter Assembly', si_dr_no: 'DR-2024-112' },
+//             { qty: 2, particulars: 'Tubing Set', si_dr_no: 'DR-2024-112' }
+//         ],
+//         before_images: [], after_images: [], service_images: [], calibration_images: []
+//     },
+//     {
+//         id: 'pending_006',
+//         machine_id: 6,
+//         machine_name: 'Drager Anesthesia Machine',
+//         serial_number: 'AN-2024-567',
+//         model: 'Drager Perseus A500',
+//         location: 'Philippine Heart Center',
+//         client_name: 'Philippine Heart Center',
+//         created_at: '2024-01-18T09:00:00',
+//         last_updated: '2024-01-18T11:30:00',
+//         status: 'draft',
+//         service_type: ['Calibration'],
+//         identification: 'Vaporizer output inaccurate',
+//         root_cause: 'Calibration out of spec',
+//         action_taken: 'Recalibrated vaporizer and tested',
+//         equipment_status: 'Operational',
+//         recommendations: 'Annual calibration required',
+//         approved_by: 'Dr. Manuel Santos',
+//         medtech_signature: null,
+//         parts: [],
+//         before_images: [], after_images: [], service_images: [], calibration_images: []
+//     }
+// ];
 
+let pendingServices = JSON.parse(localStorage.getItem("serviceDraft"));
 // ─── HELPERS ───────────────────────────────────────────────────────────────────
 
 function escapeHtml(str) {
@@ -220,11 +221,11 @@ function loadPendingServices() {
 
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (!key || !key.startsWith('serviceDraft_')) continue;
+        if (!key || !key.startsWith('serviceDraft')) continue;
         try {
             const draft = JSON.parse(localStorage.getItem(key));
             localStorageDrafts.push({
-                id:                 key.replace('serviceDraft_', ''),
+                id:                 key.replace('serviceDraft', ''),
                 machine_id:         draft.machine_id         || 'unknown',
                 machine_name:       draft.machine_name       || 'Unknown Machine',
                 serial_number:      draft.serial_number      || 'N/A',
@@ -288,24 +289,38 @@ function renderPendingTable() {
                        + (service.after_images?.length   || 0)
                        + (service.service_images?.length || 0)
                        + (service.calibration_images?.length || 0);
+        
+        let machines = {{Js::from($machines)}};
+        let find = false;
+        let index = 0;
+        while(!find){
+            if(machines[index].id == service.machine_id){
+                find = true;
+            }else{
+                index++;
+            }
+        }
+
+        console.log(machines[index])
 
         return `
         <tr class="border-b border-gray-100 hover:bg-amber-50 transition-colors group">
             <td class="px-3 py-3">
                 <div class="font-medium text-gray-800 text-sm flex items-center gap-2">
                     <i class="fas fa-microscope text-amber-500 text-xs"></i>
-                    ${escapeHtml(service.machine_name)}
+                    ${escapeHtml(machines[index].name)}
                 </div>
                 <div class="text-xs text-gray-400 mt-0.5">
-                    SN: ${escapeHtml(service.serial_number)} | ${escapeHtml(service.model)}
+                    SN: ${escapeHtml(machines[index].serial_number)} | ${escapeHtml(machines[index].model)}
                 </div>
                 <div class="text-xs text-gray-500 mt-1">
-                    <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>${escapeHtml(service.location)}
+                    <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>${escapeHtml(machines[index].
+client_location
+)}
                 </div>
             </td>
             <td class="px-3 py-3 text-sm text-gray-500 whitespace-nowrap">
-                <div>${formatDate(service.created_at)}</div>
-                <div class="text-xs text-gray-400 mt-0.5">${getRelativeTime(service.created_at)}</div>
+                <div>${service.service_date}</div>
             </td>
             <td class="px-3 py-3">
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
@@ -326,12 +341,12 @@ function renderPendingTable() {
             </td>
             <td class="px-3 py-3">
                 <div class="flex gap-1 flex-wrap">
-                    <button onclick="viewPendingDetails('${service.id}')"
+                    <button onclick="viewPendingDetails(${service.service_id})"
                             class="px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                             title="View Details">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button onclick="deletePendingService('${service.id}')"
+                    <button onclick="deletePendingService(${service.service_id})"
                             class="px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete Draft">
                         <i class="fas fa-trash-alt"></i>
@@ -345,7 +360,7 @@ function renderPendingTable() {
 // ─── VIEW DETAILS ──────────────────────────────────────────────────────────────
 
 function viewPendingDetails(serviceId) {
-    const service = pendingServices.find(s => s.id === serviceId);
+    const service = pendingServices.find(s => s.service_id === serviceId);
     if (!service) return;
 
     const totalImages = (service.before_images?.length       || 0)
@@ -353,6 +368,17 @@ function viewPendingDetails(serviceId) {
                       + (service.service_images?.length      || 0)
                       + (service.calibration_images?.length  || 0);
 
+
+        let machines = {{Js::from($machines)}};
+        let find = false;
+        let index = 0;
+        while(!find){
+            if(machines[index].id == service.machine_id){
+                find = true;
+            }else{
+                index++;
+            }
+        }
     // Build image thumbnails section
     function thumbsHtml(label, arr) {
         if (!arr || !arr.length) return '';
@@ -391,12 +417,13 @@ function viewPendingDetails(serviceId) {
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Machine</p>
                 <p class="font-medium">${escapeHtml(service.machine_name)}</p>
-                <p class="text-sm text-gray-600">SN: ${escapeHtml(service.serial_number)} | ${escapeHtml(service.model)}</p>
+                <p class="text-sm text-gray-600">SN: ${escapeHtml(machines[index].serial_number)} | ${escapeHtml(service.model)}</p>
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Client / Location</p>
                 <p class="font-medium">${escapeHtml(service.client_name)}</p>
-                <p class="text-sm text-gray-600">${escapeHtml(service.location)}</p>
+                <p class="text-sm text-gray-600">${escapeHtml(machines[index].
+client_location)}</p>
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Service Type</p>
@@ -408,11 +435,11 @@ function viewPendingDetails(serviceId) {
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Identification/Verification</p>
-                <p class="text-sm">${escapeHtml(service.identification) || 'N/A'}</p>
+                <p class="text-sm">${escapeHtml(service.identification_verification) || 'N/A'}</p>
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Root Cause/Findings</p>
-                <p class="text-sm">${escapeHtml(service.root_cause) || 'N/A'}</p>
+                <p class="text-sm">${escapeHtml(service.root_cause_findings) || 'N/A'}</p>
             </div>
             <div class="border-b pb-2">
                 <p class="text-xs text-gray-500">Action Taken</p>
@@ -575,7 +602,7 @@ function populateServiceForm(data) {
 
 
 function editPendingService(draftId) {
-    const service = pendingServices.find(s => s.id === draftId)
+    const service = pendingServices.find(s => s.service_id === draftId)
                  || (() => {
                         const raw = localStorage.getItem(`serviceDraft_${draftId}`);
                         return raw ? JSON.parse(raw) : null;
@@ -828,7 +855,7 @@ window.togglePendingModal    = togglePendingModal;
 window.closePendingModal     = closePendingModal;
 window.loadPendingServices   = loadPendingServices;
 window.editPendingService    = editPendingService;
-window.submitPendingService  = submitPendingService;
+//window.submitPendingService  = submitPendingService;
 window.deletePendingService  = deletePendingService;
 window.viewPendingDetails    = viewPendingDetails;
 </script>
