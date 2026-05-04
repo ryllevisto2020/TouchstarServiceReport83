@@ -550,12 +550,18 @@ $(document).ready(function () {
                     si_dr_no:fieldset_input[2].value,}
                     parts_replaced.push(parts_object);
             }
-            
+            let serviceId;
+            try {
+                serviceId = JSON.parse(localStorage.getItem("serviceDraft")).length + 1
+            } catch (error) {
+                serviceId = 1;
+            }
             var data = {
+                "service_id" : serviceId,
                 "machine_id" :  dataObjects.machine_id,
                 "service_type" : services_type,
-                "identification_verification" : dataObjects.identification,
-                "root_cause_findings" : dataObjects.root_cause,
+                "identification" : dataObjects.identification,
+                "root_cause" : dataObjects.root_cause,
                 "action_taken" : dataObjects.action_taken,
                 "equipment_status" : dataObjects.equipment_status,
                 "recommendations" : dataObjects.recommendations,
