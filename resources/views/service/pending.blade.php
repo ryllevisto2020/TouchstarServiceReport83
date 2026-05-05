@@ -261,7 +261,7 @@ function loadPendingServices() {
     });
     pendingServices = merged;
 
-    updatePendingBadge();
+    //updatePendingBadge();
     renderPendingTable();
 }
 
@@ -509,7 +509,7 @@ function deletePendingService(serviceId) {
         if (!result.isConfirmed) return;
         localStorage.removeItem(`serviceDraft_${serviceId}`);
         pendingServices = pendingServices.filter(s => s.id !== serviceId);
-        updatePendingBadge();
+        //updatePendingBadge();
         renderPendingTable();
         Swal.fire({ title: 'Deleted!', text: 'Draft has been deleted.', icon: 'success', timer: 1500, showConfirmButton: false });
     });
@@ -613,6 +613,17 @@ function editPendingService(draftId) {
     closePendingModal();
     if (typeof openModal === 'function') {
         openModal(service.machine_id);
+        let service_form = document.getElementById("service-form");
+        let service_id_element = document.createElement("input")
+        service_id_element.type = "hidden"
+        service_id_element.id = "service_id"
+        service_id_element.name = "service_id"
+        service_id_element.value = "";
+
+        service_form.appendChild(service_id_element);
+
+        let service_id = document.getElementById("service_id");
+        service_id.value = draftId;
     } else {
         const modal = document.getElementById('service-modal');
         if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
@@ -865,10 +876,7 @@ window.viewPendingDetails    = viewPendingDetails;
 <button onclick="togglePendingModal()" 
         class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center text-white border-0 cursor-pointer group">
     <i class="fas fa-clock text-xl"></i>
-    <span id="pending-badge" 
-          class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center shadow-md">
-        6
-    </span>
+
 </button>
 
 <!-- Pending Modal -->
