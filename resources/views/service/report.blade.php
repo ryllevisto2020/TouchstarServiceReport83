@@ -219,7 +219,7 @@ body { overflow-x: hidden; }
 </div>
 
 @include('service.modal')
-
+@include('service.offline')
 <script>
 if({{ session('success') ? 'true' : 'false' }}){
     Swal.fire({ title: "Service Completed!", icon: "success", draggable: true });

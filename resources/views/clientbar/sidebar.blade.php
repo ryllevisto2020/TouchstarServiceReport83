@@ -19,21 +19,52 @@
     <!-- Navigation Menu -->
     <div class="px-4 py-6">
         <ul class="space-y-2">
-            <!-- Machines -->
-            <li>
+             <li>
                 <a href="" class="nav-button">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-cogs w-5 text-center"></i>
+                        <span class="ml-3">Dashboard</span>
+                    </div>
+                </a>
+            </li>
+
+            <!-- Machines -->
+            <li class="nav-item">
+                <button class="nav-button" onclick="toggleDropdown('machines-dropdown', 'machines-chevron')">
                     <div class="flex items-center">
                         <i class="fa-solid fa-cogs w-5 text-center"></i>
                         <span class="ml-3">Machines</span>
                     </div>
-                </a>
+                    <i class="fa-solid fa-chevron-down text-xs chevron" id="machines-chevron"></i>
+                </button>
+                <div class="dropdown-content" id="machines-dropdown">
+                    <a href="" class="dropdown-link">
+                        <i class="fa-solid fa-plus w-4 mr-2"></i>
+                        Installed Machines
+                    </a>
+                </div>
             </li>
             <!-- Service Management -->
-            <li>
-                <a href="" class="nav-button">
+            <li class="nav-item">
+                <button class="nav-button" onclick="toggleDropdown('pms-dropdown', 'pms-chevron')">
                     <div class="flex items-center">
                         <i class="fa-solid fa-screwdriver-wrench w-5 text-center"></i>
                         <span class="ml-3">Service Management</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-xs chevron" id="pms-chevron"></i>
+                </button>
+                <div class="dropdown-content" id="pms-dropdown">
+                    <a href="" class="dropdown-link">
+                        <i class="fa-solid fa-book-medical w-4 mr-2"></i>
+                        Service Report History
+                    </a>
+                </div>
+            </li>  
+             <li>
+                <a href="" class="nav-button">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-cogs w-5 text-center"></i>
+                        <span class="ml-3">Ticketing System (Underdevelopment)</span>
                     </div>
                 </a>
             </li>
