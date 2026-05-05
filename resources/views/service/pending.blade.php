@@ -876,14 +876,10 @@ window.viewPendingDetails    = viewPendingDetails;
 <button onclick="togglePendingModal()" 
         class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center text-white border-0 cursor-pointer group">
     <i class="fas fa-clock text-xl"></i>
-<<<<<<< HEAD
     <span id="pending-badge" 
           class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center shadow-md">
-        0
+        1
     </span>
-=======
-
->>>>>>> 99892020f284338f10a472fd7bf3641995ef0511
 </button>
 
 <!-- Pending Modal -->
