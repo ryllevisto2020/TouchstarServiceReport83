@@ -516,8 +516,14 @@ $(document).ready(function () {
     const medtech_signature = $("#signature-data");
     const canvas = $("#signature-pad")[0];
     const signature = new SignaturePad(canvas);
-
+    
     $("#service-form").submit(function(e){
+        try {
+            let service_id = document.getElementById("service_id");
+            get(service_id.value)
+        } catch (error) {
+            console.log(error)
+        }
         if(!signature.isEmpty()){
             medtech_signature.val(signature.toDataURL())
         }
@@ -616,6 +622,7 @@ $(document).ready(function () {
         signature.clear();
         medtech_signature.val("")
         document.getElementById('service-modal').classList.add('hidden');
+        document.getElementById("service_id").remove();
         document.body.style.overflow = '';
     })
 
@@ -633,6 +640,55 @@ $(document).ready(function () {
         medtech_signature.val("")
         document.getElementById('service-modal').classList.add('hidden');
         document.body.style.overflow = '';
+    }
+
+    function get(serviceId){
+
+        let serviceDraftParse = JSON.parse(localStorage.getItem("serviceDraft"));
+        for (let index = 0; index < serviceDraftParse.length; index++) {
+            if(serviceDraftParse[index].service_id === parseInt(serviceId)){
+                serviceDraftParse.splice(index,1)
+            }
+        }
+        
+        localStorage.clear();
+        
+        let serviceId_renew;
+        let serviceDraft = [];
+
+        try {
+            serviceId_renew = JSON.parse(localStorage.getItem("serviceDraft")).length + 1
+        } catch (error) {
+            serviceId_renew = 1;
+        }
+
+        for (let index = 0; index < serviceDraftParse.length; index++) {
+            console.log(serviceDraftParse[index].machine_id);
+            var ob = {
+                "service_id":serviceId_renew,
+                "machine_id": serviceDraftParse[index].machine_id,
+                "service_type": serviceDraftParse[index].service_type,
+                "identification": serviceDraftParse[index].identification,
+                "root_cause": serviceDraftParse[index].root_cause,
+                "action_taken": serviceDraftParse[index].action_taken,
+                "equipment_status": serviceDraftParse[index].equipment_status,
+                "recommendations": serviceDraftParse[index].recommendations,
+                "parts_replaced": serviceDraftParse[index].parts_replaced,
+                "approved_by": serviceDraftParse[index].approved_by,
+                "medtech_signature": serviceDraftParse[index].medtech_signature,
+                "service_engineer": serviceDraftParse[index].service_engineer,
+                "service_engineer_department": serviceDraftParse[index].service_engineer_department,
+                "service_date": serviceDraftParse[index].service_date,
+                "service_images": serviceDraftParse[index].service_images,
+                "before_images": serviceDraftParse[index].before_images,
+                "after_images": serviceDraftParse[index].after_images,
+                "calibration_images": serviceDraftParse[index].calibration_images,
+                "completed_by_user_id": serviceDraftParse[index].completed_by_user_id
+            }
+
+            serviceDraft.push(ob);
+        }
+        localStorage.setItem("serviceDraft",JSON.stringify(serviceDraft))
     }
     setInterval(isOnline, 1000)
 });
