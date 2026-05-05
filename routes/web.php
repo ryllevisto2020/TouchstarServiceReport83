@@ -56,3 +56,12 @@ Route::get('/service/print', function () {
 Route::get('/service/batch-print', function () {
     return view('service.batch-print');
 })->name('service.batch-print');
+
+Route::get('/client/login', function (){
+    return view('clientauth.login');
+})->name('clientauth.login');
+
+
+Route::get('client/dashboard', function(){
+    return view('clientauth.dashboard');
+});

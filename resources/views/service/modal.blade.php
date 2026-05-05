@@ -207,6 +207,12 @@
 
                     <!-- Signature Section -->
                     <div class="mt-6 pt-6 border-t border-gray-200">
+                           <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    I hereby certify that the service was completed and performed to my satisfaction. 
+                                    By signing below, I confirm that the information provided is accurate and the service has been properly rendered.
+                                </p>
+                            </div>
                         <label class="svc-label">
                             <i class="fas fa-signature mr-1.5 text-blue-500"></i> MedTech E-Signature <span class="text-red-500">*</span>
                         </label>
@@ -240,6 +246,7 @@
                     <!-- Personnel Section -->
                     <div class="mt-5 svc-personnel-grid">
                         <div>
+                            
                             <label class="svc-label">
                                 <i class="fas fa-user-check mr-1.5 text-blue-500"></i> Approved By (MedTech) <span class="text-red-500">*</span>
                             </label>
@@ -607,7 +614,6 @@ $(document).ready(function () {
 
     $(document).on("click","#closeServiceModal",function(){
         signature.clear();
-        $('#service-form')[0].reset();
         medtech_signature.val("")
         document.getElementById('service-modal').classList.add('hidden');
         document.body.style.overflow = '';

@@ -867,7 +867,7 @@ window.viewPendingDetails    = viewPendingDetails;
     <i class="fas fa-clock text-xl"></i>
     <span id="pending-badge" 
           class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center shadow-md">
-        6
+        0
     </span>
 </button>
 
