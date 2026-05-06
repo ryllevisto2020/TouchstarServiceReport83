@@ -11,6 +11,7 @@ class Machine extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public $table = "machines";
     protected $fillable = [
         'name',
         'model',
