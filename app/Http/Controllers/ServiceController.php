@@ -115,6 +115,9 @@ class ServiceController extends Controller
 
     public function history(){
         $employee_details = touchStarEmp::where('emp_id', Auth::guard('touchstaraccount')->user()->emp_id)->first();
-        return view('service.history',compact('employee_details'));
+        $service_records = ServiceReport::all();
+        $machines = Machine::all();
+         // Mock data for testing
+        return view('service.history',compact('employee_details','service_records','machines'));
     }
 }

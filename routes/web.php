@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
+Route::get("/",function(){
+    return Response::redirectGuest("/login");
+});
+
 #Login Routes
 Route::get('/login', [AuthController::class, 'LoginForm'])->name('login')->middleware(isLogin::class);
 Route::post('/login/auth',[AuthController::class, 'LoginAuth'])->name('login.auth');
