@@ -192,7 +192,7 @@
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-slate-700">FORMATTED DATE</div>
                             <div class="mt-1"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">${record.service_type}</span></div>
-                            ${record.service_images ? `<div class="text-xs text-slate-400 mt-1"><i class="fas fa-camera mr-1"></i>${record.service_images} images</div>` : ''}
+                            ${record.service_images ? `<div class="text-xs text-slate-400 mt-1"><i class="fas fa-camera mr-1"></i>${record.service_images}</div>` : ''}
                         </td>
                         <td class="px-6 py-4 max-w-xs">
                             <div class="text-xs text-slate-600"><span class="font-semibold">Issue:</span> ${record.root_cause_findings.substring(0, 70)}${record.root_cause_findings.length > 70 ? '…' : ''}</div>
@@ -278,8 +278,10 @@
             const partsHtml = JSON.parse(report.parts_replaced)?.length ? `<div class="bg-slate-50 rounded-xl p-4"><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Parts Replaced</p><ul class="space-y-1">${JSON.parse(report.parts_replaced).map(p => `<li class="text-sm flex items-center gap-2"><i class="fas fa-microchip text-slate-400 text-xs"></i><span class="font-medium">${p.qty}x</span> ${p.particulars}</li>`).join('')}</ul></div>` : '<div class="text-slate-400 italic text-sm">No parts replaced</div>';
             const service_images = JSON.parse(report.service_images)
 
-            for (let i = 0; i < service_images.length; i++) {
-                document.getElementById("test_services_images").append("test");
+            let i = '';
+
+            for (let index = 0; index < service_images.length; index++) {
+                i += `<img src="/storage/${service_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
             }
             
             document.getElementById('modalContent').innerHTML = `
@@ -296,7 +298,7 @@
                     <div><p class="text-xs font-semibold text-slate-400 uppercase">Equipment Status</p><p><span class="inline-flex px-2.5 py-1 rounded-full text-xs ${report.equipment_status === 'Operational' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${report.equipment_status}</span></p></div>
                     <div><p class="text-xs font-semibold text-slate-400 uppercase">Images Attached</p>
                         <p class="text-slate-700" id="test_services_images">
-                            
+                            ${i}
                         </p>
                     </div>
                 </div>
