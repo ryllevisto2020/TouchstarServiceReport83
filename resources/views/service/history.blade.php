@@ -277,6 +277,11 @@
             if (!report) return;
             const partsHtml = JSON.parse(report.parts_replaced)?.length ? `<div class="bg-slate-50 rounded-xl p-4"><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Parts Replaced</p><ul class="space-y-1">${JSON.parse(report.parts_replaced).map(p => `<li class="text-sm flex items-center gap-2"><i class="fas fa-microchip text-slate-400 text-xs"></i><span class="font-medium">${p.qty}x</span> ${p.particulars}</li>`).join('')}</ul></div>` : '<div class="text-slate-400 italic text-sm">No parts replaced</div>';
             const service_images = JSON.parse(report.service_images)
+            
+            const machine_name = machines.find(m => m.id === report.machine_id)?.name;
+            const machine_model = machines.find(m => m.id === report.machine_id)?.model;
+            const machine_serial = machines.find(m => m.id === report.machine_id)?.serial_number;
+            const machine_location = machines.find(m => m.id === report.machine_id)?.client_location;
 
             let i = '';
 
@@ -286,8 +291,8 @@
             
             document.getElementById('modalContent').innerHTML = `
                 <div class="grid grid-cols-2 gap-4">
-                    <div><p class="text-xs font-semibold text-slate-400 uppercase">Machine</p><p class="font-medium text-slate-800">${report.machine_id} (${report.machine_id})</p></div>
-                    <div><p class="text-xs font-semibold text-slate-400 uppercase">Serial / Location</p><p class="text-slate-700">${report.machine_id} | ${report.machine_id}</p></div>
+                    <div><p class="text-xs font-semibold text-slate-400 uppercase">Machine</p><p class="font-medium text-slate-800">${machine_name} (${machine_model})</p></div>
+                    <div><p class="text-xs font-semibold text-slate-400 uppercase">Serial / Location</p><p class="text-slate-700">${machine_serial} | ${machine_location}</p></div>
                     <div><p class="text-xs font-semibold text-slate-400 uppercase">Service Type</p><p><span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-indigo-100 text-indigo-700">${report.service_type}</span></p></div>
                     <div><p class="text-xs font-semibold text-slate-400 uppercase">Service Date</p><p class="text-slate-700">${report.formatted_date}</p></div>
                     <div><p class="text-xs font-semibold text-slate-400 uppercase">Service Engineer</p><p class="text-slate-700">${report.service_engineer}</p></div>

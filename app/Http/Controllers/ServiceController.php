@@ -110,6 +110,10 @@ class ServiceController extends Controller
             'last_service_date' => now()->format('Y-m-d'),
             'next_service_date' => $newServiceDate->format('Y-m-d'),
             ]);
+
+        Machine::where('id',$machine_id)->update([
+            'status' => $equipment_status
+        ]);
         return redirect()->route('service.report')->with('success', 'Service report added successfully!');
     }
 
