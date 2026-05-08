@@ -896,9 +896,15 @@ window.viewPendingDetails    = viewPendingDetails;
                     Pending Services
                     <span id="pending-count" class="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">6</span>
                 </h3>
+                    
                 <div class="flex gap-2">
                     <button onclick="loadPendingServices()" class="text-white/80 hover:text-white transition-colors" title="Refresh">
                         <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button onclick="openBulkSigModal()"
+                            class="text-white/80 hover:text-white transition-colors"
+                            title="Apply signature to drafts">
+                        <i class="fas fa-signature"></i>
                     </button>
                     <button onclick="closePendingModal()" class="text-white/80 hover:text-white transition-colors">
                         <i class="fas fa-times text-xl"></i>
@@ -940,7 +946,7 @@ window.viewPendingDetails    = viewPendingDetails;
         </div>
     </div>
 </div>
-
+@include('service.signature')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // const saveDraftBtn = document.getElementById('save-draft-btn');
