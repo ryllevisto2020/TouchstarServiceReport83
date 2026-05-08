@@ -52,7 +52,7 @@ class MachineController extends Controller
         }
 
         // ✅ Paginate
-        $machines = $query->orderBy('created_at', 'desc')->paginate(12);
+        $machines = $query->orderBy('created_at', 'desc')->paginate(50);
 
         // ✅ Get distinct locations for dropdown
         $locations = Machine::distinct()

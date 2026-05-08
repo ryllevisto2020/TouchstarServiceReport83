@@ -240,7 +240,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" id="signature-data" name="medtech_signature" required>
+                        <input type="hidden" id="signature-data" name="medtech_signature">
                     </div>
 
                     <!-- Personnel Section -->
@@ -251,7 +251,7 @@
                                 <i class="fas fa-user-check mr-1.5 text-blue-500"></i> Approved By (MedTech) <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="approved_by" placeholder="Enter name of MedTech approver"
-                                   class="svc-input" required>
+                                   class="svc-input">
                             <p class="text-xs text-gray-400 mt-1.5">The person who will approve this service report</p>
                         </div>
                         <div>
