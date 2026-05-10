@@ -85,14 +85,20 @@
                 <div><label class="text-sm font-medium">Department</label>
                     <select id="dept" class="w-full border rounded-lg px-3 py-2 bg-white" required>
                         <option value="">Select</option>
-                        <option>Tech Engineering</option><option>Product Specialist</option><option>IT</option>
-                        <option>Marketing</option><option>Sales</option><option>HR</option>
+                        <option>Tech Engineering</option>
+                        <option>Product Specialist</option>
+                        <option>IT</option>
+                        <option>Marketing</option>
+                        <option>Sales</option>
+                        <option>HR</option>
                     </select>
                 </div>
             </div>
             <div><label class="text-sm font-medium">Employment Status</label>
                 <select id="empStatus" class="w-full border rounded-lg px-3 py-2" required>
-                    <option value="active">Active</option><option value="on_leave">On Leave</option><option value="inactive">Inactive</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="ON LEAVE">On Leave</option>
+                    <option value="INACTIVE">Inactive</option>
                 </select>
             </div>
             <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium">Save Employee Details</button>
@@ -124,8 +130,8 @@
     function refreshUI() { updateStats(); renderTable(); }
     function updateStats() {
         document.getElementById("totalCount").innerText = employees.length;
-        document.getElementById("withAccountCount").innerText = employees.filter(e => e.hasAccount).length;
-        document.getElementById("noAccountCount").innerText = employees.filter(e => !e.hasAccount).length;
+        document.getElementById("withAccountCount").innerText = employees.filter(e => e.emp_account === "TRUE").length;
+        document.getElementById("noAccountCount").innerText = employees.filter(e => e.emp_account === "FALSE").length;
     }
 
     function getFiltered() {
@@ -147,11 +153,11 @@
             return;
         }
         tbody.innerHTML = pageData.map(emp => {
+            console.log(emp)
             const statusBadge = emp.emp_status === 'ACTIVE' ? 'bg-green-100 text-green-700' : (emp.emp_status === 'ON LEAVE' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
             const statusText = emp.emp_status === 'ACTIVE' ? 'ACTIVE' : (emp.emp_status === 'ON LEAVE' ? 'ON LEAVE' : 'INACTIVE');
-            const avatar = emp.emp_profile != null ? `<img src="${emp.emp_profile}" class="w-9 h-9 rounded-full object-cover">` : `<div class="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">${emp.emp_first_name[0]}${emp.emp_last_name[0]}</div>`;
-            const accountSection = true//emp.hasAccount 
-                ? `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full"><i class="fas fa-check-circle mr-1"></i> Active</span>`
+            const avatar = `<div class="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">${emp.emp_first_name[0]}${emp.emp_last_name[0]}</div>`;//emp.emp_profile != null ? `<img src="${emp.emp_profile}" class="w-9 h-9 rounded-full object-cover">` : `<div class="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">${emp.emp_first_name[0]}${emp.emp_last_name[0]}</div>`;
+            const accountSection = emp.emp_account == "TRUE" ? `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full"><i class="fas fa-check-circle mr-1"></i> Active</span>`
                 : `<button onclick="openAccountModal('${emp.emp_id}')" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-full transition"><i class="fas fa-user-plus mr-1"></i> Create Account</button>`;
             return `<tr class="hover:bg-gray-50">
                 <td class="px-6 py-3 whitespace-nowrap"><div class="flex items-center gap-3"><div>${avatar}</div><div><div class="font-medium">${emp.emp_first_name} ${emp.emp_last_name}</div><div class="text-xs text-gray-400">${emp.emp_phone || ''}</div></div></div></td>
@@ -267,17 +273,18 @@
     // ---------- EDIT EMPLOYEE ----------
     const editModal = document.getElementById("editModal");
     window.openEditModal = (id) => {
-        const emp = employees.find(e => e.id === id);
-        if (!emp) return;
-        document.getElementById("editId").value = emp.id;
-        document.getElementById("editFirstName").value = emp.firstName;
-        document.getElementById("editLastName").value = emp.lastName;
-        document.getElementById("editPhone").value = emp.phone || "";
-        document.getElementById("editViber").value = emp.viber || "";
-        document.getElementById("editSocial").value = emp.social || "";
-        document.getElementById("editPosition").value = emp.position || "";
-        document.getElementById("editDept").value = emp.dept || "";
-        document.getElementById("editStatus").value = emp.status;
+        const emp = employees.find(e => e.emp_id === parseInt(id));
+        console.log(emp)
+        //if (!emp) return console.log("false");
+        document.getElementById("editId").value = emp.emp_id;
+        document.getElementById("editFirstName").value = emp.emp_first_name;
+        document.getElementById("editLastName").value = emp.emp_last_name;
+        document.getElementById("editPhone").value = emp.emp_phone || "";
+        document.getElementById("editViber").value = emp.emp_viber || "";
+        document.getElementById("editSocial").value = emp.emp_socmed || "";
+        document.getElementById("editPosition").value = emp.emp_position || "";
+        document.getElementById("editDept").value = emp.emp_deparment || "";
+        document.getElementById("editStatus").value = emp.emp_status;
         // clear file inputs
         document.getElementById("editProfile").value = "";
         document.getElementById("editSig").value = "";
@@ -326,28 +333,30 @@
 
     // ---------- VIEW PROFILE ----------
     window.viewProfile = (id) => {
-        const emp = employees.find(e => e.id === id);
+        const emp = employees.find(e => e.emp_id === parseInt(id));
+        let EmpUser = JSON.parse({{ Js::from("$empUser") }})
+        let EmpEmail = EmpUser.find(x => x.emp_id === parseInt(id))?.touch_acc_email
         if (!emp) return;
-        const avatarHtml = emp.profilePic ? `<img src="${emp.profilePic}" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow">` : `<div class="w-24 h-24 rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl font-bold">${(emp.firstName[0]||'')}${(emp.lastName[0]||'')}</div>`;
-        const accountInfo = emp.hasAccount ? `<div class="mt-2 text-green-600"><i class="fas fa-envelope"></i> ${emp.email} <span class="ml-2 text-xs bg-green-100 px-2 py-1 rounded">Login Enabled</span></div>` : `<div class="mt-2 text-orange-500"><i class="fas fa-exclamation-triangle"></i> No system account yet. Click "Create Account" to add login.</div>`;
+        const avatarHtml = `<div class="w-24 h-24 rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl font-bold">${(emp.emp_first_name[0]||'')}${(emp.emp_last_name[0]||'')}</div>`; //emp.emp_profile ? `<img src="${emp.emp_profile}" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow">` : `<div class="w-24 h-24 rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl font-bold">${(emp.emp_first_name[0]||'')}${(emp.emp_last_name[0]||'')}</div>`;
+        const accountInfo = emp.emp_account === "TRUE" ? `<div class="mt-2 text-green-600"><i class="fas fa-envelope"></i> ${EmpEmail} <span class="ml-2 text-xs bg-green-100 px-2 py-1 rounded">Login Enabled</span></div>` : `<div class="mt-2 text-orange-500"><i class="fas fa-exclamation-triangle"></i> No system account yet. Click "Create Account" to add login.</div>`;
         const content = `
             <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-24 rounded-t-lg"></div>
             <div class="px-6 pb-6 -mt-12">
                 <div class="flex flex-col md:flex-row gap-6 items-start">
                     ${avatarHtml}
                     <div class="flex-1 mt-2">
-                        <h2 class="text-2xl font-bold">${emp.firstName} ${emp.lastName}</h2>
+                        <h2 class="text-2xl font-bold">${emp.emp_first_name} ${emp.emp_last_name}</h2>
                         <div class="flex gap-3 flex-wrap mt-1">
-                            <span class="text-sm bg-gray-100 px-2 py-1 rounded">${emp.position || 'No position'}</span>
-                            <span class="text-sm bg-gray-100 px-2 py-1 rounded">${emp.dept || 'No dept'}</span>
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded">${emp.emp_position || 'No position'}</span>
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded">${emp.emp_deparment || 'No dept'}</span>
                         </div>
                         ${accountInfo}
                     </div>
                 </div>
                 <div class="grid md:grid-cols-2 gap-4 mt-6">
-                    <div class="bg-gray-50 p-4 rounded-lg"><i class="fas fa-phone text-blue-500 w-5"></i> ${emp.phone || '—'}</div>
-                    <div class="bg-gray-50 p-4 rounded-lg"><i class="fab fa-viber text-purple-500"></i> ${emp.viber ? '+63 '+emp.viber : '—'}</div>
-                    <div class="bg-gray-50 p-4 rounded-lg col-span-2"><i class="fab fa-facebook text-blue-600"></i> ${emp.social ? `<a href="${emp.social}" target="_blank" class="text-blue-600">${emp.social}</a>` : '—'}</div>
+                    <div class="bg-gray-50 p-4 rounded-lg"><i class="fas fa-phone text-blue-500 w-5"></i> ${emp.emp_phone || '—'}</div>
+                    <div class="bg-gray-50 p-4 rounded-lg"><i class="fab fa-viber text-purple-500"></i> ${emp.emp_viber ? '+63 '+emp.emp_viber : '—'}</div>
+                    <div class="bg-gray-50 p-4 rounded-lg col-span-2"><i class="fab fa-facebook text-blue-600"></i> ${emp.emp_socmed ? `<a href="${emp.emp_socmed}" target="_blank" class="text-blue-600">${emp.emp_socmed}</a>` : '—'}</div>
                 </div>
                 ${emp.signature ? `<div class="mt-4 border-t pt-4"><p class="text-sm text-gray-500">Signature:</p><img src="${emp.signature}" class="h-16 object-contain mt-1"></div>` : ''}
             </div>

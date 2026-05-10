@@ -8,10 +8,11 @@
         </div>
         <form id="accountForm" class="p-6 space-y-4">
             <input type="hidden" id="accEmpId">
+            <div><label class="text-sm font-medium">Username</label><input type="text" id="accUsername" required class="w-full border rounded-lg px-3 py-2 mt-1"></div>
             <div><label class="text-sm font-medium">Email (Login)</label><input type="email" id="accEmail" required class="w-full border rounded-lg px-3 py-2 mt-1"></div>
             <div><label class="text-sm font-medium">Password</label><input type="password" id="accPassword" required class="w-full border rounded-lg px-3 py-2"></div>
             <div><label class="text-sm font-medium">Confirm Password</label><input type="password" id="accConfirm" required class="w-full border rounded-lg px-3 py-2"></div>
-            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-medium">Create Account & Enable Login</button>
+            <button id="createAccount" type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-medium">Create Account & Enable Login</button>
         </form>
     </div>
 </div>
@@ -38,9 +39,22 @@
             <div><label>Social URL</label><input type="text" id="editSocial" class="w-full border rounded px-3 py-2"></div>
             <div class="grid grid-cols-2 gap-4">
                 <div><label>Position</label><input type="text" id="editPosition" class="w-full border rounded px-3 py-2"></div>
-                <div><label>Department</label><select id="editDept" class="w-full border rounded px-3 py-2"><option>Tech Engineering</option><option>Product Specialist</option><option>Information Technology</option><option>Marketing</option><option>Sales</option><option>Human Resource</option></select></div>
+                <div><label>Department</label><select id="editDept" class="w-full border rounded px-3 py-2">
+                        <option>Tech Engineering</option>
+                        <option>Product Specialist</option>
+                        <option>IT</option>
+                        <option>Marketing</option>
+                        <option>Sales</option>
+                        <option>HR</option>
+                </select>
             </div>
-            <div><label>Status</label><select id="editStatus" class="w-full border rounded px-3 py-2"><option value="active">Active</option><option value="on_leave">On Leave</option><option value="inactive">Inactive</option></select></div>
+            </div>
+            <div><label>Status</label><select id="editStatus" class="w-full border rounded px-3 py-2">
+                <option value="ACTIVE">Active</option>
+                <option value="ON LEAVE">On Leave</option>
+                <option value="INACTIVE">Inactive</option>
+            </select>
+        </div>
             <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg">Update Details</button>
         </form>
     </div>
@@ -56,3 +70,40 @@
         <div id="viewContent" class="p-6"></div>
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        $("#accountForm").submit(function(){
+            $user = $("#accUsername").val()
+            $email = $("#accEmail").val()
+            $pass = $("#accPassword").val()
+            $confirmPass = $("#accConfirm").val()
+            $empId = $("#accEmpId").val()
+            
+            if($pass === $confirmPass){
+                $data = {
+                    empId:$empId,
+                    user:$user,
+                    email:$email,
+                    pass:$pass,
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/employee/account/add",
+                    data: $data,
+                    dataType: "JSON",
+                    success: function (response) {
+                        Swal.fire({
+                            text: "Account Created!",
+                            icon: "success"
+                        }).then(function(res){
+                            if(res.isConfirmed){
+                                window.location.reload();
+                            }
+                        });
+
+                    }
+                });
+            }
+        })
+    })
+</script>

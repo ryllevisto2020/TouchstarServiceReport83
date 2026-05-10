@@ -13,7 +13,7 @@ class touchstarUser extends Authenticatable
     //
     public $table = "touchstaraccount";
     public $timestamps = false;
-    public $fillable = ['touch_acc_email', 'touch_acc_password'];
+    public $fillable = ['emp_id','touch_acc_username','touch_acc_email', 'password','touch_acc_login_status'];
     public $primaryKey = 'touch_acc_id';
-    public $hidden = ['touch_acc_password'];
+    public $hidden = ['password'];
 }

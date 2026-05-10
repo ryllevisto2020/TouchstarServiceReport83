@@ -77,8 +77,18 @@
         refreshUI();
     }
 
-    function saveData() { 
-        localStorage.setItem("client_management", JSON.stringify(clients)); 
+    function saveData(data) { 
+        //localStorage.setItem("client_management", JSON.stringify(clients)); 
+        console.log(data)
+        $.ajax({
+            type: "POST",
+            url: "/client/register/add",
+            data: data,
+            dataType: "JSON",
+            success: function (response) {
+                
+            }
+        });
     }
 
     function refreshUI() {
@@ -397,7 +407,7 @@
                 contactPhone: document.getElementById("contactPhone").value.trim(),
                 contactEmail: document.getElementById("contactEmail").value.trim(),
                 status: document.getElementById("clientStatus").value,
-                additionalInfo: document.getElementById("additionalInfo").value.trim(),
+                //additionalInfo: document.getElementById("additionalInfo").value.trim(),
                 clientImage: currentImageDataUrl
             };
 
@@ -416,7 +426,7 @@
                 Swal.fire("Added", "Client added", "success");
             }
 
-            saveData();
+            saveData(formData);
             refreshUI();
             closeModal();
             currentPage = 1;

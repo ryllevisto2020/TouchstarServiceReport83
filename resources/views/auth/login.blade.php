@@ -7,6 +7,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Touchstar Medical Enterprises Inc. — Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;800&display=swap" rel="stylesheet">
@@ -225,6 +226,24 @@
               </div>
             </div>
           </div>
+        @endif
+
+        @if (session("disableaccount"))
+          <script>
+                Swal.fire({
+                  icon: "warning",
+                  text: "Your account is currently disabled. If you believe this is a mistake, please reach out to support for assistance.",
+                });
+          </script>
+        @endif
+
+        @if (session("noaccount"))
+          <script>
+                Swal.fire({
+                  icon: "error",
+                  text: "Login failed. The credentials you entered are incorrect.",
+                });
+          </script>
         @endif
 
         <!-- Login Form -->
