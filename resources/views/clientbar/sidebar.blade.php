@@ -54,7 +54,7 @@
                     <i class="fa-solid fa-chevron-down text-xs chevron" id="pms-chevron"></i>
                 </button>
                 <div class="dropdown-content" id="pms-dropdown">
-                    <a href="" class="dropdown-link">
+                    <a href="{{route('client.service.history')}}" class="dropdown-link">
                         <i class="fa-solid fa-book-medical w-4 mr-2"></i>
                         Service Report History
                     </a>

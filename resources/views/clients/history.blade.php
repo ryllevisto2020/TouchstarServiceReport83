@@ -1,584 +1,386 @@
 @extends('layouts.client')
-
-@section('title', 'TouchStar Medical Enterprises - Service Report History')
-
+@section('title', 'Service Report History')
 @section('content')
-<main class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header Section with Client Info -->
-    <div class="mb-8">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Service Reports</h1>
-                <p class="text-gray-600 mt-1">{{ $user->client_name }} - Complete service history and maintenance records</p>
-            </div>
-            <div class="flex space-x-3">
-                <button onclick="exportReports()" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
-                    <i class="fas fa-download mr-2"></i>
-                    Export CSV
-                </button>
-                <button onclick="printReports()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                    <i class="fas fa-print mr-2"></i>
-                    Print Reports
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                    <i class="fas fa-clipboard-list text-xl"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Services</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['total'] }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600">
-                    <i class="fas fa-calendar-check text-xl"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">This Month</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['monthly'] }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
-                    <i class="fas fa-user-cog text-xl"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Service Engineers</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['engineers'] }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-orange-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-orange-100 text-orange-600">
-                    <i class="fas fa-clock text-xl"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Avg. Response</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['avg_resolution'] }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success/Error Messages -->
-    @if(session('success'))
-        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-            {{ session('success') }}
-        </div>
-    @endif
-    
-    @if(session('error'))
-        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <!-- Advanced Filters -->
-    <div class="bg-white rounded-lg shadow mb-8">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Filter Service Reports</h3>
-        </div>
-        <form method="GET" action="{{ route('client.service.history') }}" class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Serial Number Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Serial Number</label>
-                    <select name="serial_number" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        <option value="">All Serial Numbers</option>
-                        @foreach($serialNumbers as $serial)
-                            <option value="{{ $serial }}" {{ request('serial_number') == $serial ? 'selected' : '' }}>
-                                {{ $serial }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Service Type Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
-                    <select name="service_type" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        <option value="">All Types</option>
-                        <option value="PMS" {{ request('service_type') == 'PMS' ? 'selected' : '' }}>Preventive Maintenance</option>
-                        <option value="Troubleshooting" {{ request('service_type') == 'Troubleshooting' ? 'selected' : '' }}>Troubleshooting</option>
-                        <option value="Installation" {{ request('service_type') == 'Installation' ? 'selected' : '' }}>Installation</option>
-                        <option value="Warranty" {{ request('service_type') == 'Warranty' ? 'selected' : '' }}>Warranty</option>
-                        <option value="Calibration" {{ request('service_type') == 'Calibration' ? 'selected' : '' }}>Calibration</option>
-                    </select>
-                </div>
-
-                <!-- Service Engineer Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Service Engineer</label>
-                    <select name="service_engineer" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        <option value="">All Engineers</option>
-                        @foreach($engineers as $engineer)
-                            <option value="{{ $engineer }}" {{ request('service_engineer') == $engineer ? 'selected' : '' }}>
-                                {{ $engineer }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Equipment Status Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Equipment Status</label>
-                    <select name="equipment_status" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        <option value="">All Status</option>
-                        <option value="Operational" {{ request('equipment_status') == 'Operational' ? 'selected' : '' }}>Operational</option>
-                        <option value="Not Operational" {{ request('equipment_status') == 'Not Operational' ? 'selected' : '' }}>Not Operational</option>
-                    </select>
-                </div>
-
-                <!-- Date Range -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
-                    <input type="date" name="date_from" value="{{ request('date_from') }}" 
-                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
-                    <input type="date" name="date_to" value="{{ request('date_to') }}" 
-                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                </div>
-            </div>
-
-            <!-- Problem Search -->
-            <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Search Problem Description</label>
-                <input type="text" name="problem" value="{{ request('problem') }}"
-                    placeholder="Search in issues, root cause, actions taken..."
-                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            </div>
-
-            <!-- Filter Actions -->
-            <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-                <div class="text-sm text-gray-500">
-                    Showing {{ $serviceRecords->firstItem() ?? 0 }} to {{ $serviceRecords->lastItem() ?? 0 }} of {{ $serviceRecords->total() }} results
-                </div>
-                <div class="flex space-x-3">
-                    <a href="{{ route('client.service.history') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors">
-                        <i class="fas fa-undo mr-2"></i>
-                        Reset Filters
-                    </a>
-                    <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                        <i class="fas fa-filter mr-2"></i>
-                        Apply Filters
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Service Records Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Service Records</h3>
-        </div>
-
-        @if($serviceRecords->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Machine</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Engineer</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($serviceRecords as $record)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        {{ $record->service_date ? $record->service_date->format('M d, Y') : 'N/A' }}
-                                    </div>
-                                    <div class="text-xs text-gray-500">
-                                        {{ $record->service_date ? $record->service_date->format('g:i A') : '' }}
-                                    </div>
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10">
-                                            <img class="h-10 w-10 rounded-lg object-cover border" 
-                                                 src="{{ $record->machine && $record->machine->image_path ? Storage::url($record->machine->image_path) : asset('images/machines/default-machine.jpg') }}" 
-                                                 alt="">
-                                        </div>
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $record->machine->name ?? 'Deleted Machine' }}</div>
-                                            <div class="text-xs text-gray-500">SN: {{ $record->machine->serial_number ?? 'N/A' }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900">{{ $record->service_type_display }}</div>
-                                    @if($record->service_images && count($record->service_images) > 0)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800 mt-1">
-                                            <i class="fas fa-camera mr-1"></i>
-                                            {{ count($record->service_images) }}
-                                        </span>
-                                    @endif
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900">{{ $record->service_engineer ?: 'N/A' }}</div>
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        {{ $record->equipment_status == 'Operational' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $record->equipment_status ?: 'Unknown' }}
-                                    </span>
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    <div class="flex space-x-3">
-                                        <button onclick="viewServiceDetails({{ $record->id }})" 
-                                                class="text-blue-600 hover:text-blue-900 text-sm" title="View Details">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button onclick="printServiceReport({{ $record->id }})" 
-                                                class="text-green-600 hover:text-green-900 text-sm" title="Print Report">
-                                            <i class="fas fa-print"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="bg-white px-6 py-3 border-t border-gray-200">
-                {{ $serviceRecords->appends(request()->query())->links() }}
-            </div>
-        @else
-            <div class="text-center py-12">
-                <div class="text-gray-400 text-6xl mb-4">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No Service Records Found</h3>
-                <p class="text-gray-500">
-                    @if(request()->hasAny(['serial_number', 'service_type', 'date_from', 'date_to', 'service_engineer', 'equipment_status', 'problem']))
-                        No service records match your current filter criteria.
-                    @else
-                        No service records have been created for your location yet.
-                    @endif
-                </p>
-                @if(request()->hasAny(['serial_number', 'service_type', 'date_from', 'date_to', 'service_engineer', 'equipment_status', 'problem']))
-                    <a href="{{ route('client.service.history') }}" class="inline-flex items-center px-4 py-2 mt-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        <i class="fas fa-times mr-2"></i> Clear Filters
-                    </a>
-                @endif
-            </div>
-        @endif
-    </div>
-</main>
-
-<!-- Details Modal -->
-<div id="service-details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Service Report Details</h3>
-            <button onclick="closeServiceDetailsModal()" class="text-gray-400 hover:text-gray-600">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
-        <div id="service-details-content" class="max-h-[70vh] overflow-y-auto">
-            <!-- Content will be loaded here -->
-        </div>
-    </div>
-</div>
-
-<!-- Image Modal -->
-<div id="image-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center">
-    <div class="relative max-w-4xl max-h-screen p-4">
-        <button onclick="closeImageModal()" class="absolute top-2 right-2 text-white text-2xl hover:text-gray-300 z-10">
-            <i class="fas fa-times"></i>
-        </button>
-        <img id="modal-full-image" src="" alt="Full size image" class="max-w-full max-h-screen object-contain">
-    </div>
-</div>
-
-<!-- Loading Spinner -->
-<div id="loading-spinner" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 shadow-xl flex items-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
-        <span class="text-gray-700">Loading...</span>
-    </div>
-</div>
-
-@push('styles')
-<style>
-    /* Modal animations */
-    #service-details-modal, #image-modal {
-        transition: opacity 0.3s ease;
-    }
-    
-    #service-details-modal.hidden, #image-modal.hidden {
-        display: none;
-    }
-    
-    #service-details-modal:not(.hidden), #image-modal:not(.hidden) {
-        display: block;
-    }
-    
-    #image-modal:not(.hidden) {
-        display: flex;
-    }
-    
-    /* Custom scrollbar */
-    .overflow-y-auto::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    .overflow-y-auto::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-    
-    .overflow-y-auto::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 4px;
-    }
-    
-    .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
-    
-    /* Table hover effect */
-    tbody tr {
-        transition: background-color 0.2s ease;
-    }
-    
-    /* Print styles */
-    @media print {
-        .no-print {
-            display: none !important;
-        }
-    }
-</style>
-@endpush
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-// Service Details Modal Functions
-function viewServiceDetails(recordId) {
-    // Show loading state
-    document.getElementById('loading-spinner').classList.remove('hidden');
-    
-    const modalContent = document.getElementById('service-details-content');
-    modalContent.innerHTML = '';
+const RECORDS = [
+  { id:1, machine:"Mindray MX-900", model:"MX-900", serial:"SN-20241101-001", type:"Preventive Maintenance", engineer:"Ramon dela Cruz", status:"Operational", date:"May 08, 2025", time:"9:30 AM", problem:"Unit displaying intermittent low battery warnings despite AC power. Screen brightness degraded during extended use.", root:"Defective battery management IC causing false drain readings. Display backlight driver PCB showing early signs of capacitor aging.", actions:"Replaced battery management module. Recalibrated power sensing circuit. Cleaned and reseated display ribbon cable. Conducted 2-hour burn-in test — unit passed all checks.", recommendations:"Schedule next PMS in 3 months. Install surge protector on outlet.", id_verification:"Unit serial number verified against service log. All patient contact surfaces cleaned per hospital protocol.", parts:[{qty:1,item:"Battery Management IC",si:"SI-2025-001"},{qty:2,item:"Backlight Capacitor 100µF",si:"SI-2025-002"}], before:2, after:2 },
+  { id:2, machine:"Draeger Evita XL", model:"Evita XL", serial:"SN-20241101-002", type:"Troubleshooting", engineer:"Maria Santos", status:"Not Operational", date:"May 06, 2025", time:"2:15 PM", problem:"Ventilator alarming on high pressure limit. Patient circuit pressure readings inconsistent with set parameters.", root:"Partially blocked expiratory valve due to secretion buildup. Flow sensor calibration drift detected after 14 months.", actions:"Disassembled and cleaned expiratory valve assembly. Replaced flow sensor. Performed full ventilator calibration and leak test. Unit requires follow-up within 7 days.", recommendations:"Follow-up visit required within 7 days. Recommend daily expiratory valve inspection by nursing staff.", id_verification:"Unit tagged Out of Service pending part arrival. Serial verified against hospital equipment register.", parts:[{qty:1,item:"Flow Sensor Assembly",si:"SI-2025-010"},{qty:1,item:"Expiratory Valve Seal Kit",si:"SI-2025-011"}], before:3, after:0 },
+  { id:3, machine:"Nihon Kohden BSM-6000", model:"BSM-6000", serial:"SN-20230615-008", type:"Calibration", engineer:"Joel Reyes", status:"Operational", date:"May 05, 2025", time:"10:00 AM", problem:"Routine annual calibration due. SpO2 readings slightly off from reference by ±2%.", root:"SpO2 sensor drift after 18 months of continuous use.", actions:"Performed full multi-parameter calibration per manufacturer protocol. Adjusted SpO2, NIBP, and temperature offsets. Verified ECG lead performance. All parameters within spec.", recommendations:"Next calibration due May 2026.", id_verification:"Calibration reference equipment certificates verified and on file. Unit calibration stickers updated.", parts:[], before:1, after:1 },
+  { id:4, machine:"GE Logiq E10", model:"Logiq E10", serial:"SN-20220310-014", type:"Installation", engineer:"Ana Flores", status:"Operational", date:"Apr 29, 2025", time:"11:45 AM", problem:"New unit installation at Radiology Department, Room 3.", root:"N/A — New unit installation.", actions:"Unboxed and inspected unit. Installed at designated workstation. Configured DICOM network settings. Performed image quality verification and handed over to department head with user orientation.", recommendations:"User training follow-up in 2 weeks for remaining staff.", id_verification:"System installation complete. All probes calibrated against phantom. PACS connectivity tested with IT.", parts:[], before:5, after:3 },
+  { id:5, machine:"Philips IntelliVue MP70", model:"MP70", serial:"SN-20210820-003", type:"Warranty", engineer:"Carlos Tan", status:"Operational", date:"Apr 24, 2025", time:"8:00 AM", problem:"Touch screen unresponsive in the lower-right quadrant.", root:"Digitizer film delamination — covered under active manufacturer warranty.", actions:"Filed warranty claim with Philips. Replaced touchscreen digitizer assembly under warranty. Performed full functional test post-replacement. No charges to client.", recommendations:"Monitor for recurrence over next 30 days.", id_verification:"Warranty status confirmed with Philips distributor. Serial number registered in warranty system.", parts:[{qty:1,item:"Touchscreen Digitizer Assembly",si:"WR-2025-041"}], before:1, after:1 },
+  { id:6, machine:"Hamilton C6 Ventilator", model:"C6", serial:"SN-20230101-011", type:"Troubleshooting", engineer:"Ramon dela Cruz", status:"Not Operational", date:"Apr 20, 2025", time:"3:30 PM", problem:"Unit throwing E-045 hardware fault. Cannot enter operational mode.", root:"Main control board failure. Component-level fault in the power regulation subsystem confirmed via diagnostic port.", actions:"Isolated fault to main PCB. Replacement board ordered from distributor — ETA 5 business days. Unit tagged Out of Service pending repair.", recommendations:"Do not use unit until replacement board is installed and verified.", id_verification:"Fault code E-045 logged. Unit quarantined and tagged per hospital HTMO protocol.", parts:[{qty:1,item:"Main Control PCB (Hamilton C6)",si:"PO-2025-088"}], before:2, after:0 },
+  { id:7, machine:"Sysmex XN-3000", model:"XN-3000", serial:"SN-20191205-021", type:"Preventive Maintenance", engineer:"Joel Reyes", status:"Operational", date:"Apr 17, 2025", time:"1:00 PM", problem:"Scheduled quarterly preventive maintenance service.", root:"No issues found — routine maintenance only.", actions:"Cleaned sample probe and flow cell. Replaced sheath fluid filter. Ran QC materials and verified CBC+Diff accuracy. All parameters within acceptable range.", recommendations:"Next PMS scheduled for July 2025.", id_verification:"QC materials lot numbers recorded in service log. Maintenance sticker updated.", parts:[{qty:1,item:"Sheath Fluid Filter",si:"SI-2025-055"},{qty:1,item:"Sample Probe Cleaning Kit",si:"SI-2025-056"}], before:1, after:1 },
+  { id:8, machine:"Spacelabs 91370", model:"91370", serial:"SN-20200718-006", type:"Calibration", engineer:"Maria Santos", status:"Operational", date:"Apr 10, 2025", time:"10:30 AM", problem:"Annual calibration required per hospital protocol.", root:"Battery backup holding less than 60% capacity. No calibration drift detected.", actions:"Performed NIBP calibration against mercury reference. Verified alarm thresholds and SpO2 accuracy. Replaced backup battery.", recommendations:"Next calibration due April 2026.", id_verification:"Reference sphygmomanometer calibration certificate on file. Battery replaced and tested.", parts:[{qty:1,item:"Backup Battery Pack 12V 4Ah",si:"SI-2025-060"}], before:0, after:0 },
+  { id:9, machine:"Mindray DC-70", model:"DC-70", serial:"SN-20240205-019", type:"Installation", engineer:"Ana Flores", status:"Operational", date:"Apr 03, 2025", time:"9:00 AM", problem:"New ultrasound unit installation at OB-GYN Department.", root:"N/A — New installation.", actions:"Completed site inspection and equipment positioning. Installed transducers, configured OB/GYN presets. Connected to hospital PACS via DICOM. User training conducted for 4 staff members.", recommendations:"Follow-up training session in 2 weeks for remaining 3 staff.", id_verification:"PACS connectivity tested with IT department. DICOM tags verified. All probes calibrated.", parts:[], before:7, after:2 },
+  { id:10, machine:"Siemens ACUSON SC2000", model:"SC2000", serial:"SN-20180430-033", type:"Troubleshooting", engineer:"Carlos Tan", status:"Not Operational", date:"Mar 28, 2025", time:"4:00 PM", problem:"System not booting. Stuck on POST screen with error code 0xA3.", root:"HDD failure confirmed. Boot sector corrupted from brownout event.", actions:"Cloned original HDD to new SSD using disk imaging tool. System boots successfully. Full imaging function scan performed and passed.", recommendations:"Install a UPS for this workstation immediately to prevent recurrence.", id_verification:"System boot log reviewed. Error code 0xA3 confirmed as HDD fault via hardware diagnostic.", parts:[{qty:1,item:"256GB SSD (replacement HDD)",si:"SI-2025-071"},{qty:1,item:"SATA Data Cable",si:"SI-2025-072"}], before:2, after:1 }
+];
 
-    fetch(`/client/service-report/${recordId}/details`, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById('loading-spinner').classList.add('hidden');
-        
-        if (data.success) {
-            document.getElementById('service-details-content').innerHTML = data.html;
-            document.getElementById('service-details-modal').classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-        } else {
-            throw new Error(data.message || 'Failed to load service details');
-        }
-    })
-    .catch(error => {
-        document.getElementById('loading-spinner').classList.add('hidden');
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.message || 'Something went wrong while loading details'
-        });
-    });
+function typeIcon(t){ return {Troubleshooting:"fa-wrench",Installation:"fa-screwdriver-wrench",Warranty:"fa-file-contract",Calibration:"fa-ruler-combined","Preventive Maintenance":"fa-shield-check"}[t]||"fa-tools"; }
+function typeBadge(t){ return {Troubleshooting:"bg-orange-100 text-orange-800",Installation:"bg-purple-100 text-purple-800",Warranty:"bg-teal-100 text-teal-800",Calibration:"bg-indigo-100 text-indigo-800","Preventive Maintenance":"bg-blue-100 text-blue-800"}[t]||"bg-gray-100 text-gray-700"; }
+function mIcon(n){ if(/ventilator|evita|hamilton/i.test(n)) return "fa-lungs"; if(/mri|ct|logiq|acuson|dc-70|ultrasound/i.test(n)) return "fa-radiation"; if(/sysmex|hema/i.test(n)) return "fa-microscope"; return "fa-heartbeat"; }
+function mColor(n){ if(/ventilator|evita|hamilton/i.test(n)) return "bg-violet-50 text-violet-400 border-violet-100"; if(/mri|ct|logiq|acuson|dc-70/i.test(n)) return "bg-amber-50 text-amber-500 border-amber-100"; if(/sysmex|hema/i.test(n)) return "bg-emerald-50 text-emerald-500 border-emerald-100"; return "bg-blue-50 text-blue-400 border-blue-100"; }
+
+function svgDataUrl(label, w, h, bg){
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'><rect width='${w}' height='${h}' fill='${bg}' rx='4'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='${w>100?18:10}' fill='#6B7280' font-family='sans-serif'>${label}</text></svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(svg);
 }
-
-function closeServiceDetailsModal() {
-    document.getElementById('service-details-modal').classList.add('hidden');
-    document.body.classList.remove('overflow-hidden');
-}
-
-// Image Modal Functions
-function openImageModal(imageUrl) {
-    document.getElementById('modal-full-image').src = imageUrl;
-    document.getElementById('image-modal').classList.remove('hidden');
-    document.body.classList.add('overflow-hidden');
-}
-
-function closeImageModal() {
-    document.getElementById('image-modal').classList.add('hidden');
-    document.body.classList.remove('overflow-hidden');
-}
-
-// Print Functions
-function printServiceReport(recordId) {
-    Swal.fire({
-        title: 'Generating Report',
-        text: 'Please wait while we prepare the print view...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    fetch(`/client/service-report/${recordId}/print`, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        Swal.close();
-        if (data.success) {
-            const printWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes');
-            printWindow.document.write(data.print_html);
-            printWindow.document.close();
-            
-            printWindow.onload = function() {
-                printWindow.print();
-            };
-        } else {
-            throw new Error(data.message || 'Failed to generate print view');
-        }
-    })
-    .catch(error => {
-        Swal.close();
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Print Error',
-            text: error.message || 'Something went wrong while printing'
-        });
-    });
-}
-
-function printReports() {
-    const params = new URLSearchParams(window.location.search);
-    
-    Swal.fire({
-        title: 'Generating Reports',
-        text: 'Please wait while we prepare all reports...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    fetch(`/client/service-report/print?${params.toString()}`, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        Swal.close();
-        if (data.success) {
-            const printWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes');
-            printWindow.document.write(data.print_html);
-            printWindow.document.close();
-            
-            printWindow.onload = function() {
-                printWindow.print();
-            };
-        } else {
-            throw new Error(data.message || 'Failed to generate print view');
-        }
-    })
-    .catch(error => {
-        Swal.close();
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Print Error',
-            text: error.message || 'Something went wrong while printing'
-        });
-    });
-}
-
-function exportReports() {
-    const params = new URLSearchParams(window.location.search);
-    window.location.href = `/client/service-report/export?${params.toString()}`;
-}
-
-// Close modals when clicking outside
-document.getElementById('service-details-modal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeServiceDetailsModal();
-    }
-});
-
-document.getElementById('image-modal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeImageModal();
-    }
-});
-
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeServiceDetailsModal();
-        closeImageModal();
-    }
-});
-
-// Auto-submit form on select change (optional - uncomment if desired)
-/*
-document.querySelectorAll('select[name]').forEach(select => {
-    select.addEventListener('change', function() {
-        this.form.submit();
-    });
-});
-*/
+const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FEE2E2","#ECFDF5"];
 </script>
-@endpush
 
-@endsection
+<div class="no-print">
+  <nav class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+        <i class="fas fa-heart-pulse text-white text-sm"></i>
+      </div>
+      <span class="font-bold text-gray-900 text-sm tracking-tight">TouchStar Medical</span>
+      <span class="text-gray-300">|</span>
+      <span class="text-gray-500 text-xs">St. Luke's Medical Center</span>
+    </div>
+    <span class="text-xs text-gray-400">Client Portal</span>
+  </nav>
+
+  <main class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8 flex items-start justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Service Reports</h1>
+        <p class="text-gray-500 text-sm mt-1">St. Luke's Medical Center — Complete service history &amp; maintenance records</p>
+      </div>
+      <button onclick="batchPrint()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm gap-2 shadow-sm">
+        <i class="fas fa-print"></i> Batch Print
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 flex items-center gap-4">
+        <div class="p-2.5 rounded-xl bg-blue-50 text-blue-600 text-lg"><i class="fas fa-clipboard-list"></i></div>
+        <div><p class="text-xs text-gray-500 font-medium">Total Services</p><p class="text-2xl font-bold text-gray-900">148</p></div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500 flex items-center gap-4">
+        <div class="p-2.5 rounded-xl bg-green-50 text-green-600 text-lg"><i class="fas fa-calendar-check"></i></div>
+        <div><p class="text-xs text-gray-500 font-medium">This Month</p><p class="text-2xl font-bold text-gray-900">12</p></div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500 flex items-center gap-4">
+        <div class="p-2.5 rounded-xl bg-purple-50 text-purple-600 text-lg"><i class="fas fa-user-cog"></i></div>
+        <div><p class="text-xs text-gray-500 font-medium">Engineers</p><p class="text-2xl font-bold text-gray-900">6</p></div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 flex items-center gap-4">
+        <div class="p-2.5 rounded-xl bg-amber-50 text-amber-600 text-lg"><i class="fas fa-clock"></i></div>
+        <div><p class="text-xs text-gray-500 font-medium">Avg. Response</p><p class="text-2xl font-bold text-gray-900">2.4h</p></div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm mb-8">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+        <i class="fas fa-sliders text-gray-400 text-sm"></i>
+        <h3 class="text-sm font-semibold text-gray-900">Filter Service Reports</h3>
+      </div>
+      <div class="p-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div><label class="block text-xs font-semibold text-gray-500 mb-1.5">Serial Number</label>
+            <select><option>All Serial Numbers</option><option>SN-20241101-001</option><option>SN-20241101-002</option><option>SN-20230615-008</option></select></div>
+          <div><label class="block text-xs font-semibold text-gray-500 mb-1.5">Service Type</label>
+            <select><option>All Types</option><option>Preventive Maintenance</option><option>Troubleshooting</option><option>Installation</option><option>Warranty</option><option>Calibration</option></select></div>
+          <div><label class="block text-xs font-semibold text-gray-500 mb-1.5">Service Engineer</label>
+            <select><option>All Engineers</option><option>Ramon dela Cruz</option><option>Maria Santos</option><option>Joel Reyes</option><option>Ana Flores</option><option>Carlos Tan</option></select></div>
+          <div><label class="block text-xs font-semibold text-gray-500 mb-1.5">Equipment Status</label>
+            <select><option>All Status</option><option>Operational</option><option>Not Operational</option></select></div>
+          <div><label class="block text-xs font-semibold text-gray-500 mb-1.5">From Date</label><input type="date" value="2025-01-01"></div>
+          <div><label class="block text-xs font-semibold text-gray-500 mb-1.5">To Date</label><input type="date" value="2025-05-10"></div>
+          <div class="lg:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1.5">Search Problem Description</label>
+            <input type="text" placeholder="Search in issues, root cause, actions taken…"></div>
+        </div>
+        <div class="flex justify-between items-center mt-5 pt-4 border-t border-gray-100">
+          <span class="text-xs text-gray-400">Showing 1–10 of 148 results</span>
+          <div class="flex gap-2">
+            <button class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs gap-1.5 font-medium transition-colors">
+              <i class="fas fa-rotate-left"></i> Reset
+            </button>
+            <button class="inline-flex items-center px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs gap-1.5 font-medium transition-colors">
+              <i class="fas fa-filter"></i> Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-900">Service Records</h3>
+        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">10 of 148</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead class="bg-gray-50 border-b border-gray-100">
+            <tr>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Machine</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Service Type</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Engineer</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbl" class="divide-y divide-gray-50"></tbody>
+        </table>
+      </div>
+      <div class="px-6 py-3 border-t border-gray-100 flex items-center justify-between">
+        <span class="text-xs text-gray-400">Showing 1–10 of 148 results</span>
+        <div class="flex gap-1">
+          <button class="pag-btn">&laquo;</button>
+          <button class="pag-btn active">1</button>
+          <button class="pag-btn">2</button>
+          <button class="pag-btn">3</button>
+          <span class="pag-btn" style="border:none;background:transparent;color:#9CA3AF;">…</span>
+          <button class="pag-btn">15</button>
+          <button class="pag-btn">&raquo;</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="hidden fixed inset-0 bg-black/50 z-50 overflow-y-auto">
+  <div class="relative mx-auto my-8 w-11/12 max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+          <i id="m-icon" class="fas fa-tools text-white text-sm"></i>
+        </div>
+        <div>
+          <p class="text-white font-bold text-sm" id="m-machine">—</p>
+          <p class="text-blue-200 text-xs mono" id="m-serial">—</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="printSingle()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-medium transition-colors">
+          <i class="fas fa-print"></i> Print
+        </button>
+        <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-xl bg-white/20 hover:bg-white/30 text-white">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="p-6 max-h-[80vh] overflow-y-auto space-y-5">
+      <!-- Summary grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+          <p class="text-xs text-gray-400 font-medium mb-0.5">Service Date</p>
+          <p class="text-sm font-semibold text-gray-800" id="m-date">—</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+          <p class="text-xs text-gray-400 font-medium mb-0.5">Service Type</p>
+          <p class="text-sm font-semibold text-gray-800" id="m-type">—</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+          <p class="text-xs text-gray-400 font-medium mb-0.5">Engineer</p>
+          <p class="text-sm font-semibold text-gray-800" id="m-engineer">—</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+          <p class="text-xs text-gray-400 font-medium mb-0.5">Model</p>
+          <p class="text-sm font-semibold text-gray-800 mono" id="m-model">—</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 col-span-2">
+          <p class="text-xs text-gray-400 font-medium mb-1">Equipment Status</p>
+          <span id="m-status" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold"></span>
+        </div>
+      </div>
+
+      <!-- ID Verification -->
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-4">
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Identification / Verification</p>
+        <p class="text-sm text-gray-700 leading-relaxed" id="m-idver">—</p>
+      </div>
+
+      <!-- Details -->
+      <div class="space-y-3">
+        <div class="border border-orange-100 bg-orange-50/40 rounded-xl p-4">
+          <p class="text-xs font-bold text-orange-600 uppercase tracking-wide mb-2"><i class="fas fa-triangle-exclamation mr-1"></i>Problem / Issue Reported</p>
+          <p class="text-sm text-gray-700 leading-relaxed" id="m-problem">—</p>
+        </div>
+        <div class="border border-red-100 bg-red-50/40 rounded-xl p-4">
+          <p class="text-xs font-bold text-red-600 uppercase tracking-wide mb-2"><i class="fas fa-magnifying-glass mr-1"></i>Root Cause / Findings</p>
+          <p class="text-sm text-gray-700 leading-relaxed" id="m-root">—</p>
+        </div>
+        <div class="border border-green-100 bg-green-50/40 rounded-xl p-4">
+          <p class="text-xs font-bold text-green-700 uppercase tracking-wide mb-2"><i class="fas fa-check-circle mr-1"></i>Actions Taken</p>
+          <p class="text-sm text-gray-700 leading-relaxed" id="m-actions">—</p>
+        </div>
+        <div class="border border-blue-100 bg-blue-50/40 rounded-xl p-4">
+          <p class="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2"><i class="fas fa-lightbulb mr-1"></i>Recommendations</p>
+          <p class="text-sm text-gray-700 leading-relaxed" id="m-reco">—</p>
+        </div>
+      </div>
+
+      <!-- Parts Replaced -->
+      <div id="parts-block">
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2"><i class="fas fa-gears mr-1"></i>Parts Replaced</p>
+        <div class="rounded-xl border border-gray-200 overflow-hidden">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase w-16">Qty</th>
+                <th class="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase">Part / Item</th>
+                <th class="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase">SI/DR No.</th>
+              </tr>
+            </thead>
+            <tbody id="parts-rows" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Before Images -->
+      <div id="before-block">
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2"><i class="fas fa-camera mr-1"></i>Before Service Images</p>
+        <div id="before-imgs" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- After Images -->
+      <div id="after-block">
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2"><i class="fas fa-camera-rotate mr-1"></i>After Service Images</p>
+        <div id="after-imgs" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+
+    <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-2">
+      <button onclick="printSingle()" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors">
+        <i class="fas fa-print"></i> Print Report
+      </button>
+      <button onclick="closeModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+        <i class="fas fa-times"></i> Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="hidden fixed inset-0 bg-black/85 z-[60] flex items-center justify-center" onclick="closeLB()">
+  <button class="absolute top-5 right-5 text-white text-xl w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center" onclick="closeLB()"><i class="fas fa-times"></i></button>
+  <img id="lb-img" src="" alt="" class="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl">
+</div>
+
+<script>
+let currentId = null;
+
+function render() {
+  document.getElementById('tbl').innerHTML = RECORDS.map(r => {
+    const mc = mColor(r.machine);
+    const tc = typeBadge(r.type);
+    const sc = r.status === 'Operational' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+    const si = r.status === 'Operational' ? 'fa-circle-check' : 'fa-circle-xmark';
+    return `<tr onclick="openModal(${r.id})">
+      <td class="px-5 py-3.5 whitespace-nowrap">
+        <div class="text-sm font-semibold text-gray-900">${r.date}</div>
+        <div class="text-xs text-gray-400">${r.time}</div>
+      </td>
+      <td class="px-5 py-3.5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-sm flex-shrink-0 ${mc}"><i class="fas ${mIcon(r.machine)}"></i></div>
+          <div>
+            <div class="text-sm font-semibold text-gray-900">${r.machine}</div>
+            <div class="text-xs text-gray-400 mono">SN: ${r.serial}</div>
+          </div>
+        </div>
+      </td>
+      <td class="px-5 py-3.5">
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${tc}"><i class="fas ${typeIcon(r.type)} text-[9px]"></i>${r.type}</span>
+        ${r.before > 0 || r.after > 0 ? `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-600"><i class="fas fa-camera text-[9px]"></i>${r.before + r.after}</span></div>` : ''}
+      </td>
+      <td class="px-5 py-3.5 text-sm text-gray-800">${r.engineer}</td>
+      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${sc}"><i class="fas ${si} text-[9px]"></i>${r.status}</span></td>
+      <td class="px-5 py-3.5" onclick="event.stopPropagation()">
+        <div class="flex gap-1.5">
+          <button onclick="openModal(${r.id})" class="w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors" title="View"><i class="fas fa-eye text-sm"></i></button>
+          <button onclick="printOne(${r.id})" class="w-8 h-8 rounded-lg bg-green-50 hover:bg-green-100 text-green-600 flex items-center justify-center transition-colors" title="Print"><i class="fas fa-print text-sm"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openModal(id) {
+  const r = RECORDS.find(x => x.id === id);
+  if (!r) return;
+  currentId = id;
+
+  document.getElementById('m-machine').textContent = r.machine;
+  document.getElementById('m-serial').textContent = r.serial;
+  document.getElementById('m-date').textContent = r.date + ' — ' + r.time;
+  document.getElementById('m-type').textContent = r.type;
+  document.getElementById('m-model').textContent = r.model;
+  document.getElementById('m-engineer').textContent = r.engineer;
+  document.getElementById('m-idver').textContent = r.id_verification;
+  document.getElementById('m-problem').textContent = r.problem;
+  document.getElementById('m-root').textContent = r.root;
+  document.getElementById('m-actions').textContent = r.actions;
+  document.getElementById('m-reco').textContent = r.recommendations;
+  document.getElementById('m-icon').className = `fas ${typeIcon(r.type)} text-white text-sm`;
+
+  const sb = document.getElementById('m-status');
+  const op = r.status === 'Operational';
+  sb.className = `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${op ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+  sb.innerHTML = `<i class="fas ${op ? 'fa-circle-check' : 'fa-circle-xmark'} text-[9px]"></i>${r.status}`;
+
+  // Parts
+  const pb = document.getElementById('parts-block');
+  if (r.parts.length) {
+    pb.classList.remove('hidden');
+    document.getElementById('parts-rows').innerHTML = r.parts.map(p =>
+      `<tr><td class="px-4 py-2.5 font-bold text-gray-900">${p.qty}</td><td class="px-4 py-2.5 text-gray-800">${p.item}</td><td class="px-4 py-2.5 mono text-gray-600 text-xs">${p.si}</td></tr>`
+    ).join('');
+  } else { pb.classList.add('hidden'); }
+
+  // Before images
+  const bb = document.getElementById('before-block');
+  const bi = document.getElementById('before-imgs');
+  if (r.before > 0) {
+    bb.classList.remove('hidden');
+    bi.innerHTML = Array.from({length: r.before}, (_, i) => {
+      const src = svgDataUrl('Before ' + (i+1), 68, 68, COLORS[i % COLORS.length]);
+      const lsrc = svgDataUrl('Before Image ' + (i+1), 800, 600, COLORS[i % COLORS.length]);
+      return `<img src="${src}" class="img-thumb" onclick="openLB('${lsrc}')" alt="Before ${i+1}">`;
+    }).join('');
+  } else { bb.classList.add('hidden'); }
+
+  // After images
+  const ab = document.getElementById('after-block');
+  const ai = document.getElementById('after-imgs');
+  ab.classList.remove('hidden');
+  if (r.after > 0) {
+    ai.innerHTML = Array.from({length: r.after}, (_, i) => {
+      const src = svgDataUrl('After ' + (i+1), 68, 68, COLORS[(i+3) % COLORS.length]);
+      const lsrc = svgDataUrl('After Image ' + (i+1), 800, 600, COLORS[(i+3) % COLORS.length]);
+      return `<img src="${src}" class="img-thumb" onclick="openLB('${lsrc}')" alt="After ${i+1}">`;
+    }).join('');
+  } else {
+    ai.innerHTML = `<div class="img-placeholder"><i class="fas fa-image text-gray-300 text-xl"></i><span>No after images</span></div>`;
+  }
+
+  document.getElementById('modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function openLB(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.remove('hidden'); }
+function closeLB() { document.getElementById('lightbox').classList.add('hidden'); }
+
+function printOne(id) { window.open(`print.html?id=${id}`, '_blank', 'width=1100,height=800,scrollbars=yes'); }
+function printSingle() { if (currentId) printOne(currentId); }
+function batchPrint() { window.open('batch.html', '_blank', 'width=1200,height=900,scrollbars=yes'); }
+
+document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeLB(); } });
+
+render();
+</script>
+@endsection 
