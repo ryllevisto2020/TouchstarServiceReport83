@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\touchStarEmp;
+use App\Models\touchstarUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
@@ -12,7 +14,8 @@ class EmployeeController extends Controller
     public function index(){
         $employee_details = touchStarEmp::where('emp_id', Auth::guard('touchstaraccount')->user()->emp_id)->first();
         $employees = touchStarEmp::all();
-        return view('auth.register',compact('employee_details', 'employees'));
+        $empUser = touchstarUser::all();
+        return view('auth.register',compact('employee_details', 'employees','empUser'));
     }
 
     public function addData(Request $req){
@@ -30,5 +33,18 @@ class EmployeeController extends Controller
             'emp_profile'=>$req->input('profilePic')   
         ])->save();
         return response()->json(['message' => 'Employee added successfully']);
+    }
+
+    public function addAccount(Request $req){
+        touchstarUser::create([
+            'emp_id'=>$req->empId,
+            'touch_acc_username'=>$req->user,
+            'touch_acc_email'=>$req->email,
+            'password'=>Hash::make($req->password)
+        ])->save();
+        touchStarEmp::find($req->empId,'*')->update([
+            'emp_account'=>"TRUE"
+        ]);
+        return response()->json(["status"=>200]);
     }
 }

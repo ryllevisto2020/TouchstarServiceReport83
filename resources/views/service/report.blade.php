@@ -537,14 +537,14 @@ document.getElementById('others-checkbox').addEventListener('change', (e) => {
 });
 
 // Signature controls
-document.getElementById('clear-signature').addEventListener('click', () => {
-    if (signaturePad) {
-        signaturePad.clear();
-        document.getElementById('signature-data').value = '';
-        document.getElementById('signature-preview').classList.add('hidden');
-        signatureHistory = [];
-    }
-});
+// document.getElementById('clear-signature').addEventListener('click', () => {
+//     if (signaturePad) {
+//         signaturePad.clear();
+//         document.getElementById('signature-data').value = '';
+//         document.getElementById('signature-preview').classList.add('hidden');
+//         signatureHistory = [];
+//     }
+// });
 
 document.getElementById('undo-signature').addEventListener('click', () => {
     if (signaturePad && signatureHistory.length > 0) {
