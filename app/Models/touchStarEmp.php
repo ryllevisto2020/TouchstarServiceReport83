@@ -20,6 +20,8 @@ class touchStarEmp extends Model
         'emp_role',
         'emp_signature',
         'emp_profile',
-        'emp_status'
+        'emp_status',
+        'emp_account'
     ];
+    public $primaryKey = 'emp_id';
 }

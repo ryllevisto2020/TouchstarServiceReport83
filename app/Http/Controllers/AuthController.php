@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\touchStarEmp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -16,14 +17,23 @@ class AuthController extends Controller
         $email = $req->input('email');
         $password = $req->input('password');
         if(Auth::guard('touchstaraccount')->attempt(['touch_acc_email' => $email, 'password' => $password])){
-            return Response::redirectTo("/machine");
+            if(Auth::guard('touchstaraccount')->user()->touch_acc_login_status != "DISABLED"){
+                return Response::redirectTo("/machine");
+            }else{
+                Auth::guard('touchstaraccount')->logout();
+                return redirect("login")->with("disableaccount",true);
+            }
         }else{
-            return Response::json(['message' => 'Invalid credentials'], 401);
+            return redirect("login")->with("noaccount",true);
         }
     }
 
     public function client(){
-        return view('clientauth.register');
+        $employee_details = touchStarEmp::where('emp_id', Auth::guard('touchstaraccount')->user()->emp_id)->first();
+        return view('clientauth.register',compact('employee_details'));
+    }
+    public function clientAuth(){
+        return "";
     }
 }
 

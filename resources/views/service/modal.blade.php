@@ -251,7 +251,7 @@
                                 <i class="fas fa-user-check mr-1.5 text-blue-500"></i> Approved By (MedTech) <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="approved_by" placeholder="Enter name of MedTech approver"
-                                   class="svc-input">
+                                   class="svc-input" required>
                             <p class="text-xs text-gray-400 mt-1.5">The person who will approve this service report</p>
                         </div>
                         <div>
@@ -532,11 +532,24 @@ $(document).ready(function () {
             alert('Please provide your signature');
         }
     });
+
+    $("#clear-signature").click(function(){
+        if(signature){
+            signature.clear();
+            medtech_signature.val("")
+        }
+    })
     
     $("#save-draft-btn").click(function(e){
-
-        if(!signature.isEmpty()){
-            medtech_signature.val(signature.toDataURL())
+        var signature_medtech;
+        if(signature.isEmpty() || !signature.isEmpty){
+            
+            if(signature.isEmpty){
+                signature_medtech = "";
+            }else{
+                signature_medtech = medtech_signature.val(signature.toDataURL());
+            }
+            
 
             const formData = new FormData(document.getElementById('service-form'));
             
@@ -569,6 +582,7 @@ $(document).ready(function () {
             } catch (error) {
                 serviceId = 1;
             }
+
             var data = {
                 "service_id" : serviceId,
                 "machine_id" :  dataObjects.machine_id,
@@ -580,7 +594,7 @@ $(document).ready(function () {
                 "recommendations" : dataObjects.recommendations,
                 "parts_replaced" : parts_replaced,
                 "approved_by" : dataObjects.approved_by,
-                "medtech_signature" : medtech_signature.val(),
+                "medtech_signature" : signature_medtech,
                 "service_engineer" : dataObjects.service_engineer,
                 "service_engineer_department" : dataObjects.service_engineer_department,
                 "service_date" : new Date().toLocaleDateString("sv-SE",{year:"numeric",month:"2-digit",day:"2-digit"}),
@@ -612,18 +626,25 @@ $(document).ready(function () {
             })
             
         }
-        else if(medtech_signature.val() == ""){
-            e.preventDefault();
-            alert('Please provide your signature');
-        }
+        // else if(medtech_signature.val() == ""){
+        //     e.preventDefault();
+        //     alert('Please provide your signature');
+        // }
     })
 
     $(document).on("click","#closeServiceModal",function(){
+        $("#service-form")[0].reset();
         signature.clear();
         medtech_signature.val("")
         document.getElementById('service-modal').classList.add('hidden');
-        document.getElementById("service_id").remove();
+        try {
+            document.getElementById("service_id").remove();
+        } catch (error) {
+            
+        }
         document.body.style.overflow = '';
+        document.getElementById("machine-id").value="";
+        document.getElementById('signature-preview').classList.add('hidden');
     })
 
     function isOnline(){
@@ -640,6 +661,7 @@ $(document).ready(function () {
         medtech_signature.val("")
         document.getElementById('service-modal').classList.add('hidden');
         document.body.style.overflow = '';
+        
     }
 
     function get(serviceId){
@@ -665,7 +687,7 @@ $(document).ready(function () {
         for (let index = 0; index < serviceDraftParse.length; index++) {
             console.log(serviceDraftParse[index].machine_id);
             var ob = {
-                "service_id":serviceId_renew,
+                "service_id":index+1,
                 "machine_id": serviceDraftParse[index].machine_id,
                 "service_type": serviceDraftParse[index].service_type,
                 "identification": serviceDraftParse[index].identification,

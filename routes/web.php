@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MachineController;
@@ -33,9 +34,7 @@ Route::post("/logout",function(Request $request){
 #Employee Routes
 Route::get('/employee/register', [EmployeeController::class, 'index'])->name('employee.register')->middleware([isAuthEmployee::class]);
 Route::post("/employee/add",[EmployeeController::class, 'addData'])->name('employee.add')->middleware([isAuthEmployee::class]);
-
-#Client Routes
-Route::get('/client/register', [AuthController::class, 'client'])->name('client.register');
+Route::post("/employee/account/add",[EmployeeController::class,'addAccount'])->name('employee.account.add')->middleware([isAuthEmployee::class]);
 
 #Machine Routes
 Route::get('/machine', [MachineController::class, 'index'])->name('machines.index')->middleware([isAuthEmployee::class]);
@@ -52,7 +51,7 @@ Route::post('/service/add',[ServiceController::class, 'addReport'])->name('servi
 #History Routes
 Route::get('/service/history', [ServiceController::class, 'history'])->name('service.history');
     
-
+#Service Report Print Routes
 Route::get('/service/print', function () {
     return view('service.print');
 })->name('service.print');
@@ -61,10 +60,17 @@ Route::get('/service/batch-print', function () {
     return view('service.batch-print');
 })->name('service.batch-print');
 
+#Client Routes
+Route::get('/client/register', [AuthController::class, 'client'])->name('client.register');
+Route::post('/client/register/add',[ClientController::class, 'addClient'])->name('client.add');
+
+Route::get("/client",function(){
+    return view('clientauth.login');
+});
+
 Route::get('/client/login', function (){
     return view('clientauth.login');
 })->name('clientauth.login');
-
 
 Route::get('client/dashboard', function(){
     return view('clientauth.dashboard');

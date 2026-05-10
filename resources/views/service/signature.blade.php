@@ -181,6 +181,7 @@
 
     /* ── Render checklist ──────────────────────────────────────────────────── */
     function _renderDraftList() {
+        let machines = {{Js::from($machines)}};
         const list = document.getElementById('bulk-draft-list');
         if (!list) return;
 
@@ -193,10 +194,11 @@
         }
 
         list.innerHTML = _bulkDrafts.map(({ virtualKey, draft }) => {
+            const location = machines.find(x => x.id == draft.machine_id)?.client_location;
             const hasSig    = !!(draft.medtech_signature || draft.medtech_signature?.length);
             const checked   = _bulkChecked.has(virtualKey);
             const machineName = _getMachineName(draft);
-            const location    = draft.location || draft.client_name || 'N/A';
+            //const location    = draft.location || draft.client_name || 'N/A';
             const types       = Array.isArray(draft.service_type)
                                     ? draft.service_type.slice(0, 2).join(', ')
                                     : (draft.service_type || '');
@@ -236,17 +238,19 @@
     }
 
     function _getMachineName(draft) {
-        /* Try machine_name first, then fall back to a machines lookup if available */
-        if (draft.machine_name && draft.machine_name !== 'Unknown Machine') {
-            return draft.machine_name;
-        }
-        /* If the page exposes $machines via a global (set in renderPendingTable), use it */
-        try {
-            const machines = window.__pageMachines || [];
-            const found = machines.find(m => String(m.id) === String(draft.machine_id));
-            if (found) return found.name;
-        } catch (_) {}
-        return draft.machine_name || 'Unknown Machine';
+        // /* Try machine_name first, then fall back to a machines lookup if available */
+        // if (draft.machine_name && draft.machine_name !== 'Unknown Machine') {
+        //     return draft.machine_name;
+        // }
+        // /* If the page exposes $machines via a global (set in renderPendingTable), use it */
+        // try {
+        //     const machines = window.__pageMachines || [];
+        //     const found = machines.find(m => String(m.id) === String(draft.machine_id));
+        //     if (found) return found.name;
+        // } catch (_) {}
+        // return draft.machine_name || 'Unknown Machine';
+        let machines = {{Js::from($machines)}};
+        return machines.find(x=>x.id == draft.machine_id)?.name;
     }
 
     /* ── Check-all / toggle ────────────────────────────────────────────────── */
