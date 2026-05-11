@@ -110,7 +110,7 @@
 <script>
     let employees = [];
     let currentPage = 1;
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 20;
     let searchTerm = "";
 
     // Load from localStorage
