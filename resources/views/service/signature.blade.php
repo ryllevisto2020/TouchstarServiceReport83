@@ -40,7 +40,12 @@
                         <div id="bulk-draft-list" class="divide-y divide-gray-100"></div>
                     </div>
                 </div>
-
+                 <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    I hereby certify that the service was completed and performed to my satisfaction. 
+                                    By signing below, I confirm that the information provided is accurate and the service has been properly rendered.
+                                </p>
+                            </div>
                 <!-- Signature pad -->
                 <div>
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">

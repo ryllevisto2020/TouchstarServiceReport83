@@ -160,10 +160,15 @@ body { overflow-x: hidden; }
             </div>
             <div>
                 <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Location</label>
-                <select id="filter-location" onchange="applyFilters()"
-                        class="w-full h-10 px-3 bg-white border border-gray-300 rounded-xl text-[13px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">All Locations</option>
-                </select>
+                <div class="relative" id="location-dropdown">
+                    <input type="text" id="filter-location-search" placeholder="Search location…" autocomplete="off"
+                        class="w-full h-10 px-3 bg-white border border-gray-300 rounded-xl text-[13px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                        oninput="filterLocationOptions()" onfocus="openLocationDropdown()" onblur="closeLocationDropdown()">
+                    <input type="hidden" id="filter-location" onchange="applyFilters()">
+                    <div id="location-options"
+                        class="hidden absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-52 overflow-y-auto">
+                    </div>
+                </div>
             </div>
             <div>
                 <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Serial / Machine Name</label>
@@ -220,6 +225,7 @@ body { overflow-x: hidden; }
 
 @include('service.modal')
 @include('service.offline')
+
 <script>
 if({{ session('success') ? 'true' : 'false' }}){
     Swal.fire({ title: "Service Completed!", icon: "success", draggable: true });
@@ -227,15 +233,61 @@ if({{ session('success') ? 'true' : 'false' }}){
 
 const MACHINES = {{ Illuminate\Support\Js::from($machines) }};
 let currentView = 'card', filtered = [...MACHINES], currentPage = 1;
-const PER_PAGE = 8;
+const PER_PAGE = 50;
 
-// Populate locations
-const lf = document.getElementById('filter-location');
-[...new Set(MACHINES.map(m => m.client_location))].sort().forEach(l => {
-    const o = document.createElement('option');
-    o.value = l; o.textContent = l;
-    lf.appendChild(o);
-});
+//OLD SCRIPT
+// // Populate locations
+// const lf = document.getElementById('filter-location');
+// [...new Set(MACHINES.map(m => m.client_location))].sort().forEach(l => {
+//     const o = document.createElement('option');
+//     o.value = l; o.textContent = l;
+//     lf.appendChild(o);
+// });
+
+const locationList = [...new Set(MACHINES.map(m => m.client_location))].sort();
+const locOptionsEl = document.getElementById('location-options');
+
+function buildLocationOptions(filterText = '') {
+    locOptionsEl.innerHTML = '';
+    // "All" option
+    const allDiv = document.createElement('div');
+    allDiv.textContent = 'All Locations';
+    allDiv.className = 'px-3 py-2 text-[13px] text-gray-500 hover:bg-gray-50 cursor-pointer';
+    allDiv.onmousedown = () => selectLocation('', 'All Locations');
+    locOptionsEl.appendChild(allDiv);
+
+    locationList
+        .filter(l => l.toLowerCase().includes(filterText.toLowerCase()))
+        .forEach(l => {
+            const d = document.createElement('div');
+            d.textContent = l;
+            d.className = 'px-3 py-2 text-[13px] text-gray-800 hover:bg-blue-50 hover:text-blue-700 cursor-pointer';
+            d.onmousedown = () => selectLocation(l, l);
+            locOptionsEl.appendChild(d);
+        });
+}
+
+function selectLocation(value, label) {
+    document.getElementById('filter-location').value = value;
+    document.getElementById('filter-location-search').value = label === 'All Locations' ? '' : label;
+    locOptionsEl.classList.add('hidden');
+    applyFilters();
+}
+
+function openLocationDropdown() {
+    buildLocationOptions(document.getElementById('filter-location-search').value);
+    locOptionsEl.classList.remove('hidden');
+}
+
+function closeLocationDropdown() {
+    setTimeout(() => locOptionsEl.classList.add('hidden'), 150);
+}
+
+function filterLocationOptions() {
+    buildLocationOptions(document.getElementById('filter-location-search').value);
+    document.getElementById('filter-location').value = '';
+    applyFilters();
+}
 
 const SBADGE = {
     'Operational':     'bg-green-100 text-green-700 border border-green-200',
@@ -253,6 +305,7 @@ function dateCls(s) {
 function fmt(s) {
     return new Date(s).toLocaleDateString('en-PH', { day: '2-digit', month: 'short', year: 'numeric' });
 }
+let clientPage = {}; 
 
 function applyFilters() {
     const st = document.getElementById('filter-status').value;
@@ -263,7 +316,7 @@ function applyFilters() {
         (!lo || m.client_location === lo) &&
         (!sr || m.serial_number.toLowerCase().includes(sr) || m.name.toLowerCase().includes(sr))
     );
-    currentPage = 1;
+    clientPage = {};
     renderTags(st, lo, sr);
     render();
 }
@@ -281,17 +334,22 @@ function renderTags(st, lo, sr) {
         af.classList.add('hidden');
     }
 }
-
 function clearF(t) {
     if (t === 'status') document.getElementById('filter-status').value = '';
-    if (t === 'location') document.getElementById('filter-location').value = '';
+    if (t === 'location') {
+        document.getElementById('filter-location').value = '';
+        document.getElementById('filter-location-search').value = '';
+    }
     if (t === 'serial') document.getElementById('filter-serial').value = '';
     applyFilters();
 }
 
 function resetFilters() {
-    ['filter-status', 'filter-location'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('filter-status').value = '';
+    document.getElementById('filter-location').value = '';
+    document.getElementById('filter-location-search').value = '';
     document.getElementById('filter-serial').value = '';
+    buildLocationOptions('');
     applyFilters();
 }
 

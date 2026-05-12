@@ -75,3 +75,6 @@ Route::get('/client/login', function (){
 Route::get('client/dashboard', function(){
     return view('clientauth.dashboard');
 });
+Route::get('client/service-history', function(){
+    return view('clients.history');
+})->name('client.service.history');

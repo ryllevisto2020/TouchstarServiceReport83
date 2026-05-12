@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Report #<span id="reportId"></span>{{client_location}}</title>
+    <title>Service Report #<span id="reportId"></span> - MediTech Solutions</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,6 +19,8 @@
                 }
             }
         }
+        
+        // Get report ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const reportId = urlParams.get('id');
         document.title = `Service Report #${reportId} - MediTech Solutions`;

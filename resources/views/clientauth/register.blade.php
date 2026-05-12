@@ -40,6 +40,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pathologist</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Head MedTech</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact Person</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                         </tr>
@@ -68,9 +69,9 @@
             clients = JSON.parse(stored);
         } else {
             clients = [
-                { id: "1", clientName: "St. Luke's Medical Center", address: "279 E Rodriguez Sr. Blvd, Quezon City", pathologist: "Dr. Maria Santos", headMedtech: "Rodrigo Cruz, RMT", contactPersonName: "Atty. John Rivera", contactPhone: "+632 8723-0101", contactEmail: "clients@stlukes.ph", status: "active", additionalInfo: "JCI accredited. Net 30 terms.", clientImage: null },
-                { id: "2", clientName: "Makati Medical Center", address: "2 Amorsolo St., Makati City", pathologist: "Dr. Luisa Dimagiba", headMedtech: "Marlon Reyes, RMT", contactPersonName: "Michael Tan", contactPhone: "+632 8888-8999", contactEmail: "michael.tan@makatimed.ph", status: "active", additionalInfo: "Annual contract renewal Q1.", clientImage: null },
-                { id: "3", clientName: "Cebu Doctors' Hospital", address: "Osmeña Blvd, Cebu City", pathologist: "Dr. Emilio Neri", headMedtech: "Karen Go, RMT", contactPersonName: "Dr. Susan Fernandez", contactPhone: "+63 32 255 5522", contactEmail: "susanf@cebudoctors.com", status: "pending", additionalInfo: "Awaiting signed MOU.", clientImage: null }
+                { id: "1", clientName: "St. Luke's Medical Center", address: "279 E Rodriguez Sr. Blvd, Quezon City", pathologist: "Dr. Maria Santos", headMedtech: "Rodrigo Cruz, RMT", contactPersonName: "Atty. John Rivera", contactPhone: "+632 8723-0101", contactEmail: "clients@stlukes.ph",clientAccount: "Create Account", status: "active", additionalInfo: "JCI accredited. Net 30 terms.", clientImage: null },
+                { id: "2", clientName: "Makati Medical Center", address: "2 Amorsolo St., Makati City", pathologist: "Dr. Luisa Dimagiba", headMedtech: "Marlon Reyes, RMT", contactPersonName: "Michael Tan", contactPhone: "+632 8888-8999", contactEmail: "michael.tan@makatimed.ph",clientAccount: "Create Account", status: "active", additionalInfo: "Annual contract renewal Q1.", clientImage: null },
+                { id: "3", clientName: "Cebu Doctors' Hospital", address: "Osmeña Blvd, Cebu City", pathologist: "Dr. Emilio Neri", headMedtech: "Karen Go, RMT", contactPersonName: "Dr. Susan Fernandez", contactPhone: "+63 32 255 5522", contactEmail: "susanf@cebudoctors.com", clientAccount: "Create Account", status: "pending", additionalInfo: "Awaiting signed MOU.", clientImage: null }
             ];
             saveData();
         }
@@ -146,6 +147,7 @@
                 <td class="px-6 py-4 text-sm">${escapeHtml(c.pathologist || '—')}</td>
                 <td class="px-6 py-4 text-sm">${escapeHtml(c.headMedtech || '—')}</td>
                 <td class="px-6 py-4 text-sm">${escapeHtml(c.contactPersonName || '—')}</td>
+                <td class="px-6 py-4 text-sm text-blue-500 underline cursor-pointer" onclick="createClientAccount('${c.id}')">${escapeHtml(c.clientAccount || '—')}</td>
                 <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-semibold ${statusBadge}">${statusText}</span></td>
                 <td class="px-6 py-4 space-x-2">
                     <button onclick="editClient('${c.id}')" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
