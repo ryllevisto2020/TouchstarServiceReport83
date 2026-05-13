@@ -38,7 +38,7 @@
                     <i class="fa-solid fa-chevron-down text-xs chevron" id="machines-chevron"></i>
                 </button>
                 <div class="dropdown-content" id="machines-dropdown">
-                    <a href="" class="dropdown-link">
+                    <a href="{{route('clients.machines')}}" class="dropdown-link">
                         <i class="fa-solid fa-plus w-4 mr-2"></i>
                         Installed Machines
                     </a>
