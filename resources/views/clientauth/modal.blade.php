@@ -81,3 +81,89 @@
         <div id="viewClientContent" class="p-6 space-y-4"></div>
     </div>
 </div>
+
+{{-- Client Account Modal --}}
+<div id="clientAccountModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+
+        {{-- Header --}}
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-700 px-6 py-5 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                <i class="fas fa-user-plus text-white text-lg"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-white font-semibold text-base">Create Client Account</p>
+                <p class="text-blue-100 text-xs mt-0.5" id="accClientNameDisplay">—</p>
+            </div>
+            <button onclick="closeClientAccountModal()"
+                class="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+        </div>
+
+        {{-- Body --}}
+        <form id="clientAccountForm" class="px-6 py-5 space-y-4">
+            <input type="hidden" id="accClientId">
+
+            {{-- Info banner --}}
+            <div class="flex items-start gap-3 bg-blue-50 border-l-4 border-blue-400 rounded-lg px-4 py-3">
+                <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                <p class="text-xs text-gray-600">This creates a system login for the client portal. Share credentials securely after creation.</p>
+            </div>
+
+            {{-- Email --}}
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                    <i class="fas fa-envelope mr-1"></i> Email Address
+                </label>
+                <input type="email" id="accClientEmail" required
+                    placeholder="client@hospital.ph"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 outline-none transition">
+            </div>
+
+            {{-- Password --}}
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                    <i class="fas fa-lock mr-1"></i> Password
+                </label>
+                <div class="relative">
+                    <input type="password" id="accClientPassword" required
+                        placeholder="••••••••"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 outline-none transition pr-10">
+                    <button type="button" onclick="togglePassword('accClientPassword', this)"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-eye text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Confirm Password --}}
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                    <i class="fas fa-lock mr-1"></i> Confirm Password
+                </label>
+                <div class="relative">
+                    <input type="password" id="accClientConfirm" required
+                        placeholder="••••••••"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 outline-none transition pr-10">
+                    <button type="button" onclick="togglePassword('accClientConfirm', this)"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-eye text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Actions --}}
+            <div class="flex gap-3 pt-1">
+                <button type="button" onclick="closeClientAccountModal()"
+                    class="flex-1 border border-gray-300 text-gray-600 rounded-lg py-2 text-sm hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 text-sm font-semibold flex items-center justify-center gap-2 transition">
+                    <i class="fas fa-user-check"></i> Create Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

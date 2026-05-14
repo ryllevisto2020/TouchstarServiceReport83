@@ -75,6 +75,18 @@ Route::get('/client/login', function (){
 Route::get('client/dashboard', function(){
     return view('clientauth.dashboard');
 });
+Route::get('clients/machines', function(){
+    return view('clients.machine');
+})->name('clients.machines');
+
 Route::get('client/service-history', function(){
     return view('clients.history');
 })->name('client.service.history');
+
+Route::get('clients/batch', function(){
+    return view('clients.batch');
+})->name('clients.batch');
+
+Route::get('clients/print', function(){
+    return view('clients.print');
+})->name('clients.print');

@@ -1,8 +1,3 @@
-{{--
-  resources/views/clientbar/csat-notification.blade.php
-  Drop this inside your existing navbar partial where the notification bell lives.
-  Pass $csatPendingCount from your layout or a View Composer.
---}}
 
 @php
     $csatCount = $csatPendingCount ?? 0;

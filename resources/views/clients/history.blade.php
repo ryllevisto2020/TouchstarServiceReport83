@@ -29,23 +29,12 @@ const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FE
 </script>
 
 <div class="no-print">
-  <nav class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-        <i class="fas fa-heart-pulse text-white text-sm"></i>
-      </div>
-      <span class="font-bold text-gray-900 text-sm tracking-tight">TouchStar Medical</span>
-      <span class="text-gray-300">|</span>
-      <span class="text-gray-500 text-xs">St. Luke's Medical Center</span>
-    </div>
-    <span class="text-xs text-gray-400">Client Portal</span>
-  </nav>
 
   <main class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8 flex items-start justify-between flex-wrap gap-4">
       <div>
         <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Service Reports</h1>
-        <p class="text-gray-500 text-sm mt-1">St. Luke's Medical Center — Complete service history &amp; maintenance records</p>
+        <p class="text-gray-500 text-sm mt-1">((Client Name)) — Complete service history &amp; maintenance records</p>
       </div>
       <button onclick="batchPrint()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm gap-2 shadow-sm">
         <i class="fas fa-print"></i> Batch Print
@@ -374,10 +363,9 @@ function closeModal() {
 function openLB(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.remove('hidden'); }
 function closeLB() { document.getElementById('lightbox').classList.add('hidden'); }
 
-function printOne(id) { window.open(`print.html?id=${id}`, '_blank', 'width=1100,height=800,scrollbars=yes'); }
+function printOne(id) {let url = "{{ route('clients.print', ':id') }}";url = url.replace(':id', id);window.open(url, '_blank', 'width=1100,height=800,scrollbars=yes');}
 function printSingle() { if (currentId) printOne(currentId); }
-function batchPrint() { window.open('batch.html', '_blank', 'width=1200,height=900,scrollbars=yes'); }
-
+function batchPrint() {window.open('{{route('clients.batch')}}', '_blank', 'width=1200,height=900,scrollbars=yes');}
 document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeLB(); } });
 
