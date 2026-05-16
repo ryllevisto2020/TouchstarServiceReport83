@@ -62,28 +62,43 @@ let currentImageDataUrl = null;
 
 // ==================== LOAD / SAVE ====================
 function loadData() {
-    const stored = localStorage.getItem("client_management");
-    if (stored) {
-        clients = JSON.parse(stored);
-    } else {
-        clients = [
-            { id: "1", clientName: "St. Luke's Medical Center", address: "279 E Rodriguez Sr. Blvd, Quezon City", pathologist: "Dr. Maria Santos", headMedtech: "Rodrigo Cruz, RMT", contactPersonName: "Atty. John Rivera", contactPhone: "+632 8723-0101", contactEmail: "clients@stlukes.ph", clientAccount: "Create Account", status: "active", additionalInfo: "JCI accredited. Net 30 terms.", clientImage: null },
-            { id: "2", clientName: "Makati Medical Center", address: "2 Amorsolo St., Makati City", pathologist: "Dr. Luisa Dimagiba", headMedtech: "Marlon Reyes, RMT", contactPersonName: "Michael Tan", contactPhone: "+632 8888-8999", contactEmail: "michael.tan@makatimed.ph", clientAccount: "Create Account", status: "active", additionalInfo: "Annual contract renewal Q1.", clientImage: null },
-            { id: "3", clientName: "Cebu Doctors' Hospital", address: "Osmeña Blvd, Cebu City", pathologist: "Dr. Emilio Neri", headMedtech: "Karen Go, RMT", contactPersonName: "Dr. Susan Fernandez", contactPhone: "+63 32 255 5522", contactEmail: "susanf@cebudoctors.com", clientAccount: "Create Account", status: "pending", additionalInfo: "Awaiting signed MOU.", clientImage: null }
-        ];
-        saveData();
-    }
+    // const stored = localStorage.getItem("client_management");
+    // if (stored) {
+    //     clients = JSON.parse(stored);
+    // } else {
+    //     clients = [
+    //         { id: "1", clientName: "St. Luke's Medical Center", address: "279 E Rodriguez Sr. Blvd, Quezon City", pathologist: "Dr. Maria Santos", headMedtech: "Rodrigo Cruz, RMT", contactPersonName: "Atty. John Rivera", contactPhone: "+632 8723-0101", contactEmail: "clients@stlukes.ph", clientAccount: "Create Account", status: "active", additionalInfo: "JCI accredited. Net 30 terms.", clientImage: null },
+    //         { id: "2", clientName: "Makati Medical Center", address: "2 Amorsolo St., Makati City", pathologist: "Dr. Luisa Dimagiba", headMedtech: "Marlon Reyes, RMT", contactPersonName: "Michael Tan", contactPhone: "+632 8888-8999", contactEmail: "michael.tan@makatimed.ph", clientAccount: "Create Account", status: "active", additionalInfo: "Annual contract renewal Q1.", clientImage: null },
+    //         { id: "3", clientName: "Cebu Doctors' Hospital", address: "Osmeña Blvd, Cebu City", pathologist: "Dr. Emilio Neri", headMedtech: "Karen Go, RMT", contactPersonName: "Dr. Susan Fernandez", contactPhone: "+63 32 255 5522", contactEmail: "susanf@cebudoctors.com", clientAccount: "Create Account", status: "pending", additionalInfo: "Awaiting signed MOU.", clientImage: null }
+    //     ];
+    //     saveData();
+    // }
+    clients = {{ Js::from($client_details) }}
+    console.log(clients);
     refreshUI();
 }
 
 function saveData(data) {
-    console.log(data);
+    let formData = new FormData();
+    delete data.clientImage;
+    formData.append("client_name",data.clientName)
+    formData.append("client_address",data.address)
+    formData.append("client_pathologist",data.pathologist)
+    formData.append("client_headMedtech",data.headMedtech)
+    formData.append("client_contactPerson",data.contactPersonName)
+    formData.append("client_contactPhone",data.contactPhone)
+    formData.append("client_email",data.contactEmail)
+    formData.append("client_status",data.status)
+    formData.append("client_profilepic",$("#clientImage")[0].files[0])
     $.ajax({
         type: "POST",
         url: "/client/register/add",
-        data: data,
-        dataType: "JSON",
-        success: function (response) {}
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+           
+        }
     });
 }
 
@@ -95,8 +110,8 @@ function refreshUI() {
 // ==================== STATS ====================
 function updateStats() {
     document.getElementById("totalClientsCount").innerText = clients.length;
-    document.getElementById("activeClientsCount").innerText = clients.filter(c => c.status === 'active').length;
-    document.getElementById("withContactCount").innerText = clients.filter(c => c.contactPersonName && c.contactPersonName.trim() !== "").length;
+    document.getElementById("activeClientsCount").innerText = clients.filter(c => c.client_status === 'ACTIVE').length;
+    document.getElementById("withContactCount").innerText = clients.filter(c => c.client_contactPerson && c.client_contactPerson.trim() !== "").length;
 }
 
 // ==================== FILTER ====================
@@ -104,10 +119,10 @@ function getFiltered() {
     if (!searchTerm.trim()) return clients;
     const term = searchTerm.toLowerCase();
     return clients.filter(c =>
-        c.clientName.toLowerCase().includes(term) ||
-        (c.address && c.address.toLowerCase().includes(term)) ||
-        (c.contactPersonName && c.contactPersonName.toLowerCase().includes(term)) ||
-        (c.pathologist && c.pathologist.toLowerCase().includes(term))
+        c.client_name.toLowerCase().includes(term) ||
+        (c.client_address && c.client_address.toLowerCase().includes(term)) ||
+        (c.client_contactPerson && c.client_contactPerson.toLowerCase().includes(term)) ||
+        (c.client_pathologist && c.client_pathologist.toLowerCase().includes(term))
     );
 }
 
@@ -127,28 +142,28 @@ function renderTable() {
     }
 
     tbody.innerHTML = pageData.map(c => {
-        const statusBadge = c.status === 'active' ? 'bg-green-100 text-green-700' : (c.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
-        const statusText  = c.status === 'active' ? 'Active' : (c.status === 'pending' ? 'Pending' : 'Inactive');
+        const statusBadge = c.client_status === 'ACTIVE' ? 'bg-green-100 text-green-700' : (c.client_status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
+        const statusText  = c.client_status === 'ACTIVE' ? 'ACTIVE' : (c.client_status === 'PENDING' ? 'PENDING' : 'INACTIVE');
 
-        const imageThumb = c.clientImage
-            ? `<img src="${c.clientImage}" class="w-10 h-10 rounded-full object-cover">`
+        const imageThumb = c.client_profilepic
+            ? `<img src="${c.client_profilepic}" class="w-10 h-10 rounded-full object-cover">`
             : `<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center"><i class="fas fa-building text-blue-500"></i></div>`;
 
-        const accountCell = c.clientAccount === "Active"
+        const accountCell = c.client_account === "TRUE"
             ? `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold"><i class="fas fa-check-circle mr-1"></i>Active</span>`
-            : `<span class="text-blue-500 underline cursor-pointer text-sm" onclick="createClientAccount('${c.id}')">Create Account</span>`;
+            : `<span class="text-blue-500 underline cursor-pointer text-sm" onclick="createClientAccount('${c.client_id }')">Create Account</span>`;
 
         return `<tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center gap-3">
                     ${imageThumb}
-                    <div class="font-semibold">${escapeHtml(c.clientName)}</div>
+                    <div class="font-semibold">${escapeHtml(c.client_name)}</div>
                 </div>
             </td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(c.address ? c.address.substring(0, 40) : '—')}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(c.pathologist || '—')}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(c.headMedtech || '—')}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(c.contactPersonName || '—')}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_address ? c.client_address.substring(0, 40) : '—')}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_pathologist || '—')}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_headMedtech || '—')}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_contactPerson || '—')}</td>
             <td class="px-6 py-4 text-sm">${accountCell}</td>
             <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-semibold ${statusBadge}">${statusText}</span></td>
             <td class="px-6 py-4 space-x-2">
@@ -364,8 +379,12 @@ document.getElementById("clientForm")?.addEventListener("submit", (e) => {
         if (index !== -1) clients[index] = { ...clients[index], ...formData };
         Swal.fire("Updated", "Client updated", "success");
     } else {
-        clients.unshift({ id: Date.now().toString(), clientAccount: "Create Account", ...formData });
-        Swal.fire("Added", "Client added", "success");
+        //clients.push({ id: Date.now().toString(), clientAccount: "Create Account", ...formData });
+        Swal.fire("Added", "Client added", "success").then(function(res){
+            if(res.isConfirmed){
+                window.location.reload()
+            }
+        });
     }
 
     saveData(formData);
@@ -381,9 +400,9 @@ function closeClientAccountModal() {
 }
 
 window.createClientAccount = (id) => {
-    const client = clients.find(c => c.id === id);
+    const client = clients.find(c => c.client_id  === parseInt(id));
     if (!client) return;
-    if (client.clientAccount === "Active") {
+    if (client.client_account === "TRUE") {
         Swal.fire("Info", "This client already has an active account.", "info");
         return;
     }
@@ -406,25 +425,44 @@ document.getElementById("clientAccountForm")?.addEventListener("submit", (e) => 
     const pwd     = document.getElementById("accClientPassword").value;
     const confirm = document.getElementById("accClientConfirm").value;
 
-    if (pwd !== confirm) { Swal.fire("Error", "Passwords do not match.", "error"); return; }
-    if (pwd.length < 8)  { Swal.fire("Error", "Password must be at least 8 characters.", "error"); return; }
+    let errArr = Array();
 
-    $.ajax({
-        type: "POST",
-        url: "/client/account/create",
-        data: { client_id: id, email, password: pwd, _token: "{{ csrf_token() }}" },
-        dataType: "JSON",
-        success(response) {
-            const idx = clients.findIndex(c => c.id === id);
-            if (idx !== -1) clients[idx].clientAccount = "Active";
-            closeClientAccountModal();
-            refreshUI();
-            Swal.fire("Success", `Account created for ${response.clientName ?? "client"}.`, "success");
-        },
-        error() {
-            Swal.fire("Error", "Something went wrong. Please try again.", "error");
+    if (pwd !== confirm) { 
+        Swal.fire("Error", "Passwords do not match.", "error");
+        errArr.push("test")
+    }else if (pwd.length < 8)  { 
+        Swal.fire("Error", "Password must be at least 8 characters.", "error"); 
+        errArr.push("error");
+    }
+
+    if(errArr.length === 0){
+        let data = {
+            client_id : id,
+            client_email : email,
+            client_password : pwd,
         }
-    });
+        
+        $.ajax({
+            type: "POST",
+            url: "/client/account/add",
+            data: data,
+            dataType: "JSON",
+            success(response) {
+                // const idx = clients.findIndex(c => c.id === id);
+                // if (idx !== -1) clients[idx].clientAccount = "Active";
+                // closeClientAccountModal();
+                // refreshUI();
+                Swal.fire("Success", `Account created for ${response.clientName ?? "client"}.`, "success").then(function(res){
+                    if(res.isConfirmed){
+                        window.location.reload();
+                    }
+                });
+            },
+            error() {
+                Swal.fire("Error", "Something went wrong. Please try again.", "error");
+            }
+        });
+    }
 });
 
 document.getElementById("clientAccountModal")?.addEventListener("click", function (e) {

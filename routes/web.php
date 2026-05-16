@@ -63,6 +63,8 @@ Route::get('/service/batch-print', function () {
 #Client Routes
 Route::get('/client/register', [AuthController::class, 'client'])->name('client.register');
 Route::post('/client/register/add',[ClientController::class, 'addClient'])->name('client.add');
+Route::post("/client/account/add",[ClientController::class,"addAccount"])->name("client.add.account");
+Route::post("/client/login/auth",[AuthController::class,"clientAuth"])->name("");
 
 Route::get("/client",function(){
     return view('clientauth.login');

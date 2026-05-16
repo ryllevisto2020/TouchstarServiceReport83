@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\touchstarClientAccount;
 use App\Models\touchstarUser;
 use App\Models\User;
 
@@ -46,6 +47,10 @@ return [
         'touchstaraccount' => [
             'driver' => 'session',
             'provider' => 'touchstaraccounts',
+        ],        
+        'touchstaraclientccount' => [
+            'driver' => 'session',
+            'provider' => 'touchstarclientaccounts',
         ],
     ],
 
@@ -74,6 +79,10 @@ return [
         'touchstaraccounts' => [
             'driver' => 'eloquent',
             'model' => touchstarUser::class,
+        ],
+        'touchstarclientaccounts' => [
+            'driver' => 'eloquent',
+            'model' => touchstarClientAccount::class,
         ],
 
         // 'users' => [

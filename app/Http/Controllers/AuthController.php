@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\touchstarClient;
 use App\Models\touchStarEmp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,10 +31,12 @@ class AuthController extends Controller
 
     public function client(){
         $employee_details = touchStarEmp::where('emp_id', Auth::guard('touchstaraccount')->user()->emp_id)->first();
-        return view('clientauth.register',compact('employee_details'));
+        $client_details = touchstarClient::all();
+        return view('clientauth.register',compact('employee_details','client_details'));
     }
     public function clientAuth(){
-        return "";
+        Auth::guard("touchstaraclientccount")->attempt();
+        return "awda";
     }
 }
 

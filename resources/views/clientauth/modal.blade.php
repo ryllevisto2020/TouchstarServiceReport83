@@ -56,9 +56,9 @@
                 <div>
                     <label class="text-sm font-semibold text-gray-700"><i class="fas fa-tag"></i> Status</label>
                     <select id="clientStatus" class="w-full border rounded-lg px-4 py-2.5 bg-white">
-                        <option value="active">Active Partner</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="pending">Pending Contract</option>
+                        <option value="ACTIVE">Active Partner</option>
+                        <option value="INACTIVE">Inactive</option>
+                        <option value="PENDING">Pending Contract</option>
                     </select>
                 </div>
             </div>
