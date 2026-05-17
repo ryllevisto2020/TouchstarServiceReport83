@@ -34,7 +34,7 @@ const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FE
     <div class="mb-8 flex items-start justify-between flex-wrap gap-4">
       <div>
         <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Service Reports</h1>
-        <p class="text-gray-500 text-sm mt-1">((Client Name)) — Complete service history &amp; maintenance records</p>
+        <p class="text-gray-500 text-sm mt-1">{{ $client_detail->client_name }} — Complete service history &amp; maintenance records</p>
       </div>
       <button onclick="batchPrint()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-sm gap-2 shadow-sm">
         <i class="fas fa-print"></i> Batch Print

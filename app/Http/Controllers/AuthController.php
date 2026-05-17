@@ -34,9 +34,18 @@ class AuthController extends Controller
         $client_details = touchstarClient::all();
         return view('clientauth.register',compact('employee_details','client_details'));
     }
-    public function clientAuth(){
-        Auth::guard("touchstaraclientccount")->attempt();
-        return "awda";
+    public function clientAuth(Request $req){
+        $email = $req->input('email');
+        $password = $req->input('password');
+        if(Auth::guard('touchstaraclientccount')->attempt(['client_email'=>$email,'password'=>$password])){
+            if(Auth::guard('touchstaraclientccount')->user()->client_login_status != "DISABLED"){
+                return Response::redirectTo("/client/dashboard");
+            }else{
+                Auth::guard('touchstaraclientccount')->logout();
+            }
+        }else{
+            return Response()->json(["status"=>404]);
+        }
     }
 }
 

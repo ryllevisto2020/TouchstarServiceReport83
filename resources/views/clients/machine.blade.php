@@ -18,6 +18,7 @@
             <div class="flex items-center">
                 <div class="flex-1">
                     <p class="text-sm text-gray-500">Operational</p>
+                    {{ $operational }}
                     <p class="text-2xl font-bold text-gray-800"></p>
                 </div>
                 <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -30,6 +31,7 @@
             <div class="flex items-center">
                 <div class="flex-1">
                     <p class="text-sm text-gray-500">Maintenance</p>
+                    {{ $maintenance }}
                     <p class="text-2xl font-bold text-gray-800"></p>
                 </div>
                 <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
@@ -42,6 +44,7 @@
             <div class="flex items-center">
                 <div class="flex-1">
                     <p class="text-sm text-gray-500">Overdue PMS</p>
+                    {{ $pms_overdue }}
                     <p class="text-2xl font-bold text-gray-800"></p>
                 </div>
                 <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
@@ -54,6 +57,7 @@
             <div class="flex items-center">
                 <div class="flex-1">
                     <p class="text-sm text-gray-500">Client Name</p>
+                    {{ $client_detail->client_name }}
                     <p class="text-2xl font-bold text-gray-800"></p>
                 </div>
                 <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">

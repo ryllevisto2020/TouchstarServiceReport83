@@ -20,7 +20,7 @@
     <div class="px-4 py-6">
         <ul class="space-y-2">
              <li>
-                <a href="" class="nav-button">
+                <a href="/client/dashboard" class="nav-button">
                     <div class="flex items-center">
                         <i class="fa-solid fa-cogs w-5 text-center"></i>
                         <span class="ml-3">Dashboard</span>
@@ -93,20 +93,20 @@
             </div>
             <div class="ml-3 flex-1 min-w-0">
                 <p class="text-sm font-medium text-white truncate">
-                    @auth
-                            {{ auth()->user()->client_name }}
+                    @auth("touchstaraclientccount")
+                            {{$client_detail->client_name }}
                     @endauth
                 </p>
                 <p class="text-xs text-blue-200 font-medium truncate">
-                    @auth
-                        {{ strtoupper(auth()->user()->role ?? 'USER') }}
+                    @auth("touchstaraclientccount")
+                        {{ strtoupper($client_detail->client_name) }}
                     @else
                         GUEST
                     @endauth
                 </p>
             </div>
-            @auth
-                <form method="POST" action="{{ route('logout') }}" class="ml-2">
+            @auth("touchstaraclientccount")
+                <form method="POST" action="{{ route('client.logout') }}" class="ml-2">
                     @csrf
                     <button type="submit" 
                             class="text-white/70 hover:text-white transition-colors duration-200 p-2 rounded-md hover:bg-white/10" 
