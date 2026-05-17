@@ -3,20 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class touchstarClientAccount extends Model
+class touchstarClientAccount extends Authenticatable
 {
+    use HasFactory, Notifiable;
     //
-    public $table = "touchstarclientaccount";
+    public $table = "touchstarclientaccounts";
     public $timestamps = false;
     public $fillable = [
         "client_id",
         "client_email",
-        "client_password",
+        "password",
         "client_login_status"
     ];
     public $hidden = [
-        "client_password"
+        "password"
     ];
     public $primaryKey = "client_account_id";
 }

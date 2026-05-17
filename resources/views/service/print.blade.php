@@ -79,20 +79,28 @@
     </div>
 
     <script>
-        const MOCK_REPORTS = [
-            { id: 1001, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "PMS", service_date: "2025-02-10", formatted_date: "Feb 10, 2025", root_cause_findings: "Calibration drift on laser module. QC outliers detected on HGB channel.", action_taken: "Realigned optics, performed full QC calibration, replaced cuvette washer.", parts_replaced: [{qty:1, particulars:"Laser diode", si_dr_no:"SI-2024-001"}], equipment_status: "Operational", recommendations: "Schedule quarterly calibration and monthly QC checks.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", identification_verification: "Patient table movement checked and verified. All sensors responding correctly. Image quality calibration performed.", service_images: ["before1.jpg","before2.jpg"], after_images: ["after1.jpg","after2.jpg"], medtech_signature: null },
-            { id: 1002, machine_name: "MRI 3T Pro", model: "SIGNA", serial_number: "SN-MRI-4532", client_location: "Cebu", client_name: "MetroHealth Labs", service_type: "Troubleshooting", service_date: "2025-02-18", formatted_date: "Feb 18, 2025", root_cause_findings: "Noise artifact in axial view, RF interference suspected.", action_taken: "Replaced RF amplifier board, performed system noise test.", parts_replaced: [{qty:1, particulars:"RF Amp Board", si_dr_no:"DR-2024-045"}], equipment_status: "Operational", recommendations: "Monitor weekly for 1 month.", service_engineer: "Sarah Gomez", approved_by: "Dr. Alonzo", identification_verification: "RF shielding integrity verified. All connections secured.", service_images: ["service1.jpg","service2.jpg","service3.jpg"], after_images: [], medtech_signature: null },
-            { id: 1003, machine_name: "Ultrasound Logiq E10", model: "E10", serial_number: "SN-ULT-1290", client_location: "Davao", client_name: "St. Catherine Hospital", service_type: "Installation", service_date: "2025-02-05", formatted_date: "Feb 5, 2025", root_cause_findings: "New installation & configuration of ultrasound system.", action_taken: "Installed software, calibrated all probes, trained sonographers.", parts_replaced: [], equipment_status: "Operational", recommendations: "User training completion required.", service_engineer: "James Cruz", approved_by: "Engr. Villanueva", identification_verification: "System installation complete. All probes calibrated.", service_images: ["install1.jpg","install2.jpg","install3.jpg","install4.jpg","install5.jpg"], after_images: [], medtech_signature: null },
-            { id: 1004, machine_name: "Centrifuge CL-2", model: "CryoSpin", serial_number: "SN-CEN-876", client_location: "Laguna", client_name: "Northside Imaging", service_type: "Warranty", service_date: "2025-01-28", formatted_date: "Jan 28, 2025", root_cause_findings: "Motor not spinning, rotor imbalance error.", action_taken: "Replaced motor assembly and rotor locking mechanism.", parts_replaced: [{qty:1, particulars:"Drive motor", si_dr_no:"SI-2024-089"},{qty:1, particulars:"Rotor lock", si_dr_no:"SI-2024-090"}], equipment_status: "Operational", recommendations: "Check belt tension monthly.", service_engineer: "Patricia Lim", approved_by: "Mr. Lim", identification_verification: "Rotor assembly inspected. All components secure.", service_images: ["warranty1.jpg"], after_images: [], medtech_signature: null },
-            { id: 1005, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "Troubleshooting", service_date: "2025-01-15", formatted_date: "Jan 15, 2025", root_cause_findings: "Intermittent power failure, unit reboots randomly.", action_taken: "Replaced PSU capacitor bank, verified voltage stability.", parts_replaced: [{qty:1, particulars:"Power supply unit", si_dr_no:"SI-2024-095"}], equipment_status: "Operational", recommendations: "Add voltage regulator to outlet.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", identification_verification: "Power supply checked. Voltage output stable.", service_images: ["trouble1.jpg","trouble2.jpg"], after_images: ["after3.jpg"], medtech_signature: null }
-        ];
+        // const MOCK_REPORTS = [
+        //     { id: 1001, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "PMS", service_date: "2025-02-10", formatted_date: "Feb 10, 2025", root_cause_findings: "Calibration drift on laser module. QC outliers detected on HGB channel.", action_taken: "Realigned optics, performed full QC calibration, replaced cuvette washer.", parts_replaced: [{qty:1, particulars:"Laser diode", si_dr_no:"SI-2024-001"}], equipment_status: "Operational", recommendations: "Schedule quarterly calibration and monthly QC checks.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", identification_verification: "Patient table movement checked and verified. All sensors responding correctly. Image quality calibration performed.", service_images: ["before1.jpg","before2.jpg"], after_images: ["after1.jpg","after2.jpg"], medtech_signature: null },
+        //     { id: 1002, machine_name: "MRI 3T Pro", model: "SIGNA", serial_number: "SN-MRI-4532", client_location: "Cebu", client_name: "MetroHealth Labs", service_type: "Troubleshooting", service_date: "2025-02-18", formatted_date: "Feb 18, 2025", root_cause_findings: "Noise artifact in axial view, RF interference suspected.", action_taken: "Replaced RF amplifier board, performed system noise test.", parts_replaced: [{qty:1, particulars:"RF Amp Board", si_dr_no:"DR-2024-045"}], equipment_status: "Operational", recommendations: "Monitor weekly for 1 month.", service_engineer: "Sarah Gomez", approved_by: "Dr. Alonzo", identification_verification: "RF shielding integrity verified. All connections secured.", service_images: ["service1.jpg","service2.jpg","service3.jpg"], after_images: [], medtech_signature: null },
+        //     { id: 1003, machine_name: "Ultrasound Logiq E10", model: "E10", serial_number: "SN-ULT-1290", client_location: "Davao", client_name: "St. Catherine Hospital", service_type: "Installation", service_date: "2025-02-05", formatted_date: "Feb 5, 2025", root_cause_findings: "New installation & configuration of ultrasound system.", action_taken: "Installed software, calibrated all probes, trained sonographers.", parts_replaced: [], equipment_status: "Operational", recommendations: "User training completion required.", service_engineer: "James Cruz", approved_by: "Engr. Villanueva", identification_verification: "System installation complete. All probes calibrated.", service_images: ["install1.jpg","install2.jpg","install3.jpg","install4.jpg","install5.jpg"], after_images: [], medtech_signature: null },
+        //     { id: 1004, machine_name: "Centrifuge CL-2", model: "CryoSpin", serial_number: "SN-CEN-876", client_location: "Laguna", client_name: "Northside Imaging", service_type: "Warranty", service_date: "2025-01-28", formatted_date: "Jan 28, 2025", root_cause_findings: "Motor not spinning, rotor imbalance error.", action_taken: "Replaced motor assembly and rotor locking mechanism.", parts_replaced: [{qty:1, particulars:"Drive motor", si_dr_no:"SI-2024-089"},{qty:1, particulars:"Rotor lock", si_dr_no:"SI-2024-090"}], equipment_status: "Operational", recommendations: "Check belt tension monthly.", service_engineer: "Patricia Lim", approved_by: "Mr. Lim", identification_verification: "Rotor assembly inspected. All components secure.", service_images: ["warranty1.jpg"], after_images: [], medtech_signature: null },
+        //     { id: 1005, machine_name: "HemaTech X100", model: "HTX-100", serial_number: "SN-HTX-8821", client_location: "Manila", client_name: "WellMed Diagnostics", service_type: "Troubleshooting", service_date: "2025-01-15", formatted_date: "Jan 15, 2025", root_cause_findings: "Intermittent power failure, unit reboots randomly.", action_taken: "Replaced PSU capacitor bank, verified voltage stability.", parts_replaced: [{qty:1, particulars:"Power supply unit", si_dr_no:"SI-2024-095"}], equipment_status: "Operational", recommendations: "Add voltage regulator to outlet.", service_engineer: "Michael Tan", approved_by: "Dr. Reyes", identification_verification: "Power supply checked. Voltage output stable.", service_images: ["trouble1.jpg","trouble2.jpg"], after_images: ["after3.jpg"], medtech_signature: null }
+        // ];
+
+        const MOCK_REPORTS = {{ Js::from($service_records) }};
+        const machine = {{ Js::from($machines) }}
+        console.log(machine);
 
         function loadReportData() {
             const urlParams = new URLSearchParams(window.location.search);
             const reportId = parseInt(urlParams.get('id'));
             
             const report = MOCK_REPORTS.find(r => r.id === reportId);
-            
+            const client_name = machine.find(x => x.id === report.machine_id).client_location;
+            const machine_name = machine.find(x => x.id === report.machine_id).name;
+            const model = machine.find(x => x.id === report.machine_id).model;
+            const serial = machine.find(x => x.id === report.machine_id).serial_number;
+            console.log(report);
             if (!report) {
                 document.getElementById('printContent').innerHTML = `
                     <div class="text-center py-12">
@@ -106,10 +114,13 @@
             }
 
             document.getElementById('headerReportId').textContent = `#${report.id}`;
-            document.getElementById('reportId').textContent = report.id;
+            //console.log(report);
+            //document.getElementById('reportId').textContent = `#${report.id}`;
+            const service_type = JSON.parse(report.service_type);
+            const parts_replaced = JSON.parse(report.parts_replaced);
 
-            const serviceTypes = Array.isArray(report.service_type) ? report.service_type.join(', ') : report.service_type;
-            const partsReplacedHtml = report.parts_replaced?.length ? `
+            const serviceTypes = Array.isArray(service_type) ? service_type.join(', ') : service_type;
+            const partsReplacedHtml = parts_replaced?.length ? `
                 <div class="mb-8 print-break">
                     <div class="flex items-center mb-4">
                         <div class="bg-gradient-to-r from-orange-500 to-red-600 rounded-lg p-2.5 mr-3 shadow-md">
@@ -127,7 +138,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                ${report.parts_replaced.map(p => `
+                                ${parts_replaced.map(p => `
                                     <tr class="hover:bg-blue-50 transition-colors">
                                         <td class="px-6 py-4 text-sm font-bold">${p.qty}</td>
                                         <td class="px-6 py-4 text-sm font-medium">${p.particulars}</td>
@@ -159,7 +170,7 @@
                             </div>
                             <div class="space-y-1 text-sm">
                                 <p class="font-bold text-gray-900">Report #${report.id}</p>
-                                <p class="text-gray-600">${report.formatted_date}</p>
+                                <p class="text-gray-600">${report.service_date}</p>
                             </div>
                         </div>
                     </div>
@@ -175,10 +186,10 @@
                     </div>
                     <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200 shadow-sm">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label class="text-xs font-bold text-blue-600 uppercase">Client Location</label><p class="text-sm font-semibold bg-white rounded-lg px-3 py-2 border">${report.client_location}</p></div>
-                            <div><label class="text-xs font-bold text-blue-600 uppercase">Machine Name</label><p class="text-sm font-semibold bg-white rounded-lg px-3 py-2 border">${report.machine_name}</p></div>
-                            <div><label class="text-xs font-bold text-blue-600 uppercase">Model</label><p class="text-sm font-semibold bg-white rounded-lg px-3 py-2 border">${report.model}</p></div>
-                            <div><label class="text-xs font-bold text-blue-600 uppercase">Serial Number</label><p class="text-sm font-bold text-blue-600 bg-blue-50 rounded-lg px-3 py-2 border border-blue-200 font-mono">${report.serial_number}</p></div>
+                            <div><label class="text-xs font-bold text-blue-600 uppercase">Client Location</label><p class="text-sm font-semibold bg-white rounded-lg px-3 py-2 border">${client_name}</p></div>
+                            <div><label class="text-xs font-bold text-blue-600 uppercase">Machine Name</label><p class="text-sm font-semibold bg-white rounded-lg px-3 py-2 border">${machine_name}</p></div>
+                            <div><label class="text-xs font-bold text-blue-600 uppercase">Model</label><p class="text-sm font-semibold bg-white rounded-lg px-3 py-2 border">${model}</p></div>
+                            <div><label class="text-xs font-bold text-blue-600 uppercase">Serial Number</label><p class="text-sm font-bold text-blue-600 bg-blue-50 rounded-lg px-3 py-2 border border-blue-200 font-mono">${serial}</p></div>
                         </div>
                     </div>
                 </div>

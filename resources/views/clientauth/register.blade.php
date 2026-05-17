@@ -161,8 +161,8 @@ function renderTable() {
                 </div>
             </td>
             <td class="px-6 py-4 text-sm">${escapeHtml(c.client_address ? c.client_address.substring(0, 40) : '—')}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_pathologist || '—')}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_headMedtech || '—')}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_Pathologist || '—')}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(c.client_Pathologist || '—')}</td>
             <td class="px-6 py-4 text-sm">${escapeHtml(c.client_contactPerson || '—')}</td>
             <td class="px-6 py-4 text-sm">${accountCell}</td>
             <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-semibold ${statusBadge}">${statusText}</span></td>
