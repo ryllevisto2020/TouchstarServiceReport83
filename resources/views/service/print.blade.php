@@ -153,27 +153,31 @@
 
             document.getElementById('printContent').innerHTML = `
                 <!-- Header -->
-                <div class="border-b-4 border-blue-600 pb-8 mb-8">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                        <div class="flex items-center space-x-4 mb-6 md:mb-0">
-                            <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-3 shadow-lg">
-                                <i class="fas fa-heartbeat text-white text-3xl"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-2xl md:text-3xl font-black text-gray-900">MEDICAL SOLUTIONS INC.</h1>
-                                <p class="text-sm text-gray-600 font-medium">Professional Equipment Services</p>
-                            </div>
-                        </div>
-                        <div class="text-left md:text-right">
-                            <div class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg mb-2">
-                                <p class="text-sm font-bold">SERVICE REPORT</p>
-                            </div>
-                            <div class="space-y-1 text-sm">
-                                <p class="font-bold text-gray-900">Report #${report.id}</p>
-                                <p class="text-gray-600">${report.service_date}</p>
+                <div class="pb-6 mb-8">
+                    <div class="flex items-center justify-between">
+
+                        <!-- Left: Logo -->
+                        <div class="shrink-0">
+                            <img src="/images/logo.png" alt="Touchstar Medical Enterprises Inc."
+                                class="h-24 w-24 object-contain"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="hidden h-24 w-24 rounded-full border-2 border-blue-800 items-center justify-center bg-white shadow">
+                                <i class="fas fa-star-of-life text-blue-800 text-2xl"></i>
                             </div>
                         </div>
+
+                        <!-- Right: Report Title Block -->
+                        <div class="text-center flex-1 pl-8">
+                            <h1 class="text-2xl font-black text-blue-700 tracking-wide uppercase">SERVICE REPORT</h1>
+                            <p class="text-blue-500 font-semibold mt-2 text-base">Report ID: #${report.id}</p>
+                            <p class="text-gray-600 text-sm mt-1">Date: ${report.service_date}</p>
+                        </div>
+
                     </div>
+
+                    <!-- Double rule underline -->
+                    <div class="mt-6 border-t-4 border-blue-700"></div>
+                    <div class="mt-1 border-t border-blue-400"></div>
                 </div>
 
                 <!-- Machine Information -->
