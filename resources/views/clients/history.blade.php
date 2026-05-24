@@ -331,7 +331,7 @@ function openModal(id) {
   if (JSON.parse(r.parts_replaced).length) {
     pb.classList.remove('hidden');
     document.getElementById('parts-rows').innerHTML = JSON.parse(r.parts_replaced).map(p =>
-      `<tr><td class="px-4 py-2.5 font-bold text-gray-900">${p.qty}</td><td class="px-4 py-2.5 text-gray-800">${p.particulars}</td><td class="px-4 py-2.5 mono text-gray-600 text-xs">${p.si_dr_no}</td></tr>`
+      `<tr><td class="px-4 py-2.5 font-bold text-gray-900">${p.qty || ""}</td><td class="px-4 py-2.5 text-gray-800">${p.particulars || ""}</td><td class="px-4 py-2.5 mono text-gray-600 text-xs">${p.si_dr_no || ""}</td></tr>`
     ).join('');
   } else { pb.classList.add('hidden'); }
 
@@ -373,7 +373,7 @@ function closeModal() {
 function openLB(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.remove('hidden'); }
 function closeLB() { document.getElementById('lightbox').classList.add('hidden'); }
 
-function printOne(id) {let url = "{{ route('clients.print', ['id'=>1]) }}";url = url.replace(':id', id);window.open(url, '_blank', 'width=1100,height=800,scrollbars=yes');}
+function printOne(id) {let url = "{{ route('clients.print', ':id') }}";url = url.replace(':id', "id="+id);window.open(url, '_blank', 'width=1100,height=800,scrollbars=yes');}
 function printSingle() { if (currentId) printOne(currentId); }
 function batchPrint() {window.open('{{route('clients.batch')}}', '_blank', 'width=1200,height=900,scrollbars=yes');}
 document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
