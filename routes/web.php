@@ -197,5 +197,7 @@ Route::get('clients/batch', function(){
 })->name('clients.batch');
 
 Route::get('clients/print', function(){
-    return view('clients.print');
+    $client_detail = touchstarClient::where("client_id",Auth::guard("touchstaraclientccount")->user()->client_id)->first();
+    $client_service_record = ServiceReport::where('client_id',$client_detail->client_id)->get()->all();
+    return view('clients.print',compact("client_service_record"));
 })->name('clients.print');
