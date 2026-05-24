@@ -3,18 +3,23 @@
 @section('content')
 
 <script>
-const RECORDS = [
-  { id:1, machine:"Mindray MX-900", model:"MX-900", serial:"SN-20241101-001", type:"Preventive Maintenance", engineer:"Ramon dela Cruz", status:"Operational", date:"May 08, 2025", time:"9:30 AM", problem:"Unit displaying intermittent low battery warnings despite AC power. Screen brightness degraded during extended use.", root:"Defective battery management IC causing false drain readings. Display backlight driver PCB showing early signs of capacitor aging.", actions:"Replaced battery management module. Recalibrated power sensing circuit. Cleaned and reseated display ribbon cable. Conducted 2-hour burn-in test — unit passed all checks.", recommendations:"Schedule next PMS in 3 months. Install surge protector on outlet.", id_verification:"Unit serial number verified against service log. All patient contact surfaces cleaned per hospital protocol.", parts:[{qty:1,item:"Battery Management IC",si:"SI-2025-001"},{qty:2,item:"Backlight Capacitor 100µF",si:"SI-2025-002"}], before:2, after:2 },
-  { id:2, machine:"Draeger Evita XL", model:"Evita XL", serial:"SN-20241101-002", type:"Troubleshooting", engineer:"Maria Santos", status:"Not Operational", date:"May 06, 2025", time:"2:15 PM", problem:"Ventilator alarming on high pressure limit. Patient circuit pressure readings inconsistent with set parameters.", root:"Partially blocked expiratory valve due to secretion buildup. Flow sensor calibration drift detected after 14 months.", actions:"Disassembled and cleaned expiratory valve assembly. Replaced flow sensor. Performed full ventilator calibration and leak test. Unit requires follow-up within 7 days.", recommendations:"Follow-up visit required within 7 days. Recommend daily expiratory valve inspection by nursing staff.", id_verification:"Unit tagged Out of Service pending part arrival. Serial verified against hospital equipment register.", parts:[{qty:1,item:"Flow Sensor Assembly",si:"SI-2025-010"},{qty:1,item:"Expiratory Valve Seal Kit",si:"SI-2025-011"}], before:3, after:0 },
-  { id:3, machine:"Nihon Kohden BSM-6000", model:"BSM-6000", serial:"SN-20230615-008", type:"Calibration", engineer:"Joel Reyes", status:"Operational", date:"May 05, 2025", time:"10:00 AM", problem:"Routine annual calibration due. SpO2 readings slightly off from reference by ±2%.", root:"SpO2 sensor drift after 18 months of continuous use.", actions:"Performed full multi-parameter calibration per manufacturer protocol. Adjusted SpO2, NIBP, and temperature offsets. Verified ECG lead performance. All parameters within spec.", recommendations:"Next calibration due May 2026.", id_verification:"Calibration reference equipment certificates verified and on file. Unit calibration stickers updated.", parts:[], before:1, after:1 },
-  { id:4, machine:"GE Logiq E10", model:"Logiq E10", serial:"SN-20220310-014", type:"Installation", engineer:"Ana Flores", status:"Operational", date:"Apr 29, 2025", time:"11:45 AM", problem:"New unit installation at Radiology Department, Room 3.", root:"N/A — New unit installation.", actions:"Unboxed and inspected unit. Installed at designated workstation. Configured DICOM network settings. Performed image quality verification and handed over to department head with user orientation.", recommendations:"User training follow-up in 2 weeks for remaining staff.", id_verification:"System installation complete. All probes calibrated against phantom. PACS connectivity tested with IT.", parts:[], before:5, after:3 },
-  { id:5, machine:"Philips IntelliVue MP70", model:"MP70", serial:"SN-20210820-003", type:"Warranty", engineer:"Carlos Tan", status:"Operational", date:"Apr 24, 2025", time:"8:00 AM", problem:"Touch screen unresponsive in the lower-right quadrant.", root:"Digitizer film delamination — covered under active manufacturer warranty.", actions:"Filed warranty claim with Philips. Replaced touchscreen digitizer assembly under warranty. Performed full functional test post-replacement. No charges to client.", recommendations:"Monitor for recurrence over next 30 days.", id_verification:"Warranty status confirmed with Philips distributor. Serial number registered in warranty system.", parts:[{qty:1,item:"Touchscreen Digitizer Assembly",si:"WR-2025-041"}], before:1, after:1 },
-  { id:6, machine:"Hamilton C6 Ventilator", model:"C6", serial:"SN-20230101-011", type:"Troubleshooting", engineer:"Ramon dela Cruz", status:"Not Operational", date:"Apr 20, 2025", time:"3:30 PM", problem:"Unit throwing E-045 hardware fault. Cannot enter operational mode.", root:"Main control board failure. Component-level fault in the power regulation subsystem confirmed via diagnostic port.", actions:"Isolated fault to main PCB. Replacement board ordered from distributor — ETA 5 business days. Unit tagged Out of Service pending repair.", recommendations:"Do not use unit until replacement board is installed and verified.", id_verification:"Fault code E-045 logged. Unit quarantined and tagged per hospital HTMO protocol.", parts:[{qty:1,item:"Main Control PCB (Hamilton C6)",si:"PO-2025-088"}], before:2, after:0 },
-  { id:7, machine:"Sysmex XN-3000", model:"XN-3000", serial:"SN-20191205-021", type:"Preventive Maintenance", engineer:"Joel Reyes", status:"Operational", date:"Apr 17, 2025", time:"1:00 PM", problem:"Scheduled quarterly preventive maintenance service.", root:"No issues found — routine maintenance only.", actions:"Cleaned sample probe and flow cell. Replaced sheath fluid filter. Ran QC materials and verified CBC+Diff accuracy. All parameters within acceptable range.", recommendations:"Next PMS scheduled for July 2025.", id_verification:"QC materials lot numbers recorded in service log. Maintenance sticker updated.", parts:[{qty:1,item:"Sheath Fluid Filter",si:"SI-2025-055"},{qty:1,item:"Sample Probe Cleaning Kit",si:"SI-2025-056"}], before:1, after:1 },
-  { id:8, machine:"Spacelabs 91370", model:"91370", serial:"SN-20200718-006", type:"Calibration", engineer:"Maria Santos", status:"Operational", date:"Apr 10, 2025", time:"10:30 AM", problem:"Annual calibration required per hospital protocol.", root:"Battery backup holding less than 60% capacity. No calibration drift detected.", actions:"Performed NIBP calibration against mercury reference. Verified alarm thresholds and SpO2 accuracy. Replaced backup battery.", recommendations:"Next calibration due April 2026.", id_verification:"Reference sphygmomanometer calibration certificate on file. Battery replaced and tested.", parts:[{qty:1,item:"Backup Battery Pack 12V 4Ah",si:"SI-2025-060"}], before:0, after:0 },
-  { id:9, machine:"Mindray DC-70", model:"DC-70", serial:"SN-20240205-019", type:"Installation", engineer:"Ana Flores", status:"Operational", date:"Apr 03, 2025", time:"9:00 AM", problem:"New ultrasound unit installation at OB-GYN Department.", root:"N/A — New installation.", actions:"Completed site inspection and equipment positioning. Installed transducers, configured OB/GYN presets. Connected to hospital PACS via DICOM. User training conducted for 4 staff members.", recommendations:"Follow-up training session in 2 weeks for remaining 3 staff.", id_verification:"PACS connectivity tested with IT department. DICOM tags verified. All probes calibrated.", parts:[], before:7, after:2 },
-  { id:10, machine:"Siemens ACUSON SC2000", model:"SC2000", serial:"SN-20180430-033", type:"Troubleshooting", engineer:"Carlos Tan", status:"Not Operational", date:"Mar 28, 2025", time:"4:00 PM", problem:"System not booting. Stuck on POST screen with error code 0xA3.", root:"HDD failure confirmed. Boot sector corrupted from brownout event.", actions:"Cloned original HDD to new SSD using disk imaging tool. System boots successfully. Full imaging function scan performed and passed.", recommendations:"Install a UPS for this workstation immediately to prevent recurrence.", id_verification:"System boot log reviewed. Error code 0xA3 confirmed as HDD fault via hardware diagnostic.", parts:[{qty:1,item:"256GB SSD (replacement HDD)",si:"SI-2025-071"},{qty:1,item:"SATA Data Cable",si:"SI-2025-072"}], before:2, after:1 }
-];
+// const RECORDS = [
+//   { id:1, machine:"Mindray MX-900", model:"MX-900", serial:"SN-20241101-001", type:"Preventive Maintenance", engineer:"Ramon dela Cruz", status:"Operational", date:"May 08, 2025", time:"9:30 AM", problem:"Unit displaying intermittent low battery warnings despite AC power. Screen brightness degraded during extended use.", root:"Defective battery management IC causing false drain readings. Display backlight driver PCB showing early signs of capacitor aging.", actions:"Replaced battery management module. Recalibrated power sensing circuit. Cleaned and reseated display ribbon cable. Conducted 2-hour burn-in test — unit passed all checks.", recommendations:"Schedule next PMS in 3 months. Install surge protector on outlet.", id_verification:"Unit serial number verified against service log. All patient contact surfaces cleaned per hospital protocol.", parts:[{qty:1,item:"Battery Management IC",si:"SI-2025-001"},{qty:2,item:"Backlight Capacitor 100µF",si:"SI-2025-002"}], before:2, after:2 },
+//   { id:2, machine:"Draeger Evita XL", model:"Evita XL", serial:"SN-20241101-002", type:"Troubleshooting", engineer:"Maria Santos", status:"Not Operational", date:"May 06, 2025", time:"2:15 PM", problem:"Ventilator alarming on high pressure limit. Patient circuit pressure readings inconsistent with set parameters.", root:"Partially blocked expiratory valve due to secretion buildup. Flow sensor calibration drift detected after 14 months.", actions:"Disassembled and cleaned expiratory valve assembly. Replaced flow sensor. Performed full ventilator calibration and leak test. Unit requires follow-up within 7 days.", recommendations:"Follow-up visit required within 7 days. Recommend daily expiratory valve inspection by nursing staff.", id_verification:"Unit tagged Out of Service pending part arrival. Serial verified against hospital equipment register.", parts:[{qty:1,item:"Flow Sensor Assembly",si:"SI-2025-010"},{qty:1,item:"Expiratory Valve Seal Kit",si:"SI-2025-011"}], before:3, after:0 },
+//   { id:3, machine:"Nihon Kohden BSM-6000", model:"BSM-6000", serial:"SN-20230615-008", type:"Calibration", engineer:"Joel Reyes", status:"Operational", date:"May 05, 2025", time:"10:00 AM", problem:"Routine annual calibration due. SpO2 readings slightly off from reference by ±2%.", root:"SpO2 sensor drift after 18 months of continuous use.", actions:"Performed full multi-parameter calibration per manufacturer protocol. Adjusted SpO2, NIBP, and temperature offsets. Verified ECG lead performance. All parameters within spec.", recommendations:"Next calibration due May 2026.", id_verification:"Calibration reference equipment certificates verified and on file. Unit calibration stickers updated.", parts:[], before:1, after:1 },
+//   { id:4, machine:"GE Logiq E10", model:"Logiq E10", serial:"SN-20220310-014", type:"Installation", engineer:"Ana Flores", status:"Operational", date:"Apr 29, 2025", time:"11:45 AM", problem:"New unit installation at Radiology Department, Room 3.", root:"N/A — New unit installation.", actions:"Unboxed and inspected unit. Installed at designated workstation. Configured DICOM network settings. Performed image quality verification and handed over to department head with user orientation.", recommendations:"User training follow-up in 2 weeks for remaining staff.", id_verification:"System installation complete. All probes calibrated against phantom. PACS connectivity tested with IT.", parts:[], before:5, after:3 },
+//   { id:5, machine:"Philips IntelliVue MP70", model:"MP70", serial:"SN-20210820-003", type:"Warranty", engineer:"Carlos Tan", status:"Operational", date:"Apr 24, 2025", time:"8:00 AM", problem:"Touch screen unresponsive in the lower-right quadrant.", root:"Digitizer film delamination — covered under active manufacturer warranty.", actions:"Filed warranty claim with Philips. Replaced touchscreen digitizer assembly under warranty. Performed full functional test post-replacement. No charges to client.", recommendations:"Monitor for recurrence over next 30 days.", id_verification:"Warranty status confirmed with Philips distributor. Serial number registered in warranty system.", parts:[{qty:1,item:"Touchscreen Digitizer Assembly",si:"WR-2025-041"}], before:1, after:1 },
+//   { id:6, machine:"Hamilton C6 Ventilator", model:"C6", serial:"SN-20230101-011", type:"Troubleshooting", engineer:"Ramon dela Cruz", status:"Not Operational", date:"Apr 20, 2025", time:"3:30 PM", problem:"Unit throwing E-045 hardware fault. Cannot enter operational mode.", root:"Main control board failure. Component-level fault in the power regulation subsystem confirmed via diagnostic port.", actions:"Isolated fault to main PCB. Replacement board ordered from distributor — ETA 5 business days. Unit tagged Out of Service pending repair.", recommendations:"Do not use unit until replacement board is installed and verified.", id_verification:"Fault code E-045 logged. Unit quarantined and tagged per hospital HTMO protocol.", parts:[{qty:1,item:"Main Control PCB (Hamilton C6)",si:"PO-2025-088"}], before:2, after:0 },
+//   { id:7, machine:"Sysmex XN-3000", model:"XN-3000", serial:"SN-20191205-021", type:"Preventive Maintenance", engineer:"Joel Reyes", status:"Operational", date:"Apr 17, 2025", time:"1:00 PM", problem:"Scheduled quarterly preventive maintenance service.", root:"No issues found — routine maintenance only.", actions:"Cleaned sample probe and flow cell. Replaced sheath fluid filter. Ran QC materials and verified CBC+Diff accuracy. All parameters within acceptable range.", recommendations:"Next PMS scheduled for July 2025.", id_verification:"QC materials lot numbers recorded in service log. Maintenance sticker updated.", parts:[{qty:1,item:"Sheath Fluid Filter",si:"SI-2025-055"},{qty:1,item:"Sample Probe Cleaning Kit",si:"SI-2025-056"}], before:1, after:1 },
+//   { id:8, machine:"Spacelabs 91370", model:"91370", serial:"SN-20200718-006", type:"Calibration", engineer:"Maria Santos", status:"Operational", date:"Apr 10, 2025", time:"10:30 AM", problem:"Annual calibration required per hospital protocol.", root:"Battery backup holding less than 60% capacity. No calibration drift detected.", actions:"Performed NIBP calibration against mercury reference. Verified alarm thresholds and SpO2 accuracy. Replaced backup battery.", recommendations:"Next calibration due April 2026.", id_verification:"Reference sphygmomanometer calibration certificate on file. Battery replaced and tested.", parts:[{qty:1,item:"Backup Battery Pack 12V 4Ah",si:"SI-2025-060"}], before:0, after:0 },
+//   { id:9, machine:"Mindray DC-70", model:"DC-70", serial:"SN-20240205-019", type:"Installation", engineer:"Ana Flores", status:"Operational", date:"Apr 03, 2025", time:"9:00 AM", problem:"New ultrasound unit installation at OB-GYN Department.", root:"N/A — New installation.", actions:"Completed site inspection and equipment positioning. Installed transducers, configured OB/GYN presets. Connected to hospital PACS via DICOM. User training conducted for 4 staff members.", recommendations:"Follow-up training session in 2 weeks for remaining 3 staff.", id_verification:"PACS connectivity tested with IT department. DICOM tags verified. All probes calibrated.", parts:[], before:7, after:2 },
+//   { id:10, machine:"Siemens ACUSON SC2000", model:"SC2000", serial:"SN-20180430-033", type:"Troubleshooting", engineer:"Carlos Tan", status:"Not Operational", date:"Mar 28, 2025", time:"4:00 PM", problem:"System not booting. Stuck on POST screen with error code 0xA3.", root:"HDD failure confirmed. Boot sector corrupted from brownout event.", actions:"Cloned original HDD to new SSD using disk imaging tool. System boots successfully. Full imaging function scan performed and passed.", recommendations:"Install a UPS for this workstation immediately to prevent recurrence.", id_verification:"System boot log reviewed. Error code 0xA3 confirmed as HDD fault via hardware diagnostic.", parts:[{qty:1,item:"256GB SSD (replacement HDD)",si:"SI-2025-071"},{qty:1,item:"SATA Data Cable",si:"SI-2025-072"}], before:2, after:1 }
+// ];
+
+console.log({{ Js::from($client_service_record) }})
+
+const machines = {{ Js::from($machines) }}
+const RECORDS = {{ Js::from($client_service_record) }}
 
 function typeIcon(t){ return {Troubleshooting:"fa-wrench",Installation:"fa-screwdriver-wrench",Warranty:"fa-file-contract",Calibration:"fa-ruler-combined","Preventive Maintenance":"fa-shield-check"}[t]||"fa-tools"; }
 function typeBadge(t){ return {Troubleshooting:"bg-orange-100 text-orange-800",Installation:"bg-purple-100 text-purple-800",Warranty:"bg-teal-100 text-teal-800",Calibration:"bg-indigo-100 text-indigo-800","Preventive Maintenance":"bg-blue-100 text-blue-800"}[t]||"bg-gray-100 text-gray-700"; }
@@ -165,7 +170,7 @@ const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FE
         </div>
         <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
           <p class="text-xs text-gray-400 font-medium mb-0.5">Service Type</p>
-          <p class="text-sm font-semibold text-gray-800" id="m-type">—</p>
+          <p style="word-wrap: break-word;" class="text-sm font-semibold text-gray-800" id="m-type">—</p>
         </div>
         <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
           <p class="text-xs text-gray-400 font-medium mb-0.5">Engineer</p>
@@ -189,10 +194,10 @@ const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FE
 
       <!-- Details -->
       <div class="space-y-3">
-        <div class="border border-orange-100 bg-orange-50/40 rounded-xl p-4">
+        {{-- <div class="border border-orange-100 bg-orange-50/40 rounded-xl p-4">
           <p class="text-xs font-bold text-orange-600 uppercase tracking-wide mb-2"><i class="fas fa-triangle-exclamation mr-1"></i>Problem / Issue Reported</p>
           <p class="text-sm text-gray-700 leading-relaxed" id="m-problem">—</p>
-        </div>
+        </div> --}}
         <div class="border border-red-100 bg-red-50/40 rounded-xl p-4">
           <p class="text-xs font-bold text-red-600 uppercase tracking-wide mb-2"><i class="fas fa-magnifying-glass mr-1"></i>Root Cause / Findings</p>
           <p class="text-sm text-gray-700 leading-relaxed" id="m-root">—</p>
@@ -259,30 +264,31 @@ let currentId = null;
 
 function render() {
   document.getElementById('tbl').innerHTML = RECORDS.map(r => {
+    const machine_name = machines.find(x => x.id == r.machine_id).name;
+    const machine_serial = machines.find(x => x.id == r.machine_id).serial_number;
     const mc = mColor(r.machine);
     const tc = typeBadge(r.type);
-    const sc = r.status === 'Operational' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-    const si = r.status === 'Operational' ? 'fa-circle-check' : 'fa-circle-xmark';
+    const sc = r.equipment_status === 'Operational' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+    const si = r.equipment_status === 'Operational' ? 'fa-circle-check' : 'fa-circle-xmark';
     return `<tr onclick="openModal(${r.id})">
       <td class="px-5 py-3.5 whitespace-nowrap">
-        <div class="text-sm font-semibold text-gray-900">${r.date}</div>
-        <div class="text-xs text-gray-400">${r.time}</div>
+        <div class="text-sm font-semibold text-gray-900">${r.service_date}</div>
       </td>
       <td class="px-5 py-3.5">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-sm flex-shrink-0 ${mc}"><i class="fas ${mIcon(r.machine)}"></i></div>
+          <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-sm flex-shrink-0 ${mc}"><i class="fas ${mIcon(machine_name)}"></i></div>
           <div>
-            <div class="text-sm font-semibold text-gray-900">${r.machine}</div>
-            <div class="text-xs text-gray-400 mono">SN: ${r.serial}</div>
+            <div class="text-sm font-semibold text-gray-900">${machine_name}</div>
+            <div class="text-xs text-gray-400 mono">SN: ${machine_serial}</div>
           </div>
         </div>
       </td>
       <td class="px-5 py-3.5">
-        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${tc}"><i class="fas ${typeIcon(r.type)} text-[9px]"></i>${r.type}</span>
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${tc}"><i class="fas ${typeIcon(r.service_type)} text-[9px]"></i>${r.service_type}</span>
         ${r.before > 0 || r.after > 0 ? `<div class="mt-1"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-600"><i class="fas fa-camera text-[9px]"></i>${r.before + r.after}</span></div>` : ''}
       </td>
-      <td class="px-5 py-3.5 text-sm text-gray-800">${r.engineer}</td>
-      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${sc}"><i class="fas ${si} text-[9px]"></i>${r.status}</span></td>
+      <td class="px-5 py-3.5 text-sm text-gray-800">${r.service_engineer }</td>
+      <td class="px-5 py-3.5"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${sc}"><i class="fas ${si} text-[9px]"></i>${r.equipment_status}</span></td>
       <td class="px-5 py-3.5" onclick="event.stopPropagation()">
         <div class="flex gap-1.5">
           <button onclick="openModal(${r.id})" class="w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors" title="View"><i class="fas fa-eye text-sm"></i></button>
@@ -295,44 +301,48 @@ function render() {
 
 function openModal(id) {
   const r = RECORDS.find(x => x.id === id);
+  console.log(r)
+  const machine_name = machines.find(x => x.id == r.machine_id).name;
+  const machine_serial = machines.find(x => x.id == r.machine_id).serial_number;
+  const machine_model = machines.find(x => x.id == r.machine_id).model;
   if (!r) return;
   currentId = id;
 
-  document.getElementById('m-machine').textContent = r.machine;
-  document.getElementById('m-serial').textContent = r.serial;
-  document.getElementById('m-date').textContent = r.date + ' — ' + r.time;
-  document.getElementById('m-type').textContent = r.type;
-  document.getElementById('m-model').textContent = r.model;
-  document.getElementById('m-engineer').textContent = r.engineer;
-  document.getElementById('m-idver').textContent = r.id_verification;
-  document.getElementById('m-problem').textContent = r.problem;
-  document.getElementById('m-root').textContent = r.root;
-  document.getElementById('m-actions').textContent = r.actions;
+  document.getElementById('m-machine').textContent = machine_name;
+  document.getElementById('m-serial').textContent = machine_serial;
+  document.getElementById('m-date').textContent = r.service_date;
+  document.getElementById('m-type').textContent = r.service_type;
+  document.getElementById('m-model').textContent = machine_model;
+  document.getElementById('m-engineer').textContent = r.service_engineer;
+  document.getElementById('m-idver').textContent = r.identification_verification;
+  // document.getElementById('m-problem').textContent = "Problem";
+  document.getElementById('m-root').textContent = r.root_cause_findings;
+  document.getElementById('m-actions').textContent = r.action_taken;
   document.getElementById('m-reco').textContent = r.recommendations;
-  document.getElementById('m-icon').className = `fas ${typeIcon(r.type)} text-white text-sm`;
+  document.getElementById('m-icon').className = `fas ${typeIcon(r.service_type)} text-white text-sm`;
 
   const sb = document.getElementById('m-status');
-  const op = r.status === 'Operational';
+  const op = r.equipment_status === 'Operational';
   sb.className = `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${op ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-  sb.innerHTML = `<i class="fas ${op ? 'fa-circle-check' : 'fa-circle-xmark'} text-[9px]"></i>${r.status}`;
+  sb.innerHTML = `<i class="fas ${op ? 'fa-circle-check' : 'fa-circle-xmark'} text-[9px]"></i>${r.equipment_status}`;
 
   // Parts
   const pb = document.getElementById('parts-block');
-  if (r.parts.length) {
+  if (JSON.parse(r.parts_replaced).length) {
     pb.classList.remove('hidden');
-    document.getElementById('parts-rows').innerHTML = r.parts.map(p =>
-      `<tr><td class="px-4 py-2.5 font-bold text-gray-900">${p.qty}</td><td class="px-4 py-2.5 text-gray-800">${p.item}</td><td class="px-4 py-2.5 mono text-gray-600 text-xs">${p.si}</td></tr>`
+    document.getElementById('parts-rows').innerHTML = JSON.parse(r.parts_replaced).map(p =>
+      `<tr><td class="px-4 py-2.5 font-bold text-gray-900">${p.qty}</td><td class="px-4 py-2.5 text-gray-800">${p.particulars}</td><td class="px-4 py-2.5 mono text-gray-600 text-xs">${p.si_dr_no}</td></tr>`
     ).join('');
   } else { pb.classList.add('hidden'); }
 
   // Before images
   const bb = document.getElementById('before-block');
   const bi = document.getElementById('before-imgs');
-  if (r.before > 0) {
+  if (JSON.parse(r.before_images).length > 0) {
     bb.classList.remove('hidden');
-    bi.innerHTML = Array.from({length: r.before}, (_, i) => {
-      const src = svgDataUrl('Before ' + (i+1), 68, 68, COLORS[i % COLORS.length]);
-      const lsrc = svgDataUrl('Before Image ' + (i+1), 800, 600, COLORS[i % COLORS.length]);
+    bi.innerHTML = Array.from({length: JSON.parse(r.before_images).length}, (_, i) => {
+      const src = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
+      const lsrc = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
       return `<img src="${src}" class="img-thumb" onclick="openLB('${lsrc}')" alt="Before ${i+1}">`;
     }).join('');
   } else { bb.classList.add('hidden'); }
@@ -341,14 +351,14 @@ function openModal(id) {
   const ab = document.getElementById('after-block');
   const ai = document.getElementById('after-imgs');
   ab.classList.remove('hidden');
-  if (r.after > 0) {
-    ai.innerHTML = Array.from({length: r.after}, (_, i) => {
-      const src = svgDataUrl('After ' + (i+1), 68, 68, COLORS[(i+3) % COLORS.length]);
-      const lsrc = svgDataUrl('After Image ' + (i+1), 800, 600, COLORS[(i+3) % COLORS.length]);
+  if (JSON.parse(r.after_images).length > 0) {
+    ai.innerHTML = Array.from({length: JSON.parse(r.after_images).length}, (_, i) => {
+      const src = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
+      const lsrc = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
       return `<img src="${src}" class="img-thumb" onclick="openLB('${lsrc}')" alt="After ${i+1}">`;
     }).join('');
   } else {
-    ai.innerHTML = `<div class="img-placeholder"><i class="fas fa-image text-gray-300 text-xl"></i><span>No after images</span></div>`;
+    ab.classList.add('hidden')
   }
 
   document.getElementById('modal').classList.remove('hidden');
@@ -363,7 +373,7 @@ function closeModal() {
 function openLB(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.remove('hidden'); }
 function closeLB() { document.getElementById('lightbox').classList.add('hidden'); }
 
-function printOne(id) {let url = "{{ route('clients.print', ':id') }}";url = url.replace(':id', id);window.open(url, '_blank', 'width=1100,height=800,scrollbars=yes');}
+function printOne(id) {let url = "{{ route('clients.print', ['id'=>1]) }}";url = url.replace(':id', id);window.open(url, '_blank', 'width=1100,height=800,scrollbars=yes');}
 function printSingle() { if (currentId) printOne(currentId); }
 function batchPrint() {window.open('{{route('clients.batch')}}', '_blank', 'width=1200,height=900,scrollbars=yes');}
 document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });

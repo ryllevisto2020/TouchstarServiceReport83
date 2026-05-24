@@ -101,6 +101,7 @@
             const model = machine.find(x => x.id === report.machine_id).model;
             const serial = machine.find(x => x.id === report.machine_id).serial_number;
             console.log(report);
+            console.log({{ Js::from($employee_details) }})
             if (!report) {
                 document.getElementById('printContent').innerHTML = `
                     <div class="text-center py-12">
@@ -140,9 +141,9 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 ${parts_replaced.map(p => `
                                     <tr class="hover:bg-blue-50 transition-colors">
-                                        <td class="px-6 py-4 text-sm font-bold">${p.qty}</td>
-                                        <td class="px-6 py-4 text-sm font-medium">${p.particulars}</td>
-                                        <td class="px-6 py-4 text-sm font-mono">${p.si_dr_no}</td>
+                                        <td class="px-6 py-4 text-sm font-bold">${p.qty || ""}</td>
+                                        <td class="px-6 py-4 text-sm font-medium">${p.particulars || ""}</td>
+                                        <td class="px-6 py-4 text-sm font-mono">${p.si_dr_no || ""}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -265,7 +266,7 @@
                             <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200 shadow-lg">
                                 <h3 class="text-sm font-bold text-blue-600 uppercase mb-6">Approved By (MedTech)</h3>
                                 <div class="h-32 flex items-end justify-center mb-6 bg-white/50 rounded-lg p-4">
-                                    <div class="text-gray-400">Signature</div>
+                                    <div class="text-gray-400"><img src="${report.medtech_signature}"/></div>
                                 </div>
                                 <div class="w-full border-t-2 border-gray-400 mb-3"></div>
                                 <p class="text-base font-bold text-gray-900">${report.approved_by}</p>
@@ -276,7 +277,7 @@
                             <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200 shadow-lg">
                                 <h3 class="text-sm font-bold text-green-600 uppercase mb-6">Service Engineer</h3>
                                 <div class="h-32 flex items-end justify-center mb-6 bg-white/50 rounded-lg p-4">
-                                    <div class="text-gray-400">Signature</div>
+                                    <div class="text-gray-400"><img src="test"/></div>
                                 </div>
                                 <div class="w-full border-t-2 border-gray-400 mb-3"></div>
                                 <p class="text-base font-bold text-gray-900">${report.service_engineer}</p>

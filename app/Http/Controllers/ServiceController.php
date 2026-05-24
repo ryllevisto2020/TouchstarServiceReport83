@@ -85,8 +85,11 @@ class ServiceController extends Controller
 
         $emp_id = touchStarEmp::where('emp_id',Auth::guard('touchstaraccount')->user()->emp_id)->first();
 
+        $client_id = Machine::where('id',$machine_id)->first();
+
         ServiceReport::create([
-            'machine_id'=>$machine_id ,
+            'client_id' =>$client_id->client_id,
+            'machine_id'=>$machine_id,
             'service_type'=>json_encode(collect($service_type)->reject(fn($item)=> $item == null)->all()),
             'identification_verification'=>$identification,
             'root_cause_findings'=>$root_cause,
@@ -127,5 +130,4 @@ class ServiceController extends Controller
          // Mock data for testing
         return view('service.history',compact('employee_details','service_records','machines'));
     }
-    
 }

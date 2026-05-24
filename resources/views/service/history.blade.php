@@ -188,7 +188,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-sm font-medium text-slate-700">FORMATTED DATE</div>
+                            <div class="text-sm font-medium text-slate-700">${record.service_date}</div>
                             <div class="mt-1"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">${record.service_type}</span></div>
                             ${record.service_images ? `<div class="text-xs text-slate-400 mt-1"><i class="fas fa-camera mr-1"></i>${record.service_images}</div>` : ''}
                         </td>

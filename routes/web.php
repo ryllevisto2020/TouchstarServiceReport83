@@ -14,6 +14,7 @@ use App\Http\Middleware\isLoginClient;
 use App\Models\Machine;
 use App\Models\ServiceReport;
 use App\Models\touchstarClient;
+use App\Models\touchStarEmp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -65,7 +66,8 @@ Route::get('/service/history', [ServiceController::class, 'history'])->name('ser
 Route::get('/service/print/', function () {
     $service_records = ServiceReport::all();
     $machines = Machine::all();
-    return view('service.print',compact("service_records","machines"));
+    $employee_details = touchStarEmp::all();
+    return view('service.print',compact("service_records","machines","employee_details"));
 })->name('service.print');
 
 Route::get('/service/batch-print', function () {
@@ -185,7 +187,9 @@ Route::get("clients/machines/{id}",function(Request $req){
 
 Route::get('client/service-history', function(){
     $client_detail = touchstarClient::where("client_id",Auth::guard("touchstaraclientccount")->user()->client_id)->first();
-    return view('clients.history',compact("client_detail"));
+    $client_service_record = ServiceReport::where('client_id',$client_detail->client_id)->get()->all();
+    $machines = Machine::all();
+    return view('clients.history',compact("client_detail","client_service_record","machines"));
 })->name('client.service.history')->middleware([isAuthClient::class]);
 
 Route::get('clients/batch', function(){
