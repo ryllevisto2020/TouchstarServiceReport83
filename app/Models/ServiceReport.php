@@ -10,6 +10,7 @@ class ServiceReport extends Model
     public $table = 'service_records';
     public $timestamps = true;
     protected $fillable = [
+        'client_id',
         'machine_id',
         'service_type',
         'other_service_type',
