@@ -700,9 +700,9 @@ $(document).ready(function () {
             form.append("action_taken",$("#action_taken").val());
             form.append("equipment_status",$("#equipment_status:checked").val());
             form.append("recommendations",$("#recommendations").val());
-            form.append("qty",qty);
-            form.append("particulars",particulars);
-            form.append("si_dr_no",si_dr_no);
+            form.append("qty[]",JSON.stringify(qty));
+            form.append("particulars[]",JSON.stringify(particulars));
+            form.append("si_dr_no[]",JSON.stringify(si_dr_no));
             form.append("medtech_signature",medtech_signature.val());
             form.append("approved_by",$("#approved_by").val());
             form.append("service_engineer",$("#service_engineer").val());
@@ -710,6 +710,18 @@ $(document).ready(function () {
 
             for (let index = 0; index < $("#before-images")[0].files.length; index++) {
                 form.append("before-images[]", $("#before-images")[0].files[index]);
+            }
+
+            for (let index = 0; index < $("#after-images")[0].files.length; index++) {
+                form.append("after_images[]", $("#after-images")[0].files[index]);
+            }
+
+            for (let index = 0; index < $("#calibration-images")[0].files.length; index++) {
+                form.append("calibration_images[]", $("#calibration-images")[0].files[index]);
+            }
+
+            for (let index = 0; index < $("#service-images")[0].files.length; index++) {
+                form.append("images[]", $("#service-images")[0].files[index]);
             }
 
             $.ajax({
@@ -770,22 +782,49 @@ $(document).ready(function () {
             medtech_signature.val(signature.toDataURL());
 
             form.append("machine_id",$("#machine-id").val());
-            form.append("service_type[]",service_type);
+            form.append("service_type",service_type);
             form.append("identification",$("#identification").val());
             form.append("root_cause",$("#root_cause").val());
             form.append("action_taken",$("#action_taken").val());
             form.append("equipment_status",$("#equipment_status:checked").val());
             form.append("recommendations",$("#recommendations").val());
-            form.append("qty[]",qty);
-            form.append("particulars[]",particulars);
-            form.append("si_dr_no[]",si_dr_no);
+            form.append("qty[]",JSON.stringify(qty));
+            form.append("particulars[]",JSON.stringify(particulars));
+            form.append("si_dr_no[]",JSON.stringify(si_dr_no));
             form.append("medtech_signature",medtech_signature.val());
             form.append("approved_by",$("#approved_by").val());
             form.append("service_engineer",$("#service_engineer").val());
             form.append("service_engineer_department",$("#service_engineer_department").val());
 
+            // form.append("machine_id",$("#machine-id").val());
+            // form.append("service_type[]",service_type);
+            // form.append("identification",$("#identification").val());
+            // form.append("root_cause",$("#root_cause").val());
+            // form.append("action_taken",$("#action_taken").val());
+            // form.append("equipment_status",$("#equipment_status:checked").val());
+            // form.append("recommendations",$("#recommendations").val());
+            // form.append("qty[]",JSON.parse(qty));
+            // form.append("particulars[]",particulars);
+            // form.append("si_dr_no[]",si_dr_no);
+            // form.append("medtech_signature",medtech_signature.val());
+            // form.append("approved_by",$("#approved_by").val());
+            // form.append("service_engineer",$("#service_engineer").val());
+            // form.append("service_engineer_department",$("#service_engineer_department").val());
+
             for (let index = 0; index < $("#before-images")[0].files.length; index++) {
                 form.append("before-images[]", $("#before-images")[0].files[index]);
+            }
+
+            for (let index = 0; index < $("#after-images")[0].files.length; index++) {
+                form.append("after_images[]", $("#after-images")[0].files[index]);
+            }
+
+            for (let index = 0; index < $("#calibration-images")[0].files.length; index++) {
+                form.append("calibration_images[]", $("#calibration-images")[0].files[index]);
+            }
+
+            for (let index = 0; index < $("#service-images")[0].files.length; index++) {
+                form.append("images[]", $("#service-images")[0].files[index]);
             }
 
             $.ajax({

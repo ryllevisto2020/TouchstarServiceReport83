@@ -26,9 +26,9 @@ class ServiceController extends Controller
         $action_taken = $req->action_taken;
         $equipment_status = $req->equipment_status;
         $recommendations = $req->recommendations;
-        $qty = $req->qty;
-        $particulars = $req->particulars;
-        $si_dr_no = $req->si_dr_no;
+        $qty = json_decode($req->qty[0]);
+        $particulars = json_decode($req->particulars[0]);
+        $si_dr_no = json_decode($req->si_dr_no[0]);
         $medtech_signature = $req->medtech_signature;
         $approved_by = $req->approved_by;
         $service_engineer = $req->service_engineer;
@@ -38,7 +38,6 @@ class ServiceController extends Controller
         $images = $req->file('images');
         $calibration_images = $req->file('calibration_images');
 
-        dd($qty);
         $part_replaced = [];
         for ($i=0; $i < count($qty); $i++) {
             # code...
@@ -53,7 +52,7 @@ class ServiceController extends Controller
         $service_images_paths = [];
         if($images != null){
             for ($i=0; $i < count($images); $i++) {
-                $path = $images[$i]->store('service_images', 'private');
+                $path = $images[$i]->store('service_images', 'public');
                 array_push($service_images_paths, $path);
             }
         }
@@ -61,7 +60,7 @@ class ServiceController extends Controller
         $before_images_paths = [];
         if($before_images != null){
             for ($i=0; $i < count($before_images); $i++) {
-                $path = $before_images[$i]->store('before_images', 'private');
+                $path = $before_images[$i]->store('before_images', 'public');
                 array_push($before_images_paths, $path);
             }
         }
@@ -69,15 +68,17 @@ class ServiceController extends Controller
         $after_images_paths = [];
         if($after_images != null){
             for ($i=0; $i < count($after_images); $i++) {
-                $path = $after_images[$i]->store('after_images', 'private');
+                $path = $after_images[$i]->store('after_images', 'public');
                 array_push($after_images_paths, $path);
             }
         }
 
+        
+
         $calibration_images_paths = [];
         if($calibration_images != null){
             for ($i=0; $i < count($calibration_images); $i++) {
-                $path = $calibration_images[$i]->store('calibration_images', 'private');
+                $path = $calibration_images[$i]->store('calibration_images', 'public');
                 array_push($calibration_images_paths, $path);
             }
         }
@@ -115,6 +116,7 @@ class ServiceController extends Controller
         Machine::where('id',$machine_id)->update([
             'status' => $equipment_status
         ]);
+
         return redirect()->route('service.report')->with('success', 'Service report added successfully!');
     }
 
