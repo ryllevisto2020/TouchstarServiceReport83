@@ -289,7 +289,7 @@ function renderPendingTable() {
                        + (service.after_images?.length   || 0)
                        + (service.service_images?.length || 0)
                        + (service.calibration_images?.length || 0);
-        
+
         let machines = {{Js::from($machines)}};
         let find = false;
         let index = 0;
@@ -405,10 +405,7 @@ function viewPendingDetails(serviceId) {
             ${thumbsHtml('After',  service.after_images)}
             ${thumbsHtml('Service', service.service_images)}
             ${thumbsHtml('Calibration', service.calibration_images)}
-        </div>` : `
-        <div class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-400">
-            <i class="fas fa-image mr-1"></i> No images saved in this draft.
-        </div>`;
+        </div>` : ``;
 
     Swal.fire({
         title: 'Service Draft Details',
@@ -559,7 +556,7 @@ function populateServiceForm(data) {
         try {
             const canvas = document.getElementById('signature-pad');
             if (canvas && window.SignaturePad) {
-              
+
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
                 img.onload = () => {
@@ -873,10 +870,10 @@ window.viewPendingDetails    = viewPendingDetails;
 @endpush
 
 <!-- Floating Button - Bottom Right -->
-<button onclick="togglePendingModal()" 
+<button onclick="togglePendingModal()"
         class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center text-white border-0 cursor-pointer group">
     <i class="fas fa-clock text-xl"></i>
-    <span id="pending-badge" 
+    <span id="pending-badge"
           class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center shadow-md">
         1
     </span>
@@ -885,10 +882,10 @@ window.viewPendingDetails    = viewPendingDetails;
 <!-- Pending Modal -->
 <div id="pending-modal" class="fixed inset-0 z-50 hidden">
     <div id="pending-modal-backdrop" class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"></div>
-    
+
     <div class="absolute bottom-0 right-0 w-full sm:relative sm:max-w-5xl sm:mx-auto sm:my-8 sm:w-11/12">
         <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden">
-            
+
             <!-- Header -->
             <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-5 py-4 flex justify-between items-center flex-shrink-0">
                 <h3 class="text-white font-bold text-lg flex items-center gap-2">
@@ -896,7 +893,7 @@ window.viewPendingDetails    = viewPendingDetails;
                     Pending Services
                     <span id="pending-count" class="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">6</span>
                 </h3>
-                    
+
                 <div class="flex gap-2">
                     <button onclick="loadPendingServices()" class="text-white/80 hover:text-white transition-colors" title="Refresh">
                         <i class="fas fa-sync-alt"></i>
@@ -911,7 +908,7 @@ window.viewPendingDetails    = viewPendingDetails;
                     </button>
                 </div>
             </div>
-            
+
             <!-- Table Content -->
             <div class="flex-1 overflow-auto p-4">
                 <div class="overflow-x-auto">
@@ -935,7 +932,7 @@ window.viewPendingDetails    = viewPendingDetails;
                     </table>
                 </div>
             </div>
-            
+
             <!-- Footer -->
             <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 flex justify-between items-center flex-shrink-0">
                 <span><i class="fas fa-info-circle mr-1"></i> Drafts are saved locally. Click Submit to complete the service report.</span>
