@@ -73,7 +73,7 @@ class ServiceController extends Controller
         //     }
         // }
 
-        
+
 
         // $calibration_images_paths = [];
         // if($calibration_images != null){
@@ -119,8 +119,8 @@ class ServiceController extends Controller
         Machine::where('id',$machine_id)->update([
             'status' => $equipment_status
         ]);
-
-        return redirect()->route('service.report')->with('success', 'Service report added successfully!');
+        return Response()->json(["message"=>200]);
+        //return redirect()->route('service.report')->with('success', 'Service report added successfully!');
     }
 
     public function history(){
