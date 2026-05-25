@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Report #<span id="reportId"></span> - MediTech Solutions</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     <script>
         tailwind.config = {
             theme: {
@@ -19,7 +19,7 @@
                 }
             }
         }
-        
+
         // Get report ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const reportId = urlParams.get('id');
@@ -41,7 +41,7 @@
     </style>
 </head>
 <body class="font-sans antialiased" onload="loadReportData()">
-    
+
     <!-- Action Bar -->
     <div class="no-print fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -89,19 +89,22 @@
 
         const MOCK_REPORTS = {{ Js::from($service_records) }};
         const machine = {{ Js::from($machines) }}
+        const employee_details = {{ Js::from($employee_details) }}
+
         console.log(machine);
+        console.log(MOCK_REPORTS)
 
         function loadReportData() {
             const urlParams = new URLSearchParams(window.location.search);
             const reportId = parseInt(urlParams.get('id'));
-            
+
             const report = MOCK_REPORTS.find(r => r.id === reportId);
             const client_name = machine.find(x => x.id === report.machine_id).client_location;
             const machine_name = machine.find(x => x.id === report.machine_id).name;
             const model = machine.find(x => x.id === report.machine_id).model;
             const serial = machine.find(x => x.id === report.machine_id).serial_number;
             console.log(report);
-            console.log({{ Js::from($employee_details) }})
+
             if (!report) {
                 document.getElementById('printContent').innerHTML = `
                     <div class="text-center py-12">
@@ -115,10 +118,12 @@
             }
 
             document.getElementById('headerReportId').textContent = `#${report.id}`;
+            console.log(employee_details)
             //console.log(report);
             //document.getElementById('reportId').textContent = `#${report.id}`;
             const service_type = JSON.parse(report.service_type);
             const parts_replaced = JSON.parse(report.parts_replaced);
+            const signature_employee = employee_details.find(x => x.emp_id == report.completed_by_user_id).emp_signature;
 
             const serviceTypes = Array.isArray(service_type) ? service_type.join(', ') : service_type;
             const partsReplacedHtml = parts_replaced?.length ? `
@@ -277,7 +282,7 @@
                             <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200 shadow-lg">
                                 <h3 class="text-sm font-bold text-green-600 uppercase mb-6">Service Engineer</h3>
                                 <div class="h-32 flex items-end justify-center mb-6 bg-white/50 rounded-lg p-4">
-                                    <div class="text-gray-400"><img src="test"/></div>
+                                    <div class="text-gray-400"><img src="/storage/${signature_employee}"/></div>
                                 </div>
                                 <div class="w-full border-t-2 border-gray-400 mb-3"></div>
                                 <p class="text-base font-bold text-gray-900">${report.service_engineer}</p>
