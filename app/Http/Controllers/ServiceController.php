@@ -33,10 +33,10 @@ class ServiceController extends Controller
         $approved_by = $req->approved_by;
         $service_engineer = $req->service_engineer;
         $service_engineer_department = $req->service_engineer_department;
-        $before_images = $req->file('before-images');
-        $after_images = $req->file('after_images');
-        $images = $req->file('images');
-        $calibration_images = $req->file('calibration_images');
+        // $before_images = $req->file('before-images');
+        // $after_images = $req->file('after_images');
+        // $images = $req->file('images');
+        // $calibration_images = $req->file('calibration_images');
 
         $part_replaced = [];
         for ($i=0; $i < count($qty); $i++) {
@@ -49,39 +49,39 @@ class ServiceController extends Controller
             array_push($part_replaced, $part);
         }
 
-        $service_images_paths = [];
-        if($images != null){
-            for ($i=0; $i < count($images); $i++) {
-                $path = $images[$i]->store('service_images', 'public');
-                array_push($service_images_paths, $path);
-            }
-        }
+        // $service_images_paths = [];
+        // if($images != null){
+        //     for ($i=0; $i < count($images); $i++) {
+        //         $path = $images[$i]->store('service_images', 'public');
+        //         array_push($service_images_paths, $path);
+        //     }
+        // }
 
-        $before_images_paths = [];
-        if($before_images != null){
-            for ($i=0; $i < count($before_images); $i++) {
-                $path = $before_images[$i]->store('before_images', 'public');
-                array_push($before_images_paths, $path);
-            }
-        }
+        // $before_images_paths = [];
+        // if($before_images != null){
+        //     for ($i=0; $i < count($before_images); $i++) {
+        //         $path = $before_images[$i]->store('before_images', 'public');
+        //         array_push($before_images_paths, $path);
+        //     }
+        // }
 
-        $after_images_paths = [];
-        if($after_images != null){
-            for ($i=0; $i < count($after_images); $i++) {
-                $path = $after_images[$i]->store('after_images', 'public');
-                array_push($after_images_paths, $path);
-            }
-        }
+        // $after_images_paths = [];
+        // if($after_images != null){
+        //     for ($i=0; $i < count($after_images); $i++) {
+        //         $path = $after_images[$i]->store('after_images', 'public');
+        //         array_push($after_images_paths, $path);
+        //     }
+        // }
 
         
 
-        $calibration_images_paths = [];
-        if($calibration_images != null){
-            for ($i=0; $i < count($calibration_images); $i++) {
-                $path = $calibration_images[$i]->store('calibration_images', 'public');
-                array_push($calibration_images_paths, $path);
-            }
-        }
+        // $calibration_images_paths = [];
+        // if($calibration_images != null){
+        //     for ($i=0; $i < count($calibration_images); $i++) {
+        //         $path = $calibration_images[$i]->store('calibration_images', 'public');
+        //         array_push($calibration_images_paths, $path);
+        //     }
+        // }
 
         $emp_id = touchStarEmp::where('emp_id',Auth::guard('touchstaraccount')->user()->emp_id)->first();
 
@@ -102,10 +102,10 @@ class ServiceController extends Controller
             'service_engineer'=>$service_engineer,
             'service_engineer_department'=>$service_engineer_department,
             'service_date'=>now()->format('Y-m-d'),
-            'service_images'=>json_encode($service_images_paths),
-            'before_images'=>json_encode($before_images_paths),
-            'after_images'=>json_encode($after_images_paths),
-            'calibration_images'=>json_encode($calibration_images_paths),
+            // 'service_images'=>json_encode($service_images_paths),
+            // 'before_images'=>json_encode($before_images_paths),
+            // 'after_images'=>json_encode($after_images_paths),
+            // 'calibration_images'=>json_encode($calibration_images_paths),
             'completed_by_user_id'=>$emp_id->emp_id,
         ]);
 

@@ -144,7 +144,7 @@
                             </div>
 
                             <!-- Before Images -->
-                            <div>
+                            {{-- <div>
                                 <label class="svc-label"><i class="fas fa-camera mr-1.5 text-blue-500"></i> Before Images <span class="text-xs text-gray-400 font-normal">(Max 5)</span></label>
                                 <div id="before-upload-area" class="svc-upload-area">
                                     <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
@@ -156,10 +156,10 @@
                                     <input id="before-images" name="before_images[]" type="file" class="hidden" multiple accept="image/*">
                                 </div>
                                 <div id="before-image-preview" class="svc-preview-grid"></div>
-                            </div>
+                            </div> --}}
 
                             <!-- After Images -->
-                            <div>
+                            {{-- <div>
                                 <label class="svc-label"><i class="fas fa-camera mr-1.5 text-blue-500"></i> After Images <span class="text-xs text-gray-400 font-normal">(Max 5)</span></label>
                                 <div id="after-upload-area" class="svc-upload-area">
                                     <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
@@ -171,10 +171,10 @@
                                     <input id="after-images" name="after_images[]" type="file" class="hidden" multiple accept="image/*">
                                 </div>
                                 <div id="after-image-preview" class="svc-preview-grid"></div>
-                            </div>
+                            </div> --}}
 
                             <!-- Service Images -->
-                            <div>
+                            {{-- <div>
                                 <label class="svc-label"><i class="fas fa-camera mr-1.5 text-blue-500"></i> Service Images <span class="text-xs text-gray-400 font-normal">(Max 10)</span></label>
                                 <div id="service-upload-area" class="svc-upload-area">
                                     <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
@@ -186,10 +186,10 @@
                                     <input id="service-images" name="images[]" type="file" class="hidden" multiple accept="image/*">
                                 </div>
                                 <div id="service-image-preview" class="svc-preview-grid"></div>
-                            </div>
+                            </div> --}}
 
                             <!-- Calibration Images -->
-                            <div>
+                            {{-- <div>
                                 <label class="svc-label"><i class="fas fa-camera mr-1.5 text-blue-500"></i> Calibration Images <span class="text-xs text-gray-400 font-normal">(Max 10)</span></label>
                                 <div id="calibration-upload-area" class="svc-upload-area">
                                     <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
@@ -201,7 +201,7 @@
                                     <input id="calibration-images" name="calibration_images[]" type="file" class="hidden" multiple accept="image/*">
                                 </div>
                                 <div id="calibration-image-preview" class="svc-preview-grid"></div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -708,21 +708,21 @@ $(document).ready(function () {
             form.append("service_engineer",$("#service_engineer").val());
             form.append("service_engineer_department",$("#service_engineer_department").val());
 
-            for (let index = 0; index < $("#before-images")[0].files.length; index++) {
-                form.append("before-images[]", $("#before-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#before-images")[0].files.length; index++) {
+            //     form.append("before-images[]", $("#before-images")[0].files[index]);
+            // }
 
-            for (let index = 0; index < $("#after-images")[0].files.length; index++) {
-                form.append("after_images[]", $("#after-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#after-images")[0].files.length; index++) {
+            //     form.append("after_images[]", $("#after-images")[0].files[index]);
+            // }
 
-            for (let index = 0; index < $("#calibration-images")[0].files.length; index++) {
-                form.append("calibration_images[]", $("#calibration-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#calibration-images")[0].files.length; index++) {
+            //     form.append("calibration_images[]", $("#calibration-images")[0].files[index]);
+            // }
 
-            for (let index = 0; index < $("#service-images")[0].files.length; index++) {
-                form.append("images[]", $("#service-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#service-images")[0].files.length; index++) {
+            //     form.append("images[]", $("#service-images")[0].files[index]);
+            // }
 
             $.ajax({
                 type: "POST",
@@ -811,21 +811,21 @@ $(document).ready(function () {
             // form.append("service_engineer",$("#service_engineer").val());
             // form.append("service_engineer_department",$("#service_engineer_department").val());
 
-            for (let index = 0; index < $("#before-images")[0].files.length; index++) {
-                form.append("before-images[]", $("#before-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#before-images")[0].files.length; index++) {
+            //     form.append("before-images[]", $("#before-images")[0].files[index]);
+            // }
 
-            for (let index = 0; index < $("#after-images")[0].files.length; index++) {
-                form.append("after_images[]", $("#after-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#after-images")[0].files.length; index++) {
+            //     form.append("after_images[]", $("#after-images")[0].files[index]);
+            // }
 
-            for (let index = 0; index < $("#calibration-images")[0].files.length; index++) {
-                form.append("calibration_images[]", $("#calibration-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#calibration-images")[0].files.length; index++) {
+            //     form.append("calibration_images[]", $("#calibration-images")[0].files[index]);
+            // }
 
-            for (let index = 0; index < $("#service-images")[0].files.length; index++) {
-                form.append("images[]", $("#service-images")[0].files[index]);
-            }
+            // for (let index = 0; index < $("#service-images")[0].files.length; index++) {
+            //     form.append("images[]", $("#service-images")[0].files[index]);
+            // }
 
             
             $.ajax({
