@@ -226,17 +226,17 @@ const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FE
         </div>
       </div>
 
-      <!-- Before Images -->
+      {{-- <!-- Before Images -->
       <div id="before-block">
         <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2"><i class="fas fa-camera mr-1"></i>Before Service Images</p>
         <div id="before-imgs" class="flex flex-wrap gap-2"></div>
-      </div>
+      </div> --}}
 
       <!-- After Images -->
-      <div id="after-block">
+      {{-- <div id="after-block">
         <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2"><i class="fas fa-camera-rotate mr-1"></i>After Service Images</p>
         <div id="after-imgs" class="flex flex-wrap gap-2"></div>
-      </div>
+      </div> --}}
     </div>
 
     <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-2">
@@ -332,31 +332,31 @@ function openModal(id) {
     ).join('');
   } else { pb.classList.add('hidden'); }
 
-  // Before images
-  const bb = document.getElementById('before-block');
-  const bi = document.getElementById('before-imgs');
-  if (JSON.parse(r.before_images).length > 0) {
-    bb.classList.remove('hidden');
-    bi.innerHTML = Array.from({length: JSON.parse(r.before_images).length}, (_, i) => {
-      const src = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
-      const lsrc = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
-      return `<img src="${src}" class="img-thumb" style="width: 100px; height: 100px;" onclick="openLB('${lsrc}')" alt="Before ${i+1}">`;
-    }).join('');
-  } else { bb.classList.add('hidden'); }
+  // // Before images
+  // const bb = document.getElementById('before-block');
+  // const bi = document.getElementById('before-imgs');
+  // if (JSON.parse(r.before_images).length > 0) {
+  //   bb.classList.remove('hidden');
+  //   bi.innerHTML = Array.from({length: JSON.parse(r.before_images).length}, (_, i) => {
+  //     const src = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
+  //     const lsrc = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
+  //     return `<img src="${src}" class="img-thumb" style="width: 100px; height: 100px;" onclick="openLB('${lsrc}')" alt="Before ${i+1}">`;
+  //   }).join('');
+  // } else { bb.classList.add('hidden'); }
 
-  // After images
-  const ab = document.getElementById('after-block');
-  const ai = document.getElementById('after-imgs');
-  ab.classList.remove('hidden');
-  if (JSON.parse(r.after_images).length > 0) {
-    ai.innerHTML = Array.from({length: JSON.parse(r.after_images).length}, (_, i) => {
-      const src = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
-      const lsrc = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
-      return `<img src="${src}" class="img-thumb" style="width: 100px; height: 100px; onclick="openLB('${lsrc}')" alt="After ${i+1}">`;
-    }).join('');
-  } else {
-    ab.classList.add('hidden')
-  }
+  // // After images
+  // const ab = document.getElementById('after-block');
+  // const ai = document.getElementById('after-imgs');
+  // ab.classList.remove('hidden');
+  // if (JSON.parse(r.after_images).length > 0) {
+  //   ai.innerHTML = Array.from({length: JSON.parse(r.after_images).length}, (_, i) => {
+  //     const src = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
+  //     const lsrc = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
+  //     return `<img src="${src}" class="img-thumb" style="width: 100px; height: 100px; onclick="openLB('${lsrc}')" alt="After ${i+1}">`;
+  //   }).join('');
+  // } else {
+  //   ab.classList.add('hidden')
+  // }
 
   document.getElementById('modal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';

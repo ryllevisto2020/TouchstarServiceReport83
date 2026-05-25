@@ -190,7 +190,7 @@
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-slate-700">${record.service_date}</div>
                             <div class="mt-1"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">${record.service_type}</span></div>
-                            ${record.service_images ? `<div class="text-xs text-slate-400 mt-1"><i class="fas fa-camera mr-1"></i>${record.service_images}</div>` : ''}
+                            ${record.service_images ? `<div class="text-xs text-slate-400 mt-1"></div>` : ''}
                         </td>
                         <td class="px-6 py-4 max-w-xs">
                             <div class="text-xs text-slate-600"><span class="font-semibold">Issue:</span> ${record.root_cause_findings.substring(0, 70)}${record.root_cause_findings.length > 70 ? '…' : ''}</div>
@@ -273,7 +273,7 @@
         window.viewDetails = (id) => {
             const report = filteredData.find(r => r.id === id);
             if (!report) return;
-            const partsHtml = JSON.parse(report.parts_replaced)?.length ? `<div class="bg-slate-50 rounded-xl p-4"><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Parts Replaced</p><ul class="space-y-1">${JSON.parse(report.parts_replaced).map(p => `<li class="text-sm flex items-center gap-2"><i class="fas fa-microchip text-slate-400 text-xs"></i><span class="font-medium">${p.qty}x</span> ${p.particulars}</li>`).join('')}</ul></div>` : '<div class="text-slate-400 italic text-sm">No parts replaced</div>';
+            const partsHtml = JSON.parse(report.parts_replaced)?.length ? `<div class="bg-slate-50 rounded-xl p-4"><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Parts Replaced</p><ul class="space-y-1">${JSON.parse(report.parts_replaced).map(p => `<li class="text-sm flex items-center gap-2"><i class="fas fa-microchip text-slate-400 text-xs"></i><span class="font-medium">${p.qty+"x" || ""}</span> ${p.particulars}</li>`).join('')}</ul></div>` : '<div class="text-slate-400 italic text-sm">No parts replaced</div>';
             const before_images = JSON.parse(report.before_images)
             const after_images = JSON.parse(report.after_images)
             const service_images = JSON.parse(report.service_images)
@@ -289,21 +289,21 @@
             let after_images_path = '';
             let before_images_path = '';
 
-            for (let index = 0; index < service_images.length; index++) {
-                service_images_path += `<img src="/storage/${service_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
-            }
+            // for (let index = 0; index < service_images.length; index++) {
+            //     service_images_path += `<img src="/storage/${service_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
+            // }
 
-            for (let index = 0; index < calibration_images.length; index++) {
-                calibration_images_path += `<img src="/storage/${calibration_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
-            }
+            // for (let index = 0; index < calibration_images.length; index++) {
+            //     calibration_images_path += `<img src="/storage/${calibration_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
+            // }
 
-            for (let index = 0; index < before_images.length; index++) {
-                before_images_path += `<img src="/storage/${before_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
-            }
+            // for (let index = 0; index < before_images.length; index++) {
+            //     before_images_path += `<img src="/storage/${before_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
+            // }
 
-            for (let index = 0; index < after_images.length; index++) {
-                after_images_path += `<img src="/storage/${after_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
-            }
+            // for (let index = 0; index < after_images.length; index++) {
+            //     after_images_path += `<img src="/storage/${after_images[index]}" class="w-24 h-24 object-cover rounded-lg border">`
+            // }
             
             document.getElementById('modalContent').innerHTML = `
                 <div class="grid grid-cols-2 gap-4">
@@ -317,13 +317,6 @@
                     <div class="col-span-2"><p class="text-xs font-semibold text-slate-400 uppercase">Action Taken</p><p class="text-slate-700 bg-slate-50 p-3 rounded-lg">${report.action_taken}</p></div>
                     <div class="col-span-2"><p class="text-xs font-semibold text-slate-400 uppercase">Recommendations</p><p class="text-slate-700">${report.recommendations || 'N/A'}</p></div>
                     <div><p class="text-xs font-semibold text-slate-400 uppercase">Equipment Status</p><p><span class="inline-flex px-2.5 py-1 rounded-full text-xs ${report.equipment_status === 'Operational' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${report.equipment_status}</span></p></div>
-                    <div><p class="text-xs font-semibold text-slate-400 uppercase">Images Attached</p>
-                        <p class="text-slate-700" id="test_services_images">
-                            ${service_images_path}
-                            ${calibration_images_path}
-                            ${before_images_path}
-                            ${after_images_path}
-                        </p>
                     </div>
                 </div>
                 ${partsHtml}
