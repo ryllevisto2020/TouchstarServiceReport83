@@ -522,7 +522,7 @@ $(document).ready(function () {
         try {
             let service_id = document.getElementById("service_id");
             //get(service_id.value)
-            submitDraftReport(service_id.value)
+            submitDraftReport(service_id.value,e)
         } catch (error) {
             submitReport()
             console.log(error)
@@ -661,7 +661,7 @@ $(document).ready(function () {
 
     }
 
-    function submitDraftReport(serviceID){
+    function submitDraftReport(serviceID,e){
 
         if(!signature.isEmpty() || medtech_signature.val() != ""){
             let service_type = Array();
@@ -691,7 +691,10 @@ $(document).ready(function () {
                 si_dr_no.push($(this).val())
             })
 
-            medtech_signature.val(signature.toDataURL());
+            //medtech_signature.val(signature.toDataURL());
+            if(medtech_signature.val() == ""){
+                medtech_signature.val(signature.toDataURL());
+            }
 
             form.append("machine_id",$("#machine-id").val());
             form.append("service_type",service_type);
@@ -742,12 +745,15 @@ $(document).ready(function () {
                     })
                 }
             });
-        }
-
-        if(medtech_signature.val() == ""){
+        }else{
             e.preventDefault();
             alert('Please provide your signature');
         }
+
+        // if(medtech_signature.val() == "" || signature.isEmpty()){
+        //     e.preventDefault();
+        //     alert('Please provide your signature');
+        // }
     }
 
     function submitReport(){
@@ -827,7 +833,7 @@ $(document).ready(function () {
             //     form.append("images[]", $("#service-images")[0].files[index]);
             // }
 
-            
+
             $.ajax({
                 type: "POST",
                 url: "/service/add",
