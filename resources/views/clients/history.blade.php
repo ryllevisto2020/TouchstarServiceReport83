@@ -47,7 +47,7 @@ const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FE
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
       <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500 flex items-center gap-4">
         <div class="p-2.5 rounded-xl bg-blue-50 text-blue-600 text-lg"><i class="fas fa-clipboard-list"></i></div>
         <div><p class="text-xs text-gray-500 font-medium">Total Services</p><p class="text-2xl font-bold text-gray-900">148</p></div>
@@ -60,10 +60,7 @@ const COLORS = ["#DBEAFE","#D1FAE5","#FEF3C7","#EDE9FE","#FCE7F3","#E0F2FE","#FE
         <div class="p-2.5 rounded-xl bg-purple-50 text-purple-600 text-lg"><i class="fas fa-user-cog"></i></div>
         <div><p class="text-xs text-gray-500 font-medium">Engineers</p><p class="text-2xl font-bold text-gray-900">6</p></div>
       </div>
-      <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 flex items-center gap-4">
-        <div class="p-2.5 rounded-xl bg-amber-50 text-amber-600 text-lg"><i class="fas fa-clock"></i></div>
-        <div><p class="text-xs text-gray-500 font-medium">Avg. Response</p><p class="text-2xl font-bold text-gray-900">2.4h</p></div>
-      </div>
+      
     </div>
 
     <!-- Filters -->
@@ -343,7 +340,7 @@ function openModal(id) {
     bi.innerHTML = Array.from({length: JSON.parse(r.before_images).length}, (_, i) => {
       const src = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
       const lsrc = window.location.origin+"/storage/"+JSON.parse(r.before_images)[i];
-      return `<img src="${src}" class="img-thumb" onclick="openLB('${lsrc}')" alt="Before ${i+1}">`;
+      return `<img src="${src}" class="img-thumb" style="width: 100px; height: 100px;" onclick="openLB('${lsrc}')" alt="Before ${i+1}">`;
     }).join('');
   } else { bb.classList.add('hidden'); }
 
@@ -355,7 +352,7 @@ function openModal(id) {
     ai.innerHTML = Array.from({length: JSON.parse(r.after_images).length}, (_, i) => {
       const src = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
       const lsrc = window.location.origin+"/storage/"+JSON.parse(r.after_images)[i];
-      return `<img src="${src}" class="img-thumb" onclick="openLB('${lsrc}')" alt="After ${i+1}">`;
+      return `<img src="${src}" class="img-thumb" style="width: 100px; height: 100px; onclick="openLB('${lsrc}')" alt="After ${i+1}">`;
     }).join('');
   } else {
     ab.classList.add('hidden')

@@ -827,6 +827,7 @@ $(document).ready(function () {
                 form.append("images[]", $("#service-images")[0].files[index]);
             }
 
+            
             $.ajax({
                 type: "POST",
                 url: "/service/add",
