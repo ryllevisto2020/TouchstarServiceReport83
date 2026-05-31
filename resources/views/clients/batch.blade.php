@@ -83,7 +83,7 @@
         <!-- Footer -->
         <div class="no-print text-center mt-8 text-gray-500">
             <p class="text-sm">Generated from Service Report Management System</p>
-            <p class="text-xs mt-1">© 2024 Medical Solutions Inc. All rights reserved.</p>
+            <p class="text-xs mt-1">© 2026 Touchstar Medical Enterprises Inc. All rights reserved.</p>
         </div>
     </div>
 
@@ -164,12 +164,12 @@
                         <div class="border-b-4 border-blue-600 pb-6 mb-6">
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                                 <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                                    <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-3 shadow-lg">
-                                        <i class="fas fa-heartbeat text-white text-2xl"></i>
-                                    </div>
+                                   <img src="/images/logo.png" alt="Touchstar Medical Enterprises Inc."
+                                class="h-24 w-24 object-contain"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <div>
-                                        <h3 class="text-xl font-black text-gray-900">MEDICAL SOLUTIONS INC.</h3>
-                                        <p class="text-sm text-gray-600">Professional Equipment Services</p>
+                                        <h3 class="text-xl font-black text-gray-900">Touchstar Medical Enterprises Inc.</h3>
+                                        <p class="text-sm text-gray-600">Service Reports Services</p>
                                     </div>
                                 </div>
                                 <div class="text-left md:text-right">

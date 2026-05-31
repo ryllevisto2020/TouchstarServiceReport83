@@ -54,6 +54,8 @@ Route::get('/machine/{machine}/details', [MachineController::class, 'getMachineD
 Route::get('/machine/{machine}/edit', [MachineController::class, 'edit'])->name('machines.edit')->middleware([isAuthEmployee::class]);
 Route::put('/machine/{machine}', [MachineController::class, 'update'])->name('machines.update')->middleware([isAuthEmployee::class]);
 Route::delete('/machine/{machine}', [MachineController::class, 'destroy'])->name('machines.destroy')->middleware([isAuthEmployee::class]);
+Route::get('/machine/clients', [MachineController::class, 'getClients'])->name('machines.clients');
+
 
 #Service Report Routes
 Route::get('/service', [ServiceController::class, 'report'])->name('service.report')->middleware([isAuthEmployee::class]);

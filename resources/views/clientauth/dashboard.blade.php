@@ -3,174 +3,110 @@
 @section('title', 'Touchstar Medical Enterprises Inc. Client Management')
 
 @section('content')
-<div class="w-full">
-  {{-- Top Bar --}}
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
-    <div class="w-full">
-      <h1 class="serif text-xl sm:text-2xl text-gray-900 font-normal">
-        Touchstar Medical Enterprises Inc. Client Dashboard
-      </h1>
-      <p class="text-xs sm:text-sm text-gray-400 mt-0.5">
-        {{ $currentDate ?? now()->format('l, F d, Y') }} · Here's what's happening today
-      </p>
-    </div>
-  </div>
+<div class="w-full p-6 bg-slate-50 min-h-screen">
 
-  {{-- Stats Grid --}}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      
-      <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5">
-        <p class="text-[11px] uppercase tracking-wider text-gray-400 mb-2">
-          Welcome
-        </p>
-       <p class="serif text-2xl sm:text-3xl text-gray-900 font-normal leading-none mb-1">
-            Hello, {{ $client_detail->client_name ?? 'Client' }} 👋
-        </p>
-        <p class="text-xs text-gray-500">
-          We're glad to have you here today.
-        </p>
-      </div>
+    {{-- Header --}}
+    <div class="mb-8">
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-8 border border-blue-100 shadow-sm">
+            <h1 class="text-xl sm:text-2xl font-semibold text-slate-800">
+                Touchstar Medical Enterprises Inc. Client Dashboard
+            </h1>
 
-      <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5">
-        <p class="text-[11px] uppercase tracking-wider text-gray-400 mb-2">
-          Appointment
-        </p>
-        <p class="serif text-2xl sm:text-3xl text-gray-900 font-normal leading-none mb-1">
-          Stay Updated
-        </p>
-        <p class="text-xs text-gray-500">
-          Check your latest schedules and visits.
-        </p>
-      </div>
+            <p class="text-3xl sm:text-4xl font-bold text-slate-900 mt-2">
+                Welcome, {{ $client_detail->client_name ?? 'Client' }} 👋
+            </p>
 
-      <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5">
-        <p class="text-[11px] uppercase tracking-wider text-gray-400 mb-2">
-          Health Reminder
-        </p>
-        <p class="serif text-2xl sm:text-3xl text-gray-900 font-normal leading-none mb-1">
-          Take Care 💙
-        </p>
-        <p class="text-xs text-gray-500">
-          Your wellness always comes first.
-        </p>
-      </div>
-
-      <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5">
-        <p class="text-[11px] uppercase tracking-wider text-gray-400 mb-2">
-          Support
-        </p>
-        <p class="serif text-2xl sm:text-3xl text-gray-900 font-normal leading-none mb-1">
-          Need Help?
-        </p>
-        <p class="text-xs text-gray-500">
-          Contact us anytime for assistance.
-        </p>
-      </div>
-
-    </div>
-{{-- Bottom Row --}}
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-  {{-- Dashboard Overview --}}
-  <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5">
-    <div class="flex items-center justify-between mb-4">
-      <p class="text-sm font-medium text-gray-900">Dashboard overview</p>
-      <span class="text-xs text-gray-400">Updated today</span>
+            <p class="text-sm text-slate-500 mt-2">
+                {{ $currentDate ?? now()->format('l, F d, Y') }} · Here’s what’s happening today
+            </p>
+        </div>
     </div>
 
-    {{-- Dummy Graph --}}
-    <div class="h-56 flex items-end justify-between gap-2 mb-4">
-      <div class="flex flex-col items-center gap-2 w-full">
-        <div class="bg-emerald-400 rounded-t-md w-full h-24"></div>
-        <span class="text-[11px] text-gray-400">Mon</span>
-      </div>
+    {{-- Quick Summary --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-      <div class="flex flex-col items-center gap-2 w-full">
-        <div class="bg-blue-400 rounded-t-md w-full h-36"></div>
-        <span class="text-[11px] text-gray-400">Tue</span>
-      </div>
+        {{-- Machines --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
+                <span class="text-blue-600 text-xl">🖥️</span>
+            </div>
+            <h3 class="text-sm font-medium text-slate-500">Installed Machines</h3>
+            <p class="text-3xl font-bold text-slate-900 mt-2">
+                {{ $machineCount ?? 0 }}
+            </p>
+            <p class="text-sm text-slate-400 mt-1">Registered equipment</p>
+        </div>
 
-      <div class="flex flex-col items-center gap-2 w-full">
-        <div class="bg-violet-400 rounded-t-md w-full h-20"></div>
-        <span class="text-[11px] text-gray-400">Wed</span>
-      </div>
+        {{-- Services --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 p-6 hover:shadow-md transition">
+            <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center mb-4">
+                <span class="text-indigo-600 text-xl">🛠️</span>
+            </div>
+            <h3 class="text-sm font-medium text-slate-500">Pending Services</h3>
+            <p class="text-3xl font-bold text-slate-900 mt-2">
+                {{ $pendingService ?? 0 }}
+            </p>
+            <p class="text-sm text-slate-400 mt-1">Awaiting maintenance</p>
+        </div>
 
-      <div class="flex flex-col items-center gap-2 w-full">
-        <div class="bg-amber-400 rounded-t-md w-full h-44"></div>
-        <span class="text-[11px] text-gray-400">Thu</span>
-      </div>
-
-      <div class="flex flex-col items-center gap-2 w-full">
-        <div class="bg-rose-400 rounded-t-md w-full h-32"></div>
-        <span class="text-[11px] text-gray-400">Fri</span>
-      </div>
-
-      <div class="flex flex-col items-center gap-2 w-full">
-        <div class="bg-cyan-400 rounded-t-md w-full h-40"></div>
-        <span class="text-[11px] text-gray-400">Sat</span>
-      </div>
-
-      <div class="flex flex-col items-center gap-2 w-full">
-        <div class="bg-gray-400 rounded-t-md w-full h-28"></div>
-        <span class="text-[11px] text-gray-400">Sun</span>
-      </div>
+        {{-- Completed --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-6 hover:shadow-md transition">
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4">
+                <span class="text-emerald-600 text-xl">✅</span>
+            </div>
+            <h3 class="text-sm font-medium text-slate-500">Completed Requests</h3>
+            <p class="text-3xl font-bold text-slate-900 mt-2">
+                {{ $completedRequests ?? 0 }}
+            </p>
+            <p class="text-sm text-slate-400 mt-1">Finished service records</p>
+        </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-3 pt-2 border-t border-gray-100">
-      <div>
-        <p class="text-xs text-gray-400">Appointments</p>
-        <p class="text-lg font-semibold text-gray-800">24</p>
-      </div>
+    {{-- Main Content --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-      <div>
-        <p class="text-xs text-gray-400">Clients</p>
-        <p class="text-lg font-semibold text-gray-800">18</p>
-      </div>
+        {{-- Welcome / Info --}}
+        <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <h2 class="text-xl font-semibold text-slate-800 mb-4">
+                Welcome to Your Portal
+            </h2>
 
-      <div>
-        <p class="text-xs text-gray-400">Reports</p>
-        <p class="text-lg font-semibold text-gray-800">12</p>
-      </div>
+            <p class="text-slate-600 leading-relaxed">
+                Manage your machine service requests, monitor maintenance records,
+                and stay updated with your account activities. This dashboard is
+                designed to provide quick access to important information and
+                improve your service experience with Touchstar Medical Enterprises Inc.
+            </p>
+
+            {{-- Highlight Box --}}
+            <div class="mt-6 bg-blue-50 border border-blue-100 rounded-2xl p-5">
+                <h3 class="font-medium text-blue-700 mb-2">
+                    Quick Reminder
+                </h3>
+                <p class="text-sm text-slate-600">
+                    If your equipment needs preventive maintenance or repair,
+                    submit a request to our technical team for immediate support.
+                </p>
+            </div>            
+        </div>
+
+        {{-- Quick Links --}}
+       
     </div>
-  </div>
 
-  {{-- Quick Actions --}}
-  <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5">
-    <p class="text-sm font-medium text-gray-900 mb-4">Quick actions (This is for Ongoing Development)</p>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-
-      <a href="#" class="flex items-center gap-2.5 border border-gray-200 rounded-lg px-3.5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-        </svg>
-        <span class="truncate">Report a Concern</span>
-      </a>
-
-      <a href="#" class="flex items-center gap-2.5 border border-gray-200 rounded-lg px-3.5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-        <span class="truncate">New appointment</span>
-      </a>
-
-      <a href="#" class="flex items-center gap-2.5 border border-gray-200 rounded-lg px-3.5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-        </svg>
-        <span class="truncate">Create invoice</span>
-      </a>
-
-      <a href="#" class="flex items-center gap-2.5 border border-gray-200 rounded-lg px-3.5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-violet-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-        </svg>
-        <span class="truncate">View reports</span>
-      </a>
-
+    {{-- Bottom Section --}}
+    <div class="mt-8">
+        <div class="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl p-8 text-white shadow-md">
+            <h3 class="text-2xl font-semibold mb-3">
+                Thank You for Trusting Touchstar Medical
+            </h3>
+            <p class="text-blue-100 max-w-3xl">
+                We are committed to providing dependable medical equipment support,
+                preventive maintenance, and quality service to help your facility
+                operate efficiently and without interruption.
+            </p>
+        </div>
     </div>
-  </div>
 
-</div>
 </div>
 @endsection

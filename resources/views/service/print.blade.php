@@ -296,7 +296,7 @@
                 <div class="mt-12 pt-6 border-t-2 border-gray-200">
                     <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
                         <p>Generated on: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                        <p class="mt-2 md:mt-0">© ${new Date().getFullYear()} Medical Solutions Inc. All rights reserved.</p>
+                        <p class="mt-2 md:mt-0">© ${new Date().getFullYear()} Touchstar Medical Enterprises Inc. All rights reserved.</p>
                     </div>
                 </div>
             `;
