@@ -217,4 +217,8 @@ class Machine extends Model
             'due_soon' => static::whereBetween('next_service_date', [now(), now()->addDays(7)])->count(),
         ];
     }
+    public function client()
+{
+    return $this->belongsTo(\App\Models\touchstarClient::class, 'client_id', 'client_id');
+}
 }
